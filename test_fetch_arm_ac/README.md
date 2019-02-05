@@ -8,5 +8,8 @@ start up fetch simulation, e.g. with:
 run the test arm-motion node with:
 `rosrun test_fetch_arm_ac fetch_arm_test_action_client2`
 
+Can also test pan/tilt of head by running:
+`rosrun test_fetch_arm_ac fetch_head_test_action_client`
+
 ## Running tests/demos
     
