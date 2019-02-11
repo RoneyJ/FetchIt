@@ -131,8 +131,56 @@ Eigen::Affine3d Fetch_fwd_solver::fwd_kin_solve(const Vectorq6x1& q_vec) {
 
 
 Eigen::Matrix4d Fetch_fwd_solver::get_wrist_frame() {
-    return A_mat_products[5];
+    return A_mat_products_[5];
 }
+
+Eigen::Vector3d Fetch_fwd_solver::compute_wrist_point(Eigen::VectorXd q_vec) {
+    //Eigen::Matrix4d A = Eigen::Matrix4d::Identity();
+    //%compute A matrix from frame i to frame i-1:
+    Eigen::Matrix4d A_i_iminusi;
+    //Eigen::Matrix3d R;
+    Eigen::Vector3d w;
+    for (int i = 0; i < NJNTS_TO_WRIST; i++) {
+        //A_i_iminusi = compute_A_of_DH(DH_a_params[i],DH_d_params[i],DH_alpha_params[i], q_vec[i] + DH_q_offsets[i] );
+        A_i_iminusi = compute_A_of_DH(i, q_vec[i]); 
+        A_mats_[i] = A_i_iminusi;
+        //std::cout << "A_mats[" << i << "]:" << std::endl;
+        //std::cout << A_mats_[i] << std::endl;
+    }
+
+    A_mat_products_[0] = A_mats_[0];
+    for (int i = 1; i < NJNTS_TO_WRIST; i++) {
+        A_mat_products_[i] = A_mat_products_[i - 1] * A_mats_[i];
+        //std::cout<<"A_mat_products_["<<i<<"]:"<<std::endl;
+        //std::cout << A_mat_products_[i]<<std::endl;
+    }
+    w =  (A_mat_products_[NJNTS_TO_WRIST-1]).col(3).head(3); //wrist point
+    return w;
+}
+
+Eigen::Vector4d    Fetch_fwd_solver::compute_O5_wrt_3(double q_elbow) {
+    Eigen::Matrix4d A43 = compute_A_of_DH(3, q_elbow); 
+    Eigen::Vector4d O5_wrt_4,O5_wrt_3;
+    O5_wrt_4<<0,0,DH_d5,1;
+    O5_wrt_3 = A43*O5_wrt_4;
+    return O5_wrt_3;
+}
+
+Eigen::Vector4d Fetch_fwd_solver::compute_O5_wrt_2(Eigen::Vector4d O_5_wrt_3,  double q_humerus_roll) {
+    Eigen::Matrix4d A32 = compute_A_of_DH(2, q_humerus_roll); 
+    Eigen::Vector4d O5_wrt_2;
+    O5_wrt_2 = A32*O_5_wrt_3;
+    return O5_wrt_2;    
+}
+
+Eigen::Vector4d Fetch_fwd_solver::compute_O5_wrt_1(Eigen::Vector4d O_5_wrt_2,  double q_shoulder_pitch) {
+    Eigen::Matrix4d A21 = compute_A_of_DH(1, q_shoulder_pitch); 
+    Eigen::Vector4d O5_wrt_1;
+    O5_wrt_1 = A21*O_5_wrt_2;
+    return O5_wrt_1;    
+}
+
+
 
 //fwd kin fnc: accepts arg of type Eigen::VectorXd 
 //USES FETCH COORDS
@@ -144,24 +192,18 @@ Eigen::Affine3d Fetch_fwd_solver::fwd_kin_solve(const Eigen::VectorXd& q_vec) {
     return A;
 }
 
-void  Fetch_fwd_solver::test_q123(std::vector<Eigen::VectorXd> q_solns) {
-  int nsolns = q_solns.size();
-  Eigen::VectorXd qsoln;
-  Eigen::Matrix4d A_wrist;
-  qsoln.resize(6);
-  for (int i=0;i<nsolns;i++) {
-   qsoln = q_solns[i];
+void  Fetch_fwd_solver::test_q1234(Eigen::VectorXd q_soln) {
+  //int nsolns = q_solns.size();
+  //Eigen::VectorXd qsoln;
+  //Eigen::Matrix4d A_wrist;
+    Eigen::Vector3d wrist_pt;
 
-   for (int i=3;i<6;i++) qsoln[i]=0.0;
-     //qsoln[2]-=  M_PI/2.0;      //convert to ABB coords CAREFUL!!
-     cout<<"qsoln: "<<qsoln.transpose()<<endl;
-     fwd_kin_solve(qsoln);
-     A_wrist=get_wrist_frame();
-    std::cout << "fwd kin wrist point, soln: "<<i<<": " << A_wrist(0, 3) << ", " << A_wrist(1, 3) << ", " << A_wrist(2, 3) << std::endl;
-  }
+     ROS_INFO_STREAM("q_soln: "<<q_soln.transpose()<<endl);
+     wrist_pt = compute_wrist_point(q_soln);
+     cout<<"computed wrist point: "<<wrist_pt.transpose()<<endl;
 }
 
-
+//this fnc assumes q_vec in fetch coords (only diff is shoulder flex)s
 Eigen::Matrix4d Fetch_fwd_solver::fwd_kin_solve_(const Eigen::VectorXd& q_vec) {
     Eigen::Matrix4d A = Eigen::Matrix4d::Identity();
     //%compute A matrix from frame i to frame i-1:
@@ -170,47 +212,112 @@ Eigen::Matrix4d Fetch_fwd_solver::fwd_kin_solve_(const Eigen::VectorXd& q_vec) {
     Eigen::Vector3d p;
     for (int i = 0; i < NJNTS; i++) {
         //A_i_iminusi = compute_A_of_DH(DH_a_params[i],DH_d_params[i],DH_alpha_params[i], q_vec[i] + DH_q_offsets[i] );
-        A_i_iminusi = compute_A_of_DH(i, q_vec[i]);
-        A_mats[i] = A_i_iminusi;
+        A_i_iminusi = compute_A_of_DH(i, q_vec[i]); 
+        A_mats_[i] = A_i_iminusi;
         //std::cout << "A_mats[" << i << "]:" << std::endl;
-        //std::cout << A_mats[i] << std::endl;
+        //std::cout << A_mats_[i] << std::endl;
     }
 
-    A_mat_products[0] = A_mats[0];
+    A_mat_products_[0] = A_mats_[0];
     for (int i = 1; i < NJNTS; i++) {
-        A_mat_products[i] = A_mat_products[i - 1] * A_mats[i];
+        A_mat_products_[i] = A_mat_products_[i - 1] * A_mats_[i];
+        //std::cout<<"A_mat_products["<<i<<"]:"<<std::endl;
+        //std::cout << A_mat_products_[i]<<std::endl;
     }
-
-    //Eigen::Matrix4d A5;
-    //A5 = A_mat_products[4];
-
-    //std::cout<<" wrist position: "<<A5(0,3)<<", "<<A5(1,3)<<", "<<A5(2,3)<<std::endl;
-    return A_mat_products[NJNTS-1]; //gripper or flange frame
+    return A_mat_products_[NJNTS-1]; //gripper or flange frame
 }
 
 Fetch_IK_solver::Fetch_IK_solver() {
     //constructor: 
-    L_humerus_ = DH_a_params[1];
-    double L3 = DH_d_params[3];
-    double A2 = DH_a_params[2];
-    L_forearm_ = L3; //sqrt(A2 * A2 + L3 * L3);
+    L_humerus_ = fabs(DH_d3); //DH_a_params[1];
+    //double L3 = DH_d_params[3];
+    //double A2 = DH_a_params[2];
+    L_forearm_ = fabs(DH_d5); //L3; //sqrt(A2 * A2 + L3 * L3);
+    L_wrist_ = fabs(DH_d7);
     q_solns_fit_.resize(NJNTS);
     q_solns_.resize(NJNTS);
     
-    //for A2 = 0, do  not need this angle correction; set it to zer0
+    //for A2 = 0, do  not need this angle correction; set it to zero
     phi_elbow_=0.0; //acos((A2*A2+L_forearm*L_forearm-L3*L3)/(2.0*A2*L_forearm));
 }
 
+
+//return solns in Fetch joint space
 int Fetch_IK_solver::ik_solve(Eigen::Affine3d const& desired_hand_pose,  std::vector<Eigen::VectorXd> &q_ik_solns) {
-    int nsolns =ik_solve(desired_hand_pose);
+    //int nsolns =ik_solve(desired_hand_pose);
     //q_ik_solns = q_solns_fit_;
+    int nsolns;
     q_ik_solns.clear();
-    for (int i=0;i<nsolns;i++) {
-      q_ik_solns.push_back(q_solns_fit_[i]);
+    std::vector<Eigen::VectorXd> q_ik_solns_index_q1;
+    //for (double q1= -0.1; q1< 0.1; q1+= 0.1) {
+    double q1 =0; {// TEST TEST TEST    
+        ROS_INFO("trying q1 = %f",q1);
+        ik_solve(desired_hand_pose,q1,q_ik_solns_index_q1); //solve q2 through q7 given q1
+        int nsolns = q_ik_solns_index_q1.size();
+        for (int j_soln=0;j_soln<nsolns;j_soln++) {
+            q_ik_solns.push_back(q_ik_solns_index_q1[j_soln]);
+        }
     }
+    nsolns = q_ik_solns.size();
   return nsolns;
 }
 
+
+int Fetch_IK_solver::ik_solve(Eigen::Affine3d const& desired_hand_pose, double q_shoulder_pan, std::vector<Eigen::VectorXd> &q_ik_solns) {
+    //q_solns_.clear();
+    q_ik_solns.clear();
+    bool reachable = compute_q234_solns(desired_hand_pose, q_shoulder_pan, q_ik_solns);
+    if (!reachable) {
+        return 0;
+    }
+    int    nsolns = q_ik_solns.size();
+    for (int isoln=0;isoln<nsolns;isoln++) {
+            test_q1234(q_ik_solns[isoln]);
+    }
+
+    /*
+    reachable = false;
+    //is at least one solution within joint range limits?
+    std::vector<Eigen::VectorXd> q_solns_fit;
+    q_solns_fit.clear();
+    Eigen::VectorXd q_soln;
+    Eigen::Matrix3d R_des;
+    R_des = desired_hand_pose.linear();
+    int nsolns = q_ik_solns.size();
+    if (MAX_SOLNS_RETURNED< nsolns) nsolns = MAX_SOLNS_RETURNED; //see if specified  limit num solns
+    bool fits;
+
+    std::vector<Eigen::VectorXd> q_wrist_solns;
+    for (int i=0;i<nsolns;i++) {
+        q_soln = q_solns_[i];
+        fits = fit_joints_to_range(q_soln); // force q_soln in to periodic range, if possible, and return if possible
+        if (fits) { // if here, then have a valid 3dof soln; try to get wrist solutions
+            // get wrist solutions; expect 2, though not checked for joint limits
+            solve_spherical_wrist(q_soln,R_des, q_wrist_solns);  
+            int n_wrist_solns = q_wrist_solns.size();
+            if (MAX_SOLNS_RETURNED< n_wrist_solns) n_wrist_solns = MAX_SOLNS_RETURNED; //again, limit num solns
+            for (int iwrist=0;iwrist<n_wrist_solns;iwrist++) {
+                q_soln = q_wrist_solns[iwrist];
+                if (fit_joints_to_range(q_soln)) {
+                  q_solns_fit_.push_back(q_soln);
+                  reachable = true; // note that we have at least one reachable solution
+                }
+            }
+
+        }
+    }
+    if (!reachable) {
+        return 0;
+    }
+    */
+    //if here, have reachable solutions
+    //nsolns = q_solns_fit_.size();
+
+    return nsolns;    
+    
+}
+
+/*
 int Fetch_IK_solver::ik_solve(Eigen::Affine3d const& desired_hand_pose) {
     q_solns_.clear();
     bool reachable = compute_q123_solns(desired_hand_pose, q_solns_);
@@ -255,7 +362,7 @@ int Fetch_IK_solver::ik_solve(Eigen::Affine3d const& desired_hand_pose) {
     nsolns = q_solns_fit_.size();
     return nsolns;
 }
-
+*/
 
 //accessor function to get all solutions
 
@@ -263,43 +370,44 @@ void Fetch_IK_solver::get_solns(std::vector<Eigen::VectorXd> &q_solns) {
     q_solns = q_solns_fit_; //q_solns;
 }
 
-//given desired flange pose, fill up solns for q1, q2, q3 based on wrist position
-
-bool Fetch_IK_solver::compute_q123_solns(Eigen::Affine3d const& desired_hand_pose, std::vector<Eigen::VectorXd> &q_solns) {
-    double L6 = DH_d_params[5];
+//given q1 of J1 (input index), and given desired hand pose--> desired wrist point, 
+//  compute solns q2,q3,q4 to place wrist at desired wrist position
+// trig ambiguities--> 8 combinations, of which only 2 are real
+// tests all 8 solns to find the 2 viable ones
+bool Fetch_IK_solver::compute_q234_solns(Eigen::Affine3d const& desired_hand_pose, double q_shoulder_pan, std::vector<Eigen::VectorXd> &q_solns) {
     double r_goal;
     bool reachable;
+    //double L_hand = DH_d7;
     Eigen::Vector3d p_des = desired_hand_pose.translation();
     Eigen::Matrix3d R_des = desired_hand_pose.linear();
     Eigen::Vector3d z_des = R_des.col(2); // direction of desired z-vector
-    Eigen::Vector3d w_des = p_des - L6*z_des; // desired wrist position w/rt frame0
+    Eigen::Vector3d w_des = p_des - L_wrist_*z_des; // desired wrist position w/rt frame0
+    //std::cout<<"z_des: "<<z_des.transpose()<<std::endl;
+    //std::cout<<"w_des: "<<w_des.transpose()<<std::endl;
+    //std::cout<<"p_des: "<<p_des.transpose()<<std::endl;
+    
     q_solns.clear();
     Eigen::VectorXd q_soln;
+    q_soln.resize(NJNTS);
     
-    double q1a = atan2(w_des(1), w_des(0));
-    ROS_INFO("q1a = %f",q1a);
-    double q1b = q1a + M_PI; // given q1, q1+pi is also a soln
-    Eigen::Matrix4d A1a, A1b;
-    //compute_A_of_DH(double a,double d,double q, double alpha); use q_vec(i) + DH_q_offsets(i)
-    A1a = compute_A_of_DH(0, q1a); //compute_A_of_DH(DH_a_params[0],DH_d_params[0],DH_alpha_params[0], q1a+ DH_q_offsets[0] );
-    A1b = compute_A_of_DH(0, q1b); //compute_A_of_DH(DH_a_params[0],DH_d_params[0],DH_alpha_params[0], q1b+ DH_q_offsets[0] );    
-    double q2a_solns[2];
-    double q2b_solns[2];
-
     Eigen::Matrix4d A10;
-    A10 = compute_A_of_DH(0, q1a);
+    //compute_A_of_DH(double a,double d,double q, double alpha); use q_vec(i) + DH_q_offsets(i)
+    A10 = compute_A_of_DH(0, q_shoulder_pan); 
+    
     Eigen::Matrix3d R10;
-    Eigen::Vector3d p1_wrt_0, w_wrt_1a, w_wrt_1b;
+    Eigen::Vector3d p1_wrt_0, w_wrt_1_des;
     R10 = A10.block<3, 3>(0, 0);
     //std::cout << "compute_q123, R10: " << std::endl;
     //std::cout << R10 << std::endl;
     p1_wrt_0 = A10.col(3).head(3); ///origin of frame1 w/rt frame0
+    //std::cout<<"p1_wrt_0: "<<p1_wrt_0.transpose()<<std::endl;
+    
     //compute A10_inv * w_wrt_0, = R'*w_wrt_0 -R'*p1_wrt_0
-    w_wrt_1a = R10.transpose() * w_des - R10.transpose() * p1_wrt_0; //desired wrist pos w/rt frame1
-    std::cout << "w_wrt_1a = " << w_wrt_1a.transpose() << std::endl;
-    r_goal = sqrt(w_wrt_1a[0] * w_wrt_1a[0] + w_wrt_1a[1] * w_wrt_1a[1]);
+    w_wrt_1_des = R10.transpose() * w_des - R10.transpose() * p1_wrt_0; //desired wrist pos w/rt frame1
+    //std::cout << "w_wrt_1_des = " << w_wrt_1_des.transpose() << std::endl;
+    r_goal = w_wrt_1_des.norm(); //sqrt(w_wrt_1[0] * w_wrt_1[0] + w_wrt_1[1] * w_wrt_1[1]);
 
-    ROS_INFO("r_goal = %f", r_goal);
+    //ROS_INFO("r_goal = %f", r_goal);
     //is the desired wrist position reachable? if not, return false
     // does not yet consider joint limits
     if (r_goal >= L_humerus_ + L_forearm_) {
@@ -311,107 +419,153 @@ bool Fetch_IK_solver::compute_q123_solns(Eigen::Affine3d const& desired_hand_pos
         ROS_WARN("goal is too close!");
         return false;
     }
-
-    reachable = solve_for_theta2(w_wrt_1a, r_goal, q2a_solns);
-
+    double q_elbow_solns[2];
+    double q_humerus_roll_solns[2];    
+    double q_shoulder_lift_solns[2];    
+    //BOTH elbow solns should be viable (if within joint limits)
+    reachable = solve_for_elbow_theta(r_goal, q_elbow_solns);
+    //ROS_INFO("q_elbow solns: %f,  %f",q_elbow_solns[0],q_elbow_solns[1]);
     if (!reachable) {
-        ROS_WARN("logic error! desired wrist point is out of reach");
+        ROS_WARN("logic error computing elbow angle!");
         return false;
-    } else {
-        ROS_INFO("q2a solns: %f, %f", q2a_solns[0], q2a_solns[1]);
+    } 
+    /*else {
+        ROS_INFO("elbow solns: %f, %f", q_elbow_solns[0], q_elbow_solns[1]);
+    }*/
+    
+   double q_elbow_soln,q_humerus_roll_soln,q_shoulder_lift_soln;
+   Eigen::Vector4d O5_wrt_3,O5_wrt_2,O5_wrt_1;    
+   Eigen::Vector3d O5_wrt_1_3d;
+   double w_err;
+    for (int i_elbow=0;i_elbow<2;i_elbow++) {
+       q_elbow_soln = q_elbow_solns[i_elbow]; //consider first elbow soln:
+       O5_wrt_3=compute_O5_wrt_3(q_elbow_soln);
+       solve_for_q_humerus_roll(w_wrt_1_des,q_elbow_soln,q_humerus_roll_solns);
+       for (int i_humerus_roll=0;i_humerus_roll<2;i_humerus_roll++) {      //test both roll solns:
+           q_humerus_roll_soln=q_humerus_roll_solns[i_humerus_roll];
+           O5_wrt_2=compute_O5_wrt_2(O5_wrt_3,q_humerus_roll_soln);           
+           solve_for_shoulder_lift(w_wrt_1_des, q_elbow_soln, q_humerus_roll_soln, q_shoulder_lift_solns); 
+           for (int i_shoulder_lift=0;i_shoulder_lift<2;i_shoulder_lift++) {
+               q_shoulder_lift_soln=q_shoulder_lift_solns[i_shoulder_lift];
+               O5_wrt_1=compute_O5_wrt_1(O5_wrt_2,q_shoulder_lift_soln);  
+               O5_wrt_1_3d = O5_wrt_1.head(3);
+               w_err = (O5_wrt_1_3d-w_wrt_1_des).norm();
+
+               if (w_err<W_ERR_THRESHOLD) {
+                 q_soln<<q_shoulder_pan,q_shoulder_lift_soln,q_humerus_roll_soln,q_elbow_soln,0,0,0;
+                 ROS_INFO_STREAM("q_test: "<<q_soln.transpose()<<endl);
+                 ROS_WARN("err = %f",w_err);                   
+                   //ROS_WARN("saving this soln");
+                   q_solns.push_back(q_soln);
+                   ROS_INFO("\n \n");
+               }
+           }
+       }
     }
-    double q3a_solns[2];
-    solve_for_theta3(w_wrt_1a, r_goal, q3a_solns);
-    ROS_INFO("q3a solns: %f, %f", q3a_solns[0], q3a_solns[1]);
+   int nsolns = q_solns.size();
+   if (nsolns>0) return true;
+   else return false;
+}  
     
-    // now, get w_wrt_1b:
-    A10 = compute_A_of_DH(0, q1b);
-    R10 = A10.block<3, 3>(0, 0);
-    p1_wrt_0 = A10.col(3).head(3); //origin of frame1 w/rt frame0; should be the same as above
-    //compute A10_inv * w_wrt_0, = R'*w_wrt_0 -R'*p1_wrt_0
-    w_wrt_1b = R10.transpose() * w_des - R10.transpose() * p1_wrt_0; //desired wrist pos w/rt frame1
-    std::cout << "w_wrt_1b = " << w_wrt_1b.transpose() << std::endl;
-    //r_goal for q1b is different, due to offset a1
-    r_goal = sqrt(w_wrt_1b[0] * w_wrt_1b[0] + w_wrt_1b[1] * w_wrt_1b[1]);
-    ROS_INFO("r_goal b: %f", r_goal);
 
-    reachable = solve_for_theta2(w_wrt_1b, r_goal, q2b_solns);
-    ROS_INFO("q2b solns: %f, %f", q2b_solns[0], q2b_solns[1]);
-    
-    double q3b_solns[2];
-    solve_for_theta3(w_wrt_1b, r_goal, q3b_solns);
-    ROS_INFO("q3b solns: %f, %f", q3b_solns[0], q3b_solns[1]);
-    
-    //now, assemble the 4 solutions:
-    q_soln[0] = q1a;
-    q_soln[1] = q2a_solns[0];
-    q_soln[2] = q3a_solns[0];
-    q_solns.push_back(q_soln);
-    
-    q_soln[0] = q1a;
-    q_soln[1] = q2a_solns[1];
-    q_soln[2] = q3a_solns[1];
-    q_solns.push_back(q_soln);  
-    
-    q_soln[0] = q1b;
-    q_soln[1] = q2b_solns[0];
-    q_soln[2] = q3b_solns[0];
-    q_solns.push_back(q_soln);
-    
-    q_soln[0] = q1b;
-    q_soln[1] = q2b_solns[1];
-    q_soln[2] = q3b_solns[1];
-    q_solns.push_back(q_soln);      
-    
-    return true;
-
-}
 
 //reachable = solve_for_theta2(q1a,w_wrt_1,r_goal,q2a_solns);
-
-bool Fetch_IK_solver::solve_for_theta2(Eigen::Vector3d w_wrt_1, double r_goal, double q2_solns[2]) {
-    //double L_humerus_ = DH_a_params[1];
-    //double L3 = DH_d_params[3];
-    //double A2 = DH_a_params[2];
-    //double L_forearm = sqrt(A2*A2 + L3*L3);
-
-
-    double beta = atan2(-w_wrt_1[1], w_wrt_1[0]);
-    double acos_arg = (L_humerus_ * L_humerus_ + r_goal * r_goal - L_forearm_ * L_forearm_) / (2.0 * r_goal * L_humerus_);
-    if (fabs(acos_arg > 1.0)) {
-        ROS_WARN("hey!  logic err acos_arg = %f", acos_arg);
-        return false;
+bool Fetch_IK_solver::solve_for_q_humerus_roll(Eigen::Vector3d w_wrt_1,double q_elbow_soln,double q_humerus_roll_solns[]) {
+    //w_5/1,z = s3*s4*d5
+    //double q4 = q_elbow_solns[0];
+    double s4 = sin(q_elbow_soln);
+    if (fabs(q_elbow_soln) < ELBOW_SINGULARITY_THRESHOLD) {
+        ROS_WARN("elbow singularity!");
+        return false;     
     }
-    double gamma = acos(acos_arg);
-    q2_solns[0] = M_PI / 2.0 - beta - gamma; //%elbow up
-    q2_solns[1] = M_PI / 2.0 - beta + gamma; //%elbow down 
-    return true;
-    //return 0;
+    double w_5wrt1_z = w_wrt_1[2];
+    double s4d5 = s4*DH_d5;
+    double q3 = asin(w_5wrt1_z/s4d5);
+    //ROS_INFO("q_elbow = %f, q_humerus_roll = %f",q_elbow_soln,q3);
+    q_humerus_roll_solns[0]=q3;
+    q_humerus_roll_solns[1]=M_PI/2-q3;
+    return false;
+}
+
+bool Fetch_IK_solver::solve_for_shoulder_lift(Eigen::Vector3d w_wrt_1, double q_elbow, double q_shoulder_roll, double q_shoulder_lift_solns[]) {
+    //ROS_INFO("solve_for_shoulder_lift: using q_elbow = %f, q_humerus_roll= %f",q_elbow,q_shoulder_roll);
+    double w_wrt_1_y = w_wrt_1[1];
+    //look at 2nd row of O5_wrt_1 = A_2/1 * A_3/2 * O_5/3
+    double s3 = sin(q_shoulder_roll);
+    double c3 = cos(q_shoulder_roll);
+    double s4d5= sin(q_elbow)*DH_d5;
+    double c4d5= cos(q_elbow)*DH_d5;
+    //A*sin(q2)+B*cos(q2)= C
+    //s4d5*c3+c4d5*s3*c3; s4d5*c3+c4d5*s3*c3
+    double A= s4d5*c3; //s4d5*c3 +s3*c3*c4d5;
+    double B = -c4d5-DH_d3;
+    double C = w_wrt_1_y;
+    //double q_shoulder_lift_solns[2];
+    solve_Asin_plus_Bcos_eqC(A,B,C,q_shoulder_lift_solns);
+    //convert to Fetch coords://q = q_fetch + DH_q_offsets[i];
+    q_shoulder_lift_solns[0]-=DH_q_offsets[1];
+    q_shoulder_lift_solns[1]-=DH_q_offsets[1];
+    
+    //test:
+    /*
+    Eigen::Matrix4d A21 = compute_A_of_DH(1, 1.0);
+    Eigen::Matrix4d A32 = compute_A_of_DH(2, 1.0);
+    ROS_INFO_STREAM("A32: "<<endl<<A32<<endl);
+    //Eigen::Matrix4d A31 = A21*A32;
+    Eigen::Vector4d O53;
+    O53<<s4d5,-c4d5,0,1;
+    ROS_INFO_STREAM("O53: "<<O53.transpose()<<endl);
+    Eigen::Vector4d test_O51;
+    Eigen::Vector4d test_O52;
+    Eigen::Vector4d test2_O52;
+    test_O52 = A32*O53;
+    test2_O52<< s4d5*c3, s4d5*s3, c4d5+DH_d3, 1;
+    test_O51= A21*A32*O53;
+    ROS_INFO_STREAM("test_O52: "<<test_O52.transpose()<<endl);
+    ROS_INFO_STREAM("test2_O52: "<<test2_O52.transpose()<<endl);
+
+    ROS_INFO_STREAM("test_O51: "<<test_O51.transpose()<<endl);
+    ROS_INFO("A,B,C = %f, %f, %f",A,B,C);
+    ROS_INFO_STREAM("w_wrt_1: "<<w_wrt_1.transpose()<<endl);   
+    //ERROR HERE: A should be O52[0], but this is not A= s4d5*c3+c4d5*s3*c3;
+    //examine analytic A32*O_53;
+    
+    A = test_O52[0];
+    ROS_INFO("redo: A= %f",A);
+    solve_Asin_plus_Bcos_eqC(test_O52[0],B,C,q_shoulder_lift_solns);
+    //convert to Fetch coords://q = q_fetch + DH_q_offsets[i];
+    q_shoulder_lift_solns[0]-=DH_q_offsets[1];
+    q_shoulder_lift_solns[1]-=DH_q_offsets[1];    
+    ROS_INFO("q_shoulder_lift_solns: %f, %f",q_shoulder_lift_solns[0],q_shoulder_lift_solns[1]);
+    */
+    
+    return true; 
 }
 
 //rtn elbow solns in ABB coords
-bool Fetch_IK_solver::solve_for_theta3(Eigen::Vector3d w_wrt_1, double r_goal, double q3_solns[2]) {
+bool Fetch_IK_solver::solve_for_elbow_theta(double r_goal, double q_elbow_solns[2]) {
      //phi_elbow;
     double acos_arg = (L_humerus_*L_humerus_ + L_forearm_*L_forearm_ - r_goal*r_goal)/(2.0*L_humerus_*L_forearm_);
     if (fabs(acos_arg>1.0)) {
-        ROS_WARN("solve_for_theta3 logic err!  acos_arg = %f",acos_arg);
+        ROS_WARN("solve_for_elbow_theta logic err!  acos_arg = %f",acos_arg);
         return false;
     }
     double eta = acos(acos_arg);     
-    cout<<"eta = "<<eta<<endl;
+    //cout<<"eta = "<<eta<<endl;
     
-    q3_solns[0]=  M_PI/2.0 -eta; //M_PI -phi_elbow -eta;    //q3(1) = pi - phi- eta; 
-    q3_solns[1]=  -M_PI-q3_solns[0];  //M_PI -phi_elbow +eta;  //q3(2) = pi - phi + eta; */
-    double testx = L_humerus_ - L_forearm_*sin(q3_solns[0]);
-    double testy = L_forearm_*cos(q3_solns[0]);
+    q_elbow_solns[0]=  M_PI -eta; //M_PI -phi_elbow -eta;    //q3(1) = pi - phi- eta; 
+    q_elbow_solns[1]=  -q_elbow_solns[0];  //M_PI -phi_elbow +eta;  //q3(2) = pi - phi + eta; */
+    /*debug:
+    double testx = L_humerus_ + L_forearm_*cos(q_elbow_solns[0]);
+    double testy = L_forearm_*sin(q_elbow_solns[0]);
     double testr = sqrt(testx*testx+testy*testy);
     cout<<"rgoal = "<<r_goal<<endl;
-    cout<<"q3[0] = "<<q3_solns[0]<<" --> r = "<<testr<<endl;
-     testx = L_humerus_ +- L_forearm_*sin(q3_solns[1]);
-     testy = L_forearm_*cos(q3_solns[1]);
+    cout<<"q_elbow[0] = "<<q_elbow_solns[0]<<" --> r = "<<testr<<endl;
+     testx = L_humerus_ + L_forearm_*cos(q_elbow_solns[1]);
+     testy = L_forearm_*sin(q_elbow_solns[1]);
      testr = sqrt(testx*testx+testy*testy);
-    cout<<"q3[1] = "<<q3_solns[1]<<" --> r = "<<testr<<endl;
-
+    cout<<"q_elbow[1] = "<<q_elbow_solns[1]<<" --> r = "<<testr<<endl;
+    */
     return true;
 }
 
@@ -531,13 +685,42 @@ bool Fetch_IK_solver::solve_spherical_wrist(Eigen::VectorXd q_in,Eigen::Matrix3d
     return is_singular;
 }
 
+
+//solve for q given A*sin(q)+B*cos(q) = C
+bool Fetch_IK_solver::solve_Asin_plus_Bcos_eqC(double A,double B,double C, double theta[]) {
+    //say r = sqrt(A*A+B*B)
+    //and A = r*sin(phi); B = r*cos(phi)
+    // phi = atan2(A,B)
+    // so r*sin(phi)*sin(q) + r*cos(phi)*cos(q)=C
+    // C/r = cos(phi-q)
+    // phi-q = acos(C/r)
+    // q = phi - acos(C/r)
+    double R = sqrt(A*A+B*B);
+    double phi = atan2(A,B);
+    double cos_arg = C/R;
+    if (fabs(cos_arg>1.0)) {
+        ROS_WARN("solve_Asin_plus_Bcos_eqC error: C/R>1");
+        return false;
+    }
+    double q = acos(C/R);
+    theta[0] = phi - q; //note: multipl solns to consider
+    theta[1] = phi + q;
+    
+    //test:
+    double testC = A*sin(theta[0])+B*cos(theta[0]);
+    //ROS_INFO("theta = %f; test C = %f; specified C = %f",theta[0],testC,C);
+    //testC = A*sin(theta[1])+B*cos(theta[1]);
+    //ROS_INFO("theta = %f; test C = %f; specified C = %f",theta[1],testC,C);    
+    return true;
+    
+}
 /*
 Eigen::Affine3d FwdSolver::fwd_kin_solve(Eigen::VectorXd const& q_vec) { // given vector of q angles, compute fwd kin
  Eigen::Affine3d fwd_soln;
 
  fwd_soln = Fetch_fwd_solver.fwd_kin_solve(q_vec);
  return fwd_soln;
-}
+} 
 
 Eigen::MatrixXd FwdSolver::jacobian(const Eigen::VectorXd& q_vec) {
   Eigen::MatrixXd jacobian;

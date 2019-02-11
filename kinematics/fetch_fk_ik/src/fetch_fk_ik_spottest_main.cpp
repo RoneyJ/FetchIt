@@ -34,7 +34,8 @@ int main(int argc, char **argv) {
     //q_in<<0,0.5,0,0.5, 1,1,1;
     //q_in<<0,1,0,-1, 1,1,1;
     //q_goal<<0.0, 1.1, 0.0, -1.4, 0, 0.6, 1, 0.0; //box hover pose:
-    q_in<<0.0, 1.1, 0.0, -1.4, 0, 0.6, 1;
+    //q_in<<0.0, 1.1, 0.0, -1.4, 0, 0.6, 1;
+    q_in<< -1, -1,-1,-1,0,0,0;
     Eigen::Affine3d A_fwd_DH = fwd_solver.fwd_kin_solve(q_in); //fwd_kin_solve
 
         std::cout << "q_in: " << q_in.transpose() << std::endl;        
@@ -46,25 +47,36 @@ int main(int argc, char **argv) {
 
         Eigen::Quaterniond quat(R_flange);
         std::cout<<"quat: "<<quat.x()<<", "<<quat.y()<<", "<<quat.z()<<", "<<quat.w()<<endl; 
+        Eigen::Vector3d wrist_pt;
+        wrist_pt = fwd_solver.compute_wrist_point(q_in);
+        ROS_INFO_STREAM("wrist point: "<<wrist_pt.transpose()<<endl);
         
         std::vector<Eigen::VectorXd> q_solns;
-        
+         
+
         ROS_INFO("calling ik_solver....");
-        int nsolns = ik_solver.ik_solve(A_fwd_DH,q_solns);
-        //nsolns = q6dof_solns.size();
+        //debug...
+        
+        //int nsolns = ik_solver.ik_solve(A_fwd_DH,q_solns);
+        //    int ik_solve(Eigen::Affine3d const& desired_hand_pose, double q_shoulder_pan, std::vector<Eigen::VectorXd> &q_ik_solns);
+        double q_shoulder_pan = q_in[0];
+        int nsolns = ik_solver.ik_solve(A_fwd_DH,q_shoulder_pan,q_solns);
+        ROS_INFO_STREAM("desired wrist point: "<<wrist_pt.transpose()<<endl);
+
+        
+        
+        nsolns = q_solns.size();
         std::cout << "number of IK solutions: " << nsolns << std::endl;    
-        //select the solution that is closest to some reference--try q_6dof_bin8_approach
-        //Eigen::VectorXd q_fit;
-        //q_fit = fwd_solver.closest_soln(q_6dof_bin8_approach,q6dof_solns);
-        //cout<<"best fit soln: "<<q_fit.transpose()<<endl;
         
         //test fwd kin:
         std::cout << "q_in: " << q_in.transpose() << std::endl;        
         
         Eigen::Vector3d O_7,O_7_des;
         O_7_des = A_fwd_DH.translation();
-        ROS_INFO_STREAM("desired hand position: " <<A_fwd_DH.translation().transpose() <<endl);
-        ROS_INFO("test solns: ");
+        ROS_INFO_STREAM("desired hand position: " <<O_7_des <<endl);
+        
+
+        ROS_INFO("test solns (should have 4 solns in all: ");
         for (int i=0;i<nsolns;i++) {
             ROS_INFO_STREAM("q_soln: "<<q_solns[i].transpose()<<endl);
             A_fwd_DH = fwd_solver.fwd_kin_solve(q_solns[i]);
@@ -72,7 +84,7 @@ int main(int argc, char **argv) {
             double hand_err = (O_7_des-O_7).norm();
             ROS_INFO_STREAM("fwd kin hand position err: " <<hand_err <<endl);
         }
-        
+
 
         return 0;  //DEBUG
 }

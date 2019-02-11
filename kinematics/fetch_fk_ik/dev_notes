@@ -1,0 +1,19 @@
+status 2/10/19:
+given desired hand affine, try to find solns;
+
+approach: index the solns for sampled values of q1 (shoulder pan)
+
+status: given q_shoulder_pan and desired hand affine, can compute 2 solns for q2,q3,q4
+  q4 is elbow angle with + and - solns;
+  expect 1 soln for q_elbow>0 and other for q_elbow<0
+
+extend these:  each q1,q2,q3,q4 soln has 2 wrist solns
+--> each q1 value yields 4 solns; need to check if elbow angle is out of range
+    for wrist solns, need to check if wrist bend is out of range
+
+FINISH ME!!!
+
+after have viable solns (up to 4), compute more solns indexed by q1;
+need to speed up search over indexed q1
+
+

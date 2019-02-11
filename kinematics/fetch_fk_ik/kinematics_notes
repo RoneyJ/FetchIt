@@ -1,0 +1,10 @@
+fetch IK:
+
+try indexing on shoulder pan joint (J1);
+recast w_des w/rt frame 1, given proposed q1;
+compute distance from O1 to Ogripper
+--> elbow angles +/-, based on L_humerus and L_forearm
+
+
+
+
