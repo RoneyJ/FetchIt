@@ -13,13 +13,13 @@
 
 #include <ros/ros.h> //ALWAYS need to include this
 
-//message types used in this example code;  include more message types, as needed
+//message types used in this example code;  include more message types, as needed 
 #include <std_msgs/Bool.h> 
 #include <std_msgs/Float32.h>
 #include <std_msgs/Float32MultiArray.h>
 
 //#include <cwru_srv/simple_bool_service_message.h> // this is a pre-defined service message, contained in shared "cwru_srv" package
-#include<geometry_msgs/Pose.h> 
+#include <geometry_msgs/Pose.h>
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <geometry_msgs/Point.h>
@@ -59,7 +59,7 @@ private:
     // some objects to support subscriber, service, and publisher
     ros::Subscriber odom_subscriber_; //these will be set up within the class constructor, hiding these ugly details
     ros::Subscriber des_state_subscriber_;
-    //ros::Subscriber gazebo_state_subscriber_;    
+    ros::Subscriber gazebo_state_subscriber_;    
     ros::Publisher cmd_publisher_; // = nh.advertise<geometry_msgs::Twist>("cmd_vel",1);
     ros::Publisher cmd_publisher2_; // = nh.advertise<geometry_msgs::TwistStamped>("cmd_vel_stamped",1);
     ros::Publisher steering_errs_publisher_;
@@ -96,6 +96,10 @@ private:
     geometry_msgs::Quaternion des_state_quat_;  
     //Eigen::Vector2d des_xy_vec_;    
     
+    double gazebo_x_;
+    double gazebo_y_;
+    double gazebo_phi_;
+    
     // message to hold/publish steering performance data
     std_msgs::Float32MultiArray steering_errs_;
         
@@ -106,7 +110,7 @@ private:
  
     void odomCallback(const nav_msgs::Odometry& odom_rcvd);
     void desStateCallback(const nav_msgs::Odometry& des_state_rcvd);   
-    //void gazeboStateCallback(const geometry_msgs::Pose);
+    void gazeboStateCallback(const geometry_msgs::Pose);
         
 }; 
 

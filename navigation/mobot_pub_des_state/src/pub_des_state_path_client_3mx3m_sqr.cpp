@@ -51,15 +51,16 @@ int main(int argc, char **argv) {
 
     pose.position.x = 0.0;
     pose_stamped.pose = pose;
-    path_srv.request.path.poses.push_back(pose_stamped);
+    //debug: just make an L-shape
+    //path_srv.request.path.poses.push_back(pose_stamped);
     
     pose.position.y = 0.0;
     pose_stamped.pose = pose;
-    path_srv.request.path.poses.push_back(pose_stamped);
+    //path_srv.request.path.poses.push_back(pose_stamped);
     
     //repeat (x,y) with new heading:
     pose_stamped.pose.orientation = convertPlanarPhi2Quaternion(0); 
-    path_srv.request.path.poses.push_back(pose_stamped);
+    //path_srv.request.path.poses.push_back(pose_stamped);
     
     client.call(path_srv);
 

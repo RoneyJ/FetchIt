@@ -1,13 +1,13 @@
-//lin_steering_wrt_odom.cpp:
-//wsn, Feb 2016
-//subscribe to desired state and to odom
+//lin_steering_wrt_gazebo_state.cpp:
+//wsn, Feb 2019
+//subscribe to desired state and to gazebo state
 // invoke an algorithm to command speed and spin
 // update this computation adequately fast
 
 
 
 // this header incorporates all the necessary #include files and defines the class "SteeringController"
-#include "steering_algorithm.h"
+#include "steering_algorithm_gazebo.h"
 
 
 SteeringController::SteeringController(ros::NodeHandle* nodehandle):nh_(*nodehandle)
@@ -77,6 +77,9 @@ void SteeringController::initializeSubscribers() {
     odom_subscriber_ = nh_.subscribe("/odom", 1, &SteeringController::odomCallback, this); //subscribe to odom messages
     // add more subscribers here, as needed
     des_state_subscriber_ = nh_.subscribe("/desState", 1, &SteeringController::desStateCallback, this); // for desired state messages
+    
+    //    void gazeboStateCallback(const geometry_msgs::Pose);
+    gazebo_state_subscriber_ = nh_.subscribe("/gazebo_fetch_pose", 1, &SteeringController::gazeboStateCallback, this); // for gazebo state 
 }
 
 //member helper function to set up services:
@@ -139,6 +142,16 @@ void SteeringController::desStateCallback(const nav_msgs::Odometry& des_state_rc
     //des_xy_vec_(1) = des_state_y_;      
 }
 
+void SteeringController::gazeboStateCallback(const geometry_msgs::Pose gazebo_pose) {
+    gazebo_x_ = gazebo_pose.position.x;
+    gazebo_y_= gazebo_pose.position.y;
+    double qz = gazebo_pose.orientation.z;
+    double qw = gazebo_pose.orientation.w;
+    
+    gazebo_phi_= 2.0 * atan2(qz, qw);
+}
+
+
 //utility fnc to compute min dang, accounting for periodicity
 double SteeringController::min_dang(double dang) {
     while (dang > M_PI) dang -= 2.0 * M_PI;
@@ -194,8 +207,8 @@ void SteeringController::lin_steering_algorithm() {
     
 
     // have access to: des_state_vel_, des_state_omega_, des_state_x_, des_state_y_, des_state_phi_ and corresponding odom values    
-    double dx = des_state_x_- odom_x_;
-    double dy = des_state_y_ - odom_y_;
+    double dx = des_state_x_- gazebo_x_;
+    double dy = des_state_y_ - gazebo_y_;
     
     //pos_err_xy_vec_ = des_xy_vec_ - odom_xy_vec_; // vector pointing from odom x-y to desired x-y
     //lateral_err = n_vec.dot(pos_err_xy_vec_); //signed scalar lateral offset error; if positive, then desired state is to the left of odom
@@ -203,11 +216,11 @@ void SteeringController::lin_steering_algorithm() {
     trip_dist_err = dx*tx + dy*ty;
     
     //trip_dist_err = t_vec.dot(pos_err_xy_vec_); // progress error: if positive, then we are behind schedule
-    heading_err = min_dang(des_state_phi_ - odom_phi_); // if positive, should rotate +omega to align with desired heading
+    heading_err = min_dang(des_state_phi_ - gazebo_phi_); // if positive, should rotate +omega to align with desired heading
     
     
     // DEBUG OUTPUT...
-    ROS_INFO("des_state_phi, odom_phi, heading err = %f, %f, %f", des_state_phi_,odom_phi_,heading_err);
+    ROS_INFO("des_state_phi, gazebo_phi, heading err = %f, %f, %f", des_state_phi_,gazebo_phi_,heading_err);
     ROS_INFO("lateral err, trip dist err = %f, %f",lateral_err,trip_dist_err);
     // DEFINITELY COMMENT OUT ALL cout<< OPERATIONS FOR REAL-TIME CODE
     //std::cout<<des_xy_vec_<<std::endl;

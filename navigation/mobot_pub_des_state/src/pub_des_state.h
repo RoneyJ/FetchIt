@@ -12,16 +12,19 @@
 //constants and parameters:
 const double dt = 0.02; //send desired-state messages at fixed rate, e.g. 0.02 sec = 50Hz
 //dynamic parameters: should be tuned for target system
-const double accel_max = 0.5; //1m/sec^2
+const double accel_max = 0.2; // m/sec^2
 const double alpha_max = 0.2; // rad/sec^2
-const double speed_max = 1.0; //1 m/sec
-const double omega_max = 1.0; //1 rad/sec
+const double speed_max = 0.4; // m/sec
+const double omega_max = 0.4; // rad/sec
 const double path_move_tol = 0.01; // if path points are within 1cm, fuggidaboutit
 
 const int E_STOPPED = 0; //define some mode keywords
 const int DONE_W_SUBGOAL = 1;
 const int PURSUING_SUBGOAL = 2;
 const int HALTING = 3;
+const int SETTLING =4;
+
+const int MAX_SETTLE_COUNT = 100;
 
 class DesStatePublisher {
 private:
@@ -55,6 +58,7 @@ private:
     double speed_max_; 
     double omega_max_; 
     double path_move_tol_; 
+    int settle_count_;
 
     // some objects to support service and publisher
     ros::ServiceServer estop_service_;

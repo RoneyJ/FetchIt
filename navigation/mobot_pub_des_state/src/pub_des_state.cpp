@@ -179,7 +179,9 @@ void DesStatePublisher::pub_next_state() {
             traj_pt_i_++; // increment counter to prep for next point of plan
             //check if we have clocked out all of our planned states:
             if (traj_pt_i_ >= npts_traj_) {
-                motion_mode_ = DONE_W_SUBGOAL; //if so, indicate we are done
+                motion_mode_ = SETTLING; //if so, indicate we are done
+                ROS_WARN("transition to settling mode");
+                settle_count_=0;
                 seg_end_state_ = des_state_vec_.back(); // last state of traj
                 if (!path_queue_.empty()) { 
                     path_queue_.pop(); // done w/ this subgoal; remove from the queue 
@@ -189,6 +191,18 @@ void DesStatePublisher::pub_next_state() {
             }
             break;
 
+           case SETTLING: //wait here for robot state to settle
+
+                //ROS_INFO("settling; settle_count = %d",settle_count_);
+                desired_state_publisher_.publish(seg_end_state_);
+
+               settle_count_++;
+               if (settle_count_ > MAX_SETTLE_COUNT) {
+                   motion_mode_ =DONE_W_SUBGOAL;
+                   ROS_WARN("transistion to DONE_W_SUBGOAL");
+               }            
+            break;
+            
         case DONE_W_SUBGOAL: //suspended, pending a new subgoal
             //see if there is another subgoal is in queue; if so, use
             //it to compute a new trajectory and change motion mode
