@@ -1,0 +1,4 @@
+<launch>
+<!--x,y,z = 3.028, -0.11, 0.8  rpy = 0,0,0.43-->
+<node name="spawn_Fetch_kit" pkg="gazebo_ros" type="spawn_model" args="-file $(find exmpl_models)/Fetch_kit/model.sdf -sdf -model Fetch_kit -x 0.5 -y -0.35 -z 0.8  -Y 0.43" />
+</launch>
