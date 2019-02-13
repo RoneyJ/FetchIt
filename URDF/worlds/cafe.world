@@ -1,0 +1,95 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+  <world name="default">
+
+     <model name="kit">
+     <pose>5.958056 -2.067436 0.783351 0 -0 0.280733</pose>
+     <static>true</static>
+           <link name='link'>
+	<inertial>
+        <mass>0.1</mass>
+        <inertia>
+          <ixx>0.01</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.01</iyy>
+          <iyz>0</iyz>
+          <izz>0.01</izz>
+        </inertia>
+      </inertial>
+	    
+            <collision name='collision'>
+              <geometry>
+               <mesh>
+		  <uri>model://Fetch_kit/meshes/kit3.stl</uri>
+
+               </mesh>
+              </geometry>
+            </collision>
+
+           <visual name='visual'>
+             <geometry>
+               <mesh>
+		  <uri>model://Fetch_kit/meshes/kit3.stl</uri>
+
+               </mesh>
+             </geometry>
+            </visual>
+          </link>
+
+  </model>
+
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <include>
+        <uri>model://cafe_table</uri>
+        <pose>6.664898 -1.397426 0 0 -0 0</pose>
+    </include>
+   <include>
+        <uri>model://cafe_table</uri>
+        <pose>5.226423 -1.889488 0 0 -0 0</pose>
+    </include>
+   <include>
+        <uri>model://cafe_table</uri>
+        <pose>7.812943 -2.365025 0 0 -0 0</pose>
+    </include>
+   <include>
+        <uri>model://cafe_table</uri>
+        <pose>7.084308 -3.520992 0 0 -0 0</pose>
+    </include>
+   <include>
+        <uri>model://cafe_table</uri>
+        <pose>6.042780 -3.544366 0 0 -0 0</pose>
+    </include>
+
+         <include>
+        <uri>model://grey_wall</uri>
+        <pose>4.747150 -0.943460 0 0 -0 0</pose>
+    </include>
+
+     <include>
+        <uri>model://grey_wall</uri>
+        <pose>4.778823 -2.560388 0 0 -0 -1.574183</pose>
+    </include>
+ <include>
+        <uri>model://grey_wall</uri>
+        <pose>4.823890 -4.008980 0 0 -0 0</pose>
+    </include>
+ <include>
+        <uri>model://grey_wall</uri>
+        <pose>8.195705 -2.308397 0 0 -0 -1.571061</pose>
+    </include>
+
+    <physics type="ode">
+      <real_time_update_rate>1000.0</real_time_update_rate>
+      <gravity>
+	0.0 0.0 -9.81
+      </gravity>
+    </physics>
+  </world>
+</sdf>
