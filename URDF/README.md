@@ -3,6 +3,6 @@ Here is a simulated workspace for Fetch robot. The Fetch.stl file is in .zip sin
 To launch the workspace, simply type `roslaunch worlds Fetch_kit.launch`.
 Make sure to use Gazebo 9 and melodic since thats the requirements for the competition.
 
-I'll further 
+I'll further make changes as well. So please be aware of new commits. 
 
 Bruce
