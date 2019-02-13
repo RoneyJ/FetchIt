@@ -25,6 +25,16 @@ SteeringController::SteeringController(ros::NodeHandle* nodehandle):nh_(*nodehan
         ros::spinOnce();
     }
     ROS_INFO("constructor: got an odom message");    
+
+    gazebo_phi_ = 1000.0; // put in impossible value for heading; test this value to make sure we have received a viable odom message
+    ROS_INFO("waiting for valid gazebo-state message...");
+    while (gazebo_phi_ > 500.0) {
+        ros::Duration(0.5).sleep(); // sleep for half a second
+        std::cout << ".";
+        ros::spinOnce();
+    }
+    ROS_INFO("constructor: got a gazebo-state message");  
+
     
     /*
     tfListener_ = new tf::TransformListener; 
@@ -203,7 +213,7 @@ void SteeringController::lin_steering_algorithm() {
     
     double heading_err;  
     double lateral_err;
-    double trip_dist_err; // error is scheduling...are we ahead or behind?
+    double trip_dist_err; // error in scheduling...are we ahead or behind?
     
 
     // have access to: des_state_vel_, des_state_omega_, des_state_x_, des_state_y_, des_state_phi_ and corresponding odom values    

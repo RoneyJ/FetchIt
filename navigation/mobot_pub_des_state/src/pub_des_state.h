@@ -7,7 +7,9 @@
 #include <std_msgs/Bool.h>
 #include <std_srvs/Trigger.h>
 #include <mobot_pub_des_state/path.h>
+#include <mobot_pub_des_state/integer_query.h>
 #include <std_msgs/Float64.h>
+#include <std_msgs/Int32.h>
 
 //constants and parameters:
 const double dt = 0.02; //send desired-state messages at fixed rate, e.g. 0.02 sec = 50Hz
@@ -65,6 +67,7 @@ private:
     ros::ServiceServer estop_clear_service_;
     ros::ServiceServer flush_path_queue_;
     ros::ServiceServer append_path_;
+    ros::ServiceServer path_queue_query_;
     
     ros::Publisher desired_state_publisher_;
     ros::Publisher des_psi_publisher_;
@@ -79,6 +82,7 @@ private:
     bool clearEstopServiceCallback(std_srvs::TriggerRequest& request, std_srvs::TriggerResponse& response);
     bool flushPathQueueCB(std_srvs::TriggerRequest& request, std_srvs::TriggerResponse& response);
     bool appendPathQueueCB(mobot_pub_des_state::pathRequest& request,mobot_pub_des_state::pathResponse& response);
+    bool queryPathQueueCB(mobot_pub_des_state::integer_queryRequest& request,mobot_pub_des_state::integer_queryResponse& response);
 
 public:
     DesStatePublisher(ros::NodeHandle& nh);//constructor

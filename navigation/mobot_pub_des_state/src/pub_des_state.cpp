@@ -50,7 +50,8 @@ void DesStatePublisher::initializeServices() {
             &DesStatePublisher::flushPathQueueCB, this);
     append_path_ = nh_.advertiseService("append_path_queue_service",
             &DesStatePublisher::appendPathQueueCB, this);
-    
+    path_queue_query_ = nh_.advertiseService("path_queue_query_service",
+            &DesStatePublisher::queryPathQueueCB, this);   
 }
 
 //member helper function to set up publishers;
@@ -91,6 +92,16 @@ bool DesStatePublisher::appendPathQueueCB(mobot_pub_des_state::pathRequest& requ
     }
     return true;
 }
+
+bool DesStatePublisher::queryPathQueueCB(mobot_pub_des_state::integer_queryRequest& request,mobot_pub_des_state::integer_queryResponse& response) {
+    int npts;
+    npts = path_queue_.size();
+    response.int_val = npts;
+    ROS_WARN("received path queue length query; size = %d ",npts);
+    return true;
+        
+    }
+
 
 void DesStatePublisher::set_init_pose(double x, double y, double psi) {
     current_pose_ = trajBuilder_.xyPsi2PoseStamped(x, y, psi);
@@ -199,7 +210,7 @@ void DesStatePublisher::pub_next_state() {
                settle_count_++;
                if (settle_count_ > MAX_SETTLE_COUNT) {
                    motion_mode_ =DONE_W_SUBGOAL;
-                   ROS_WARN("transistion to DONE_W_SUBGOAL");
+                   ROS_WARN("transition to DONE_W_SUBGOAL");
                }            
             break;
             
