@@ -141,7 +141,7 @@ int main(int argc, char** argv) {
         
 
         O_7_des = A_fwd_DH.translation();
-        ROS_INFO_STREAM("desired hand position: " <<O_7_des <<endl);
+        ROS_INFO_STREAM("desired hand position: " <<O_7_des.transpose() <<endl);
         
 
         ROS_INFO("test solns (should have 4 solns in all: ");

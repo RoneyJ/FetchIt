@@ -261,54 +261,41 @@ int Fetch_IK_solver::ik_solve(Eigen::Affine3d const& desired_hand_pose,  std::ve
 int Fetch_IK_solver::ik_solve(Eigen::Affine3d const& desired_hand_pose, double q_shoulder_pan, std::vector<Eigen::VectorXd> &q_ik_solns) {
     //q_solns_.clear();
     q_ik_solns.clear();
-    
-    bool reachable = compute_q234_solns(desired_hand_pose, q_shoulder_pan, q_ik_solns);
+    std::vector<Eigen::VectorXd> q_ik_solns1234;
+    bool reachable = compute_q234_solns(desired_hand_pose, q_shoulder_pan, q_ik_solns1234);
     if (!reachable) {
         return 0;
     }
-    int    nsolns = q_ik_solns.size();
+    int    nsolns = q_ik_solns1234.size();
     for (int isoln=0;isoln<nsolns;isoln++) {
-            test_q1234(q_ik_solns[isoln]);
+            test_q1234(q_ik_solns1234[isoln]);
     }
-
-    /*
-    reachable = false;
-    //is at least one solution within joint range limits?
-    std::vector<Eigen::VectorXd> q_solns_fit;
-    q_solns_fit.clear();
     Eigen::VectorXd q_soln;
+    q_soln.resize(NJNTS);
+    std::vector<Eigen::VectorXd> q_wrist_solns;
     Eigen::Matrix3d R_des;
     R_des = desired_hand_pose.linear();
-    int nsolns = q_ik_solns.size();
-    if (MAX_SOLNS_RETURNED< nsolns) nsolns = MAX_SOLNS_RETURNED; //see if specified  limit num solns
-    bool fits;
-
-    std::vector<Eigen::VectorXd> q_wrist_solns;
+    reachable=false; //guilty until proven innocent
     for (int i=0;i<nsolns;i++) {
-        q_soln = q_solns_[i];
-        fits = fit_joints_to_range(q_soln); // force q_soln in to periodic range, if possible, and return if possible
-        if (fits) { // if here, then have a valid 3dof soln; try to get wrist solutions
-            // get wrist solutions; expect 2, though not checked for joint limits
-            solve_spherical_wrist(q_soln,R_des, q_wrist_solns);  
-            int n_wrist_solns = q_wrist_solns.size();
-            if (MAX_SOLNS_RETURNED< n_wrist_solns) n_wrist_solns = MAX_SOLNS_RETURNED; //again, limit num solns
-            for (int iwrist=0;iwrist<n_wrist_solns;iwrist++) {
-                q_soln = q_wrist_solns[iwrist];
-                if (fit_joints_to_range(q_soln)) {
-                  q_solns_fit_.push_back(q_soln);
-                  reachable = true; // note that we have at least one reachable solution
+        q_soln = q_ik_solns1234[i];
+            if (solve_spherical_wrist(q_soln,R_des, q_wrist_solns)) {  
+                int n_wrist_solns = q_wrist_solns.size();
+                for (int iwrist=0;iwrist<n_wrist_solns;iwrist++) {
+                    q_soln = q_wrist_solns[iwrist];
+                    q_ik_solns.push_back(q_soln);
+                    reachable = true; // note that we have at least one reachable solution
                 }
             }
-
-        }
+            else {
+                ROS_WARN("singularity in wrist solns!");
+            }
     }
     if (!reachable) {
         return 0;
     }
-    */
-    //if here, have reachable solutions
-    //nsolns = q_solns_fit_.size();
-
+    
+    //if here, have reachable solutions in q_ik_solns
+    nsolns = q_ik_solns.size();
     return nsolns;    
     
 }
@@ -604,91 +591,109 @@ bool Fetch_IK_solver::fit_joints_to_range(Eigen::VectorXd &qvec) {
         return false;
 }
 
-//find the + forearm-rotation orientation solution, q4, q5, q6--not concerned with joint limits;
-// note: if q5 is near zero, then at a wrist singularity; 
-// inf solutions of q4+D, q6-D
-// use q1, q2, q3 from q_in; copy these values to q_solns, and tack on the two solutions q4, q5, q6
+// find wrist solns; need to check joint limits of q6, wrist bend (symmetric)
+// note: if q6 is near zero, then at a wrist singularity; 
+// inf solutions of q5+D, q7-D
+// use q1, q2, q3, q4 from q_in; copy these values to q_solns, and tack on the two solutions  q5, q6, q7
 bool Fetch_IK_solver::solve_spherical_wrist(Eigen::VectorXd q_in,Eigen::Matrix3d R_des, std::vector<Eigen::VectorXd> &q_solns) {
     bool is_singular = false;
-    Eigen::Matrix4d A01,A12,A23,A03,A34,A04,A45,A05;
+    Eigen::Matrix4d A01,A12,A23,A03,A34,A45, A04,A56,A05,A06;
     A01 = compute_A_of_DH(0, q_in[0]);
     A12 = compute_A_of_DH(1, q_in[1]);
     A23 = compute_A_of_DH(2, q_in[2]);
-    A03 = A01*A12*A23;   
-    Eigen::Vector3d n3,t3,b3; //axes of frame3
+    A34 = compute_A_of_DH(3, q_in[3]);
+    A04 = A01*A12*A23*A34;   
+    Eigen::Vector3d n5,t5,b5; //axes of frame5
     Eigen::Vector3d n4,t4,b4; // axes of frame4
-    Eigen::Vector3d n5,t5; // axes of frame5; b5 is same as b_des = b6
+    Eigen::Vector3d n6,t6; // axes of frame6; b6 is antiparallel to b_des = b7
     Eigen::Vector3d n_des,b_des; // desired x-axis and z-axis of flange frame
-    n3 = A03.col(0).head(3);
-    t3 = A03.col(1).head(3);    
-    b3 = A03.col(2).head(3);  
+    n4 = A04.col(0).head(3);
+    t4 = A04.col(1).head(3);    
+    b4 = A04.col(2).head(3);  
     b_des = R_des.col(2);
     n_des = R_des.col(0);
-    b4 = b3.cross(b_des);
-    double q4,q5,q6;
+    b5 = b4.cross(b_des);
+    ROS_INFO_STREAM("b_des = "<<b_des.transpose()<<endl);
+    ROS_INFO_STREAM("b4_wrt0 = "<<b4.transpose()<<endl);
+    ROS_INFO_STREAM("b5_wrt0 = "<<b5.transpose()<<endl);
+    double q7,q5,q6;
     Eigen::VectorXd q_soln;
-      if (b4.norm() <= 0.000001) {
-                q4=0;
+      if (b5.norm() <= 0.000001) {
+                q5=0;
                 is_singular = true;
+                ROS_WARN("wrist singularity: b5 norm = %f ",b5.norm());
       }
       else {
-            double cq4= b4.dot(-t3);
-            double sq4= b4.dot(n3); 
-            q4= atan2(sq4, cq4);
+            double cq5= b5.dot(-t4);
+            double sq5= b5.dot(n4); 
+            q5= atan2(sq5, cq5); 
         }
     // choose the positive forearm-rotation solution:
-    if (q4>M_PI) {
-        q4-= 2*M_PI;
+    if (q5>M_PI) {
+        q5-= 2*M_PI;
     }    
-    if (q4<0.0) {
-        q4+= M_PI;
+    if (q5<0.0) {
+        q5+= M_PI;
     }
-    double q4b = q4 -M_PI;
+    double q5b = q5 -M_PI;
     // THESE OPTIONS LOOK GOOD FOR q4
     //std::cout<<"forearm rotation options: "<<q4<<", "<<q4b<<std::endl;
     
-    // use the + q4 soln to find q5, q6
-    A34 = compute_A_of_DH(3, q4);
-    A04 = A03*A34;
-    n4 = A04.col(0).head(3);
-    t4 = A04.col(1).head(3); 
-    double cq5 = b_des.dot(t4);
-    double sq5 = b_des.dot(-n4);
-    q5 = atan2(sq5,cq5);
-    //std::cout<<"wrist bend = "<<q5<<std::endl;
-
-    //solve for q6
+    // use the + q5 soln to find q6, q7
     A45 = compute_A_of_DH(4, q5);
     A05 = A04*A45;
     n5 = A05.col(0).head(3);
-    t5 = A05.col(1).head(3);   
+    t5 = A05.col(1).head(3); 
+    double cq6 = b_des.dot(t5);
+    double sq6 = b_des.dot(n5);
+    q6 = -atan2(sq6,cq6); //ad hoc; try to fix sign
+    //std::cout<<"wrist bend = "<<q5<<std::endl;
+
+    //solve for q7
+    A56 = compute_A_of_DH(6, q6);
+    A06 = A05*A56;
+    n6 = A06.col(0).head(3);
+    t6 = A06.col(1).head(3);   
         
-    double cq6=n_des.dot(-n5);
-    double sq6=n_des.dot(-t5);
-    q6 =atan2(sq6, cq6);
+    double cq7=n_des.dot(-n6);
+    double sq7=n_des.dot(-t6);
+    cout<<"n_des = "<<n_des.transpose()<<endl;
+    cout<<"n6 = "<<n6.transpose()<<endl;
+    cout<<"t6 = "<<t6.transpose()<<endl;
+            
+    q7 =atan2(sq7, cq7)-M_PI; //ad hoc attempt to fix soln
+    ROS_INFO("q5,q6,q7 = %f, %f, %f",q5,q6,q7);
     //ROS_INFO("q4,q5,q6 = %f, %f, %f",q4,q5,q6);
     q_soln = q_in;
-    q_soln[3] = q4;
     q_soln[4] = q5;
     q_soln[5] = q6;
+    q_soln[6] = q7;
     q_solns.clear();
     //make 1st soln the positive wrist-bend soln:
-    if (q5>0) {
+    if ((q6>0)&&(q6<FETCH_WRIST_BEND_MAX)) {
        q_solns.push_back(q_soln);
-    }
-    //2nd wrist soln: 
-    q_soln[3] = q4b;
-    q_soln[4] *= -1.0; // flip wrist opposite direction
-    q_soln[5] = q6+M_PI; // fix the periodicity later; 
+        //2nd wrist soln: 
+        q_soln[4] = q5b;
+        q_soln[5] *= -1.0; // flip wrist opposite direction
+        q_soln[6] = q7+M_PI; // fix the periodicity later; 
        // ROS_INFO("alt q4,q5,q6 = %f, %f, %f",q_soln[3],q_soln[4],q_soln[5]);
-    q_solns.push_back(q_soln);    
-    if (q5<0) {
-    q_soln[3] = q4;
-    q_soln[4] = q5;
-    q_soln[5] = q6;
-    q_solns.push_back(q_soln);
+        q_solns.push_back(q_soln);        
+    }
+    
+    if ((q6<0)&&(q6>FETCH_WRIST_BEND_MIN)) {
+        q_soln[4] = q5b;
+        q_soln[5] *= -1.0; // flip wrist opposite direction
+        q_soln[6] = q7+M_PI; // fix the periodicity later;         
+        q_solns.push_back(q_soln);
+        q_soln[4] = q5;
+        q_soln[5] = q6;
+        q_soln[6] = q7;
+        q_solns.push_back(q_soln);
     }    
-    return is_singular;
+    if (fabs(q6)>FETCH_WRIST_BEND_MAX) {
+        ROS_WARN("wrist bend q6 soln = %f is out of range",q6);
+    }
+    return !is_singular; //return true if all is well
 }
 
 
