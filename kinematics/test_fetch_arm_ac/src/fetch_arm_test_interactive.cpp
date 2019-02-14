@@ -44,6 +44,7 @@ int main(int argc, char** argv) {
             robot_motion_action_client("/arm_controller/follow_joint_trajectory", true);
 
     // attempt to connect to the server:
+    /*
     ROS_INFO("waiting for arm server: ");
     bool server_exists = robot_motion_action_client.waitForServer(ros::Duration(1.0));
     while (!server_exists) {
@@ -53,7 +54,7 @@ int main(int argc, char** argv) {
         server_exists = robot_motion_action_client.waitForServer(ros::Duration(1.0));
     }
     ROS_INFO("connected to arm action server"); // if here, then we connected to the server;  
-
+*/
     //populate a  trajectory message:
     trajectory_msgs::JointTrajectoryPoint trajectory_point;
     trajectory_point.positions.resize(8);
@@ -93,6 +94,7 @@ int main(int argc, char** argv) {
     //put traj in goal message
     robot_goal.trajectory = des_trajectory;
 
+    /*
     ROS_INFO("sending goal to arm: ");
     robot_motion_action_client.sendGoal(robot_goal, &doneCb);
 
@@ -100,7 +102,7 @@ int main(int argc, char** argv) {
         ROS_INFO("waiting to finish pre-pose..");
         ros::Duration(1.0).sleep();
     }
- 
+ */
         int jnum;
         double qval;
     trajectory_point.time_from_start = ros::Duration(2.0);
@@ -115,7 +117,7 @@ int main(int argc, char** argv) {
         q_in[jnum]=qval;
         des_trajectory.points.push_back(trajectory_point);
         robot_goal.trajectory = des_trajectory;
-        robot_motion_action_client.sendGoal(robot_goal, &doneCb);
+        //robot_motion_action_client.sendGoal(robot_goal, &doneCb);
         A_fwd_DH = fwd_solver.fwd_kin_solve(q_in); //fwd_kin_solve
 
         std::cout << "q_in: " << q_in.transpose() << std::endl;        

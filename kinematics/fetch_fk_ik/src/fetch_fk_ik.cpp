@@ -606,7 +606,7 @@ bool Fetch_IK_solver::solve_spherical_wrist(Eigen::VectorXd q_in,Eigen::Matrix3d
     Eigen::Vector3d n5,t5,b5; //axes of frame5
     Eigen::Vector3d n4,t4,b4; // axes of frame4
     Eigen::Vector3d n6,t6; // axes of frame6; b6 is antiparallel to b_des = b7
-    Eigen::Vector3d n_des,b_des; // desired x-axis and z-axis of flange frame
+    Eigen::Vector3d n_des,b_des; // desired x-axis and z-axis of flange or gripper frame
     n4 = A04.col(0).head(3);
     t4 = A04.col(1).head(3);    
     b4 = A04.col(2).head(3);  
@@ -636,8 +636,8 @@ bool Fetch_IK_solver::solve_spherical_wrist(Eigen::VectorXd q_in,Eigen::Matrix3d
         q5+= M_PI;
     }
     double q5b = q5 -M_PI;
-    // THESE OPTIONS LOOK GOOD FOR q4
-    //std::cout<<"forearm rotation options: "<<q4<<", "<<q4b<<std::endl;
+    // THESE OPTIONS LOOK GOOD FOR q5
+    //std::cout<<"forearm rotation options: "<<q5<<", "<<q5b<<std::endl;
     
     // use the + q5 soln to find q6, q7
     A45 = compute_A_of_DH(4, q5);
@@ -647,10 +647,10 @@ bool Fetch_IK_solver::solve_spherical_wrist(Eigen::VectorXd q_in,Eigen::Matrix3d
     double cq6 = b_des.dot(t5);
     double sq6 = b_des.dot(n5);
     q6 = -atan2(sq6,cq6); //ad hoc; try to fix sign
-    //std::cout<<"wrist bend = "<<q5<<std::endl;
+    //std::cout<<"wrist bend = "<<q6<<std::endl;
 
     //solve for q7
-    A56 = compute_A_of_DH(6, q6);
+    A56 = compute_A_of_DH(5, q6);
     A06 = A05*A56;
     n6 = A06.col(0).head(3);
     t6 = A06.col(1).head(3);   
@@ -661,7 +661,8 @@ bool Fetch_IK_solver::solve_spherical_wrist(Eigen::VectorXd q_in,Eigen::Matrix3d
     cout<<"n6 = "<<n6.transpose()<<endl;
     cout<<"t6 = "<<t6.transpose()<<endl;
             
-    q7 =atan2(sq7, cq7)-M_PI; //ad hoc attempt to fix soln
+    q7 =atan2(sq7, cq7)+M_PI; //ad hoc attempt to fix soln
+    if (q7>M_PI) q7-=M_PI*2.0;
     ROS_INFO("q5,q6,q7 = %f, %f, %f",q5,q6,q7);
     //ROS_INFO("q4,q5,q6 = %f, %f, %f",q4,q5,q6);
     q_soln = q_in;
