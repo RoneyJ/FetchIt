@@ -31,6 +31,11 @@ vel limits, 1.256, 1.454, 1.571, 1.521, 1.571, 2.268, 2.268
  choose base frame consistent with shoulder_pan_link
  make fk consistent with:
  rosrun tf tf_echo shoulder_pan_link generic_gripper_frame (w/ origin same as gripper_link, but reoriented)
+ * 
+ 2/14/19: added A_shoulder_wrt_torso_, so fk is computed with respect to torso_lift_link
+ 
+ rosrun tf tf_echo torso_lift_link gripper_link  origin is now consistent with fk
+ BUT, hand to fix alphas: roll positive rotation is NOT as shown in fig!!
 
 
 */
@@ -52,6 +57,9 @@ const int MAX_SOLNS_RETURNED=100; //tune me!
 const double ELBOW_SINGULARITY_THRESHOLD = 0.001; // outstretched is singularity
 const double W_ERR_THRESHOLD = 0.0001; // test for correct IK solns
 
+const double DZ_TORSO_LIFT_TO_SHOULDER_PAN = 0.34858;
+const double DX_TORSO_LIFT_TO_SHOULDER_PAN = 0.119525;
+
 // a fwd kin solver...
 // list DH params here
 
@@ -66,20 +74,20 @@ const double DH_a7=0.0;
 
 const double DH_d1 = 0.06; //
 const double DH_d2 = 0.0;
-const double DH_d3 = -0.352;
+const double DH_d3 = 0.352;
 const double DH_d4 = 0.0;
-const double DH_d5 = -0.3215;
+const double DH_d5 = 0.3215;
 const double DH_d6 = 0.0;
-const double DH_d7 = -0.30495;
+const double DH_d7 = 0.30495;
 
-//robot.DH.alpha= '[-pi/2 0 -pi/2 pi/2 -pi/2 0]';
+
 const double DH_alpha1 = -M_PI/2.0;
-const double DH_alpha2 = M_PI/2.0;
-const double DH_alpha3 = -M_PI/2.0;
-const double DH_alpha4 = M_PI/2.0;
-const double DH_alpha5 = -M_PI/2.0;
-const double DH_alpha6 = M_PI/2.0;
-const double DH_alpha7 = M_PI;
+const double DH_alpha2 = -M_PI/2.0;
+const double DH_alpha3 = M_PI/2.0;
+const double DH_alpha4 = -M_PI/2.0;
+const double DH_alpha5 = M_PI/2.0;
+const double DH_alpha6 = -M_PI/2.0;
+const double DH_alpha7 = 0.0; //M_PI;
 
 //robot.DH.theta= '[q(1) q(2)-pi/2 q(3) q(4) q(5) q(6)+pi]';
 const double DH_q_offset1 = 0;
@@ -137,13 +145,14 @@ public:
     Eigen::Vector4d compute_O5_wrt_3(double q_elbow);
     Eigen::Vector4d compute_O5_wrt_2(Eigen::Vector4d O_5_wrt_3,  double q_humerus_roll);
     Eigen::Vector4d compute_O5_wrt_1(Eigen::Vector4d O_5_wrt_2,  double q_shoulder_pitch);
-    
+    Eigen::Matrix4d compute_A_of_DH(int i, double q_fetch);
+    Eigen::Affine3d Affine_shoulder_wrt_torso_inv_;
+
 
 private:
     Eigen::Matrix4d fwd_kin_solve_(const Eigen::VectorXd& q_vec);
-    Eigen::Matrix4d A_mats_[NJNTS], A_mat_products_[NJNTS], A_tool_; // note: tool A must also handle diff DH vs URDF frame-7 xform
+    Eigen::Matrix4d A_mats_[NJNTS], A_mat_products_[NJNTS], A_tool_,A_shoulder_wrt_torso_,A_shoulder_wrt_torso_inv_; // note: tool A must also handle diff DH vs URDF frame-7 xform
     Eigen::MatrixXd Jacobian_;
-
 
 };
 

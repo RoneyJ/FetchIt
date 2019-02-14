@@ -33,6 +33,7 @@ catkin_simple()
 # may add more of these lines for more nodes from the same package
 cs_add_executable(fetch_arm_test_action_client src/fetch_arm_test_action_client.cpp)
 cs_add_executable(fetch_arm_test_action_client2 src/fetch_arm_test_action_client2.cpp)
+cs_add_executable(fetch_arm_test_interactive src/fetch_arm_test_interactive.cpp)
 cs_add_executable(fetch_head_test_action_client src/fetch_head_test_action_client.cpp)
 #the following is required, if desire to link a node in this package with a library created in this same package
 # edit the arguments to reference the named node and named library within this package
