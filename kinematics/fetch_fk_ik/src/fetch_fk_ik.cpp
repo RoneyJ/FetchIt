@@ -242,12 +242,13 @@ int Fetch_IK_solver::ik_solve(Eigen::Affine3d const& desired_hand_pose,  std::ve
     int nsolns;
     q_ik_solns.clear();
     std::vector<Eigen::VectorXd> q_ik_solns_index_q1;
-    Eigen::Affine3d desired_hand_pose_wrt_DH0 = Affine_shoulder_wrt_torso_inv_*desired_hand_pose;
-    ROS_INFO_STREAM("desired hand origin w/rt DH0: "<<desired_hand_pose_wrt_DH0.translation().transpose()<<endl);
+    //Eigen::Affine3d desired_hand_pose_wrt_DH0 = Affine_shoulder_wrt_torso_inv_*desired_hand_pose;
+    //ROS_INFO_STREAM("desired hand origin w/rt DH0: "<<desired_hand_pose_wrt_DH0.translation().transpose()<<endl);
+    //here, step through samples of q1 to get redundant options
     //for (double q1= -0.1; q1< 0.1; q1+= 0.1) {
     double q1 =0; {// TEST TEST TEST    
         ROS_INFO("trying q1 = %f",q1);
-        ik_solve(desired_hand_pose_wrt_DH0,q1,q_ik_solns_index_q1); //solve q2 through q7 given q1
+        ik_solve(desired_hand_pose,q1,q_ik_solns_index_q1); //solve q2 through q7 given q1
         int nsolns = q_ik_solns_index_q1.size();
         for (int j_soln=0;j_soln<nsolns;j_soln++) {
             q_ik_solns.push_back(q_ik_solns_index_q1[j_soln]);
@@ -257,12 +258,14 @@ int Fetch_IK_solver::ik_solve(Eigen::Affine3d const& desired_hand_pose,  std::ve
   return nsolns;
 }
 
-
+//uses q_shoulder_pan provided and solves for remaining 6 jnt angles:
 int Fetch_IK_solver::ik_solve(Eigen::Affine3d const& desired_hand_pose, double q_shoulder_pan, std::vector<Eigen::VectorXd> &q_ik_solns) {
     //q_solns_.clear();
     q_ik_solns.clear();
     std::vector<Eigen::VectorXd> q_ik_solns1234;
-    bool reachable = compute_q234_solns(desired_hand_pose, q_shoulder_pan, q_ik_solns1234);
+    Eigen::Affine3d desired_hand_pose_wrt_DH0 = Affine_shoulder_wrt_torso_inv_*desired_hand_pose;
+
+    bool reachable = compute_q234_solns(desired_hand_pose_wrt_DH0, q_shoulder_pan, q_ik_solns1234);
     if (!reachable) {
         return 0;
     }
@@ -274,7 +277,7 @@ int Fetch_IK_solver::ik_solve(Eigen::Affine3d const& desired_hand_pose, double q
     q_soln.resize(NJNTS);
     std::vector<Eigen::VectorXd> q_wrist_solns;
     Eigen::Matrix3d R_des;
-    R_des = desired_hand_pose.linear();
+    R_des = desired_hand_pose_wrt_DH0.linear();
     reachable=false; //guilty until proven innocent
     for (int i=0;i<nsolns;i++) {
         q_soln = q_ik_solns1234[i];
@@ -300,52 +303,52 @@ int Fetch_IK_solver::ik_solve(Eigen::Affine3d const& desired_hand_pose, double q
     
 }
 
-/*
-int Fetch_IK_solver::ik_solve(Eigen::Affine3d const& desired_hand_pose) {
-    q_solns_.clear();
-    bool reachable = compute_q123_solns(desired_hand_pose, q_solns_);
+
+//restricts solns to q_elbow>0
+//will return 2 solns (or 0 solns); first soln will be positive wrist bend
+int Fetch_IK_solver::ik_solve_elbow_up_given_q1(Eigen::Affine3d const& desired_hand_pose, double q_shoulder_pan, std::vector<Eigen::VectorXd> &q_ik_solns) {
+        q_ik_solns.clear();
+    std::vector<Eigen::VectorXd> q_ik_solns1234;
+        Eigen::Affine3d desired_hand_pose_wrt_DH0 = Affine_shoulder_wrt_torso_inv_*desired_hand_pose;
+
+    bool reachable = compute_q234_solns_elbow_up(desired_hand_pose_wrt_DH0, q_shoulder_pan, q_ik_solns1234);
     if (!reachable) {
         return 0;
     }
-    //test_q123(q_solns_);
-    reachable = false;
-    //is at least one solution within joint range limits?
-    q_solns_fit_.clear();
+    int    nsolns = q_ik_solns1234.size();
+    for (int isoln=0;isoln<nsolns;isoln++) {
+            test_q1234(q_ik_solns1234[isoln]);
+    }
     Eigen::VectorXd q_soln;
-    Eigen::Matrix3d R_des;
-    R_des = desired_hand_pose.linear();
-    int nsolns = q_solns_.size();
-    if (MAX_SOLNS_RETURNED< nsolns) nsolns = MAX_SOLNS_RETURNED; //see if specified  limit num solns
-    bool fits;
-
+    q_soln.resize(NJNTS);
     std::vector<Eigen::VectorXd> q_wrist_solns;
+    Eigen::Matrix3d R_des;
+    R_des = desired_hand_pose_wrt_DH0.linear();
+    reachable=false; //guilty until proven innocent
     for (int i=0;i<nsolns;i++) {
-        q_soln = q_solns_[i];
-        fits = fit_joints_to_range(q_soln); // force q_soln in to periodic range, if possible, and return if possible
-        if (fits) { // if here, then have a valid 3dof soln; try to get wrist solutions
-            // get wrist solutions; expect 2, though not checked for joint limits
-            solve_spherical_wrist(q_soln,R_des, q_wrist_solns);  
-            int n_wrist_solns = q_wrist_solns.size();
-            if (MAX_SOLNS_RETURNED< n_wrist_solns) n_wrist_solns = MAX_SOLNS_RETURNED; //again, limit num solns
-            for (int iwrist=0;iwrist<n_wrist_solns;iwrist++) {
-                q_soln = q_wrist_solns[iwrist];
-                if (fit_joints_to_range(q_soln)) {
-                  q_solns_fit_.push_back(q_soln);
-                  reachable = true; // note that we have at least one reachable solution
+        q_soln = q_ik_solns1234[i];
+            if (solve_spherical_wrist(q_soln,R_des, q_wrist_solns)) {  
+                int n_wrist_solns = q_wrist_solns.size();
+                for (int iwrist=0;iwrist<n_wrist_solns;iwrist++) {
+                    q_soln = q_wrist_solns[iwrist];
+                    q_ik_solns.push_back(q_soln);
+                    reachable = true; // note that we have at least one reachable solution
                 }
             }
-
-        }
+            else {
+                ROS_WARN("singularity in wrist solns!");
+            }
     }
     if (!reachable) {
         return 0;
     }
     
-    //if here, have reachable solutions
-    nsolns = q_solns_fit_.size();
-    return nsolns;
+    //if here, have reachable solutions in q_ik_solns
+    nsolns = q_ik_solns.size();
+    return nsolns;    
 }
-*/
+
+
 
 //accessor function to get all solutions
 
@@ -451,6 +454,109 @@ bool Fetch_IK_solver::compute_q234_solns(Eigen::Affine3d const& desired_hand_pos
                    //ROS_WARN("saving this soln");
                    q_solns.push_back(q_soln);
                    ROS_INFO("\n \n");
+               }
+           }
+       }
+    }
+   int nsolns = q_solns.size();
+   if (nsolns>0) return true;
+   else return false;
+}  
+
+//same as above, but only consider positive elbow angle solutions
+//should result in a unique soln for q234
+bool Fetch_IK_solver::compute_q234_solns_elbow_up(Eigen::Affine3d const& desired_hand_pose, double q_shoulder_pan, std::vector<Eigen::VectorXd> &q_solns) {
+    double r_goal;
+    bool reachable;
+    //double L_hand = DH_d7;
+    
+    Eigen::Vector3d p_des = desired_hand_pose.translation();
+    Eigen::Matrix3d R_des = desired_hand_pose.linear();
+    Eigen::Vector3d z_des = R_des.col(2); // direction of desired z-vector
+    Eigen::Vector3d w_des = p_des - L_wrist_*z_des; // desired wrist position w/rt frame0
+    std::cout<<"z_des: "<<z_des.transpose()<<std::endl;
+    std::cout<<"w_des: "<<w_des.transpose()<<std::endl;
+    std::cout<<"p_des: "<<p_des.transpose()<<std::endl;
+    
+    q_solns.clear();
+    Eigen::VectorXd q_soln;
+    q_soln.resize(NJNTS);
+    
+    Eigen::Matrix4d A10;
+    //compute_A_of_DH(double a,double d,double q, double alpha); use q_vec(i) + DH_q_offsets(i)
+    A10 = compute_A_of_DH(0, q_shoulder_pan); 
+    
+    Eigen::Matrix3d R10;
+    Eigen::Vector3d p1_wrt_0, w_wrt_1_des;
+    R10 = A10.block<3, 3>(0, 0);
+    //std::cout << "compute_q123, R10: " << std::endl;
+    //std::cout << R10 << std::endl;
+    p1_wrt_0 = A10.col(3).head(3); ///origin of frame1 w/rt frame0
+    std::cout<<"p1_wrt_0: "<<p1_wrt_0.transpose()<<std::endl;
+    
+    //compute A10_inv * w_wrt_0, = R'*w_wrt_0 -R'*p1_wrt_0
+    w_wrt_1_des = R10.transpose() * w_des - R10.transpose() * p1_wrt_0; //desired wrist pos w/rt frame1
+    std::cout << "w_wrt_1_des = " << w_wrt_1_des.transpose() << std::endl;
+    r_goal = w_wrt_1_des.norm(); //sqrt(w_wrt_1[0] * w_wrt_1[0] + w_wrt_1[1] * w_wrt_1[1]);
+
+    ROS_INFO("r_goal = %f", r_goal);
+    //is the desired wrist position reachable? if not, return false
+    // does not yet consider joint limits
+    if (r_goal >= L_humerus_ + L_forearm_) {
+        ROS_WARN("goal is too far away!");
+        return false;
+    }
+    // can also have problems if wrist goal is too close to shoulder
+    if (r_goal <= fabs(L_humerus_ - L_forearm_)) {
+        ROS_WARN("goal is too close!");
+        return false;
+    }
+    double q_elbow_solns[2];
+    double q_humerus_roll_solns[2];    
+    double q_shoulder_lift_solns[2];    
+    //BOTH elbow solns should be viable (if within joint limits)
+    reachable = solve_for_elbow_theta(r_goal, q_elbow_solns);
+    ROS_INFO("q_elbow solns: %f,  %f",q_elbow_solns[0],q_elbow_solns[1]);
+    if (!reachable) {
+        ROS_WARN("logic error computing elbow angle!");
+        return false;
+    } 
+    /*else {
+        ROS_INFO("elbow solns: %f, %f", q_elbow_solns[0], q_elbow_solns[1]);
+    }*/
+    
+   double q_elbow_soln,q_humerus_roll_soln,q_shoulder_lift_soln;
+   Eigen::Vector4d O5_wrt_3,O5_wrt_2,O5_wrt_1;    
+   Eigen::Vector3d O5_wrt_1_3d;
+   double w_err;
+    for (int i_elbow=0;i_elbow<1;i_elbow++) { //only consider first elbow soln
+       q_elbow_soln = q_elbow_solns[i_elbow]; //consider first elbow soln:
+       //ROS_INFO("q_elbow soln: %f",q_elbow_soln);
+       O5_wrt_3=compute_O5_wrt_3(q_elbow_soln);
+       solve_for_q_humerus_roll(w_wrt_1_des,q_elbow_soln,q_humerus_roll_solns);
+       //ROS_INFO("q_humerus_roll solns: %f, %f",q_humerus_roll_solns[0],q_humerus_roll_solns[1]);
+       for (int i_humerus_roll=0;i_humerus_roll<2;i_humerus_roll++) {      //test both roll solns:
+           q_humerus_roll_soln=q_humerus_roll_solns[i_humerus_roll];
+           //ROS_INFO("q_humerus_roll_soln soln: %f",q_humerus_roll_soln);
+           O5_wrt_2=compute_O5_wrt_2(O5_wrt_3,q_humerus_roll_soln);           
+           solve_for_shoulder_lift(w_wrt_1_des, q_elbow_soln, q_humerus_roll_soln, q_shoulder_lift_solns); 
+           //ROS_INFO("q_shoulder_lift_solns: %f, %f",q_shoulder_lift_solns[0],q_shoulder_lift_solns[1]);
+
+           for (int i_shoulder_lift=0;i_shoulder_lift<2;i_shoulder_lift++) {
+               q_shoulder_lift_soln=q_shoulder_lift_solns[i_shoulder_lift];
+               //ROS_INFO("q_shoulder_lift_soln soln: %f",q_shoulder_lift_soln);
+
+               O5_wrt_1=compute_O5_wrt_1(O5_wrt_2,q_shoulder_lift_soln);  
+               O5_wrt_1_3d = O5_wrt_1.head(3);
+               w_err = (O5_wrt_1_3d-w_wrt_1_des).norm();
+               //ROS_INFO("q2, q3, q4 = %f, %f, %f; w_err = %f",q_shoulder_lift_soln,q_humerus_roll_soln,q_elbow_soln,w_err);
+               if (w_err<W_ERR_THRESHOLD) {
+                 q_soln<<q_shoulder_pan,q_shoulder_lift_soln,q_humerus_roll_soln,q_elbow_soln,0,0,0;
+                 //ROS_INFO_STREAM("q234_test: "<<q_soln.transpose()<<endl);
+                 //ROS_WARN("wrist err = %f",w_err);                   
+                   //ROS_WARN("saving this soln");
+                   q_solns.push_back(q_soln);
+                   //ROS_INFO("\n \n");
                }
            }
        }

@@ -166,7 +166,8 @@ public:
     //int ik_solve(Eigen::Affine3d const& desired_hand_pose); // given desired pose, compute IK
     int ik_solve(Eigen::Affine3d const& desired_hand_pose,  std::vector<Eigen::VectorXd> &q_ik_solns);
     int ik_solve(Eigen::Affine3d const& desired_hand_pose, double q_shoulder_pan, std::vector<Eigen::VectorXd> &q_ik_solns);
-
+    int ik_solve_elbow_up_given_q1(Eigen::Affine3d const& desired_hand_pose, double q_shoulder_pan, std::vector<Eigen::VectorXd> &q_ik_solns);
+ 
     void get_solns(std::vector<Eigen::VectorXd> &q_solns);
     bool fit_joints_to_range(Eigen::VectorXd &qvec);
     bool solve_Asin_plus_Bcos_eqC(double A,double B,double C, double thetas[]);
@@ -185,7 +186,9 @@ private:
     // fill up solns for  q2, q3, q4 based on wrist position  
     // populate q_solns, including specified q1
     bool compute_q234_solns(Eigen::Affine3d const& desired_hand_pose, double q_shoulder_pan, std::vector<Eigen::VectorXd> &q_solns);
-    
+    //restrict consideration to positive elbow solns:
+    bool compute_q234_solns_elbow_up(Eigen::Affine3d const& desired_hand_pose, double q_shoulder_pan, std::vector<Eigen::VectorXd> &q_solns);
+
     bool solve_for_elbow_theta(double r_goal, double q_elbow_solns[]);  //
     bool solve_for_q_humerus_roll(Eigen::Vector3d w_wrt_1,double q_elbow_soln,double q_humerus_roll_solns[]);
     //next fnc not ready...
