@@ -32,6 +32,8 @@ rosrun tf tf_echo base_link gripper_link
 - Translation: [0.128, 0.370, 1.160]
 
 arm base frame relative to mobile base frame:
+torso_lift_joint, bellows_joint=-9.319062961183888e-08, 0.006691447338222459
+
 rosrun tf tf_echo base_link shoulder_pan_link
 - Translation: [0.033, 0.000, 0.726]
 

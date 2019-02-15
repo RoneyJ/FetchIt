@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(test_fetch_arm_ac)
+project(fetch_arm_behavior_server)
 
 find_package(catkin_simple REQUIRED)
 
@@ -12,10 +12,10 @@ find_package(catkin_simple REQUIRED)
 
 
 #uncomment the following 4 lines to use the Eigen library
-find_package(cmake_modules REQUIRED)
-find_package(Eigen3 REQUIRED)
-include_directories(${EIGEN3_INCLUDE_DIR})
-add_definitions(${EIGEN_DEFINITIONS})
+#find_package(cmake_modules REQUIRED)
+#find_package(Eigen3 REQUIRED)
+#include_directories(${EIGEN3_INCLUDE_DIR})
+#add_definitions(${EIGEN_DEFINITIONS})
 
 catkin_simple()
 
@@ -31,16 +31,7 @@ catkin_simple()
 
 # Executables: uncomment the following and edit arguments to compile new nodes
 # may add more of these lines for more nodes from the same package
-cs_add_executable(fetch_arm_test_action_client src/fetch_arm_test_action_client.cpp)
-cs_add_executable(fetch_arm_test_action_client2 src/fetch_arm_test_action_client2.cpp)
-cs_add_executable(fetch_arm_test_interactive src/fetch_arm_test_interactive.cpp)
-cs_add_executable(fetch_arm_pre_pose src/fetch_arm_pre_pose.cpp)
-
-cs_add_executable(fetch_head_test_action_client src/fetch_head_test_action_client.cpp)
-cs_add_executable(fetch_head_tilt_preset src/fetch_head_tilt_preset.cpp)
-
-cs_add_executable(fetch_torso_test_action_client src/fetch_torso_test_action_client.cpp)
-cs_add_executable(fetch_torso_lift_preset src/fetch_torso_lift_preset.cpp)
+# cs_add_executable(example src/example.cpp)
 
 #the following is required, if desire to link a node in this package with a library created in this same package
 # edit the arguments to reference the named node and named library within this package

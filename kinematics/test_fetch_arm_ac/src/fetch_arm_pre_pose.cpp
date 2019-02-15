@@ -1,6 +1,17 @@
 // example action client for Fetch robot action  server 
-//interactive version
+//routine to pre-position arm for suitable grasp version
 // wsn,  2/2019
+
+//pose for arm out of camera view, but ready to swing into position above table
+//(should pre-position camera to tilt down, e.g. 1.0 rad, and rais up torso to max, 0.385)
+//q_in:   1.57     -1      0 1.5707      0      1      0: gripper is down, arm is to left; should be safe to swing to:
+//actually, q_shoulder_pan = 0.8 is good enough to be out of view
+//q_in:      0     -1      0 1.5707      0      1      0: gripper is in front, pointing down, above table;
+//   the above pose is safe for Cartesian moves in x,y, but it blocks the camera view; need to make move gently to not displace robot
+//rosrun tf tf_echo base_link gripper_link:  
+//- Translation: [0.610, 0.000, 0.989]
+//- Rotation: in Quaternion [-0.000, 0.707, 0.000, 0.707]
+
 
 #include<ros/ros.h>
 #include <actionlib/client/simple_action_client.h>
@@ -32,8 +43,8 @@ int main(int argc, char** argv) {
     Eigen::VectorXd q_ARM_INIT,q_ARM_INIT2; //
     q_ARM_INIT.resize(7); 
     q_ARM_INIT2.resize(7);
-    q_ARM_INIT<<1.32, 0.7, 0.0, -2.0, 0.0, -0.57, 0.0;
-    q_ARM_INIT2<<0.0, -0.62, 0.0, 0.0, 0.0, 0.62, 0.0;
+    q_ARM_INIT<<0.8,     -1,      0, 1.5707,      0,      1,      0;
+    //q_ARM_INIT2<<0.0, -0.62, 0.0, 0.0, 0.0, 0.62, 0.0;
     Eigen::VectorXd q_in;
     q_in.resize(7);
     control_msgs::FollowJointTrajectoryGoal robot_goal;
@@ -59,7 +70,7 @@ int main(int argc, char** argv) {
     trajectory_msgs::JointTrajectoryPoint trajectory_point;
     trajectory_point.positions.resize(8);
     for (int i = 0; i < 7; i++) 
-        trajectory_point.positions[i] = q_ARM_INIT2[i]; 
+        trajectory_point.positions[i] = q_ARM_INIT[i]; 
 
     des_trajectory.points.clear(); //not really necessary; just paranoid
     des_trajectory.joint_names.clear(); //ditto
@@ -83,12 +94,13 @@ int main(int argc, char** argv) {
     
     //one one or more trajectory points to the trajectory:
         //q_ARM_INIT:    
+    /*
     for (int i = 0; i < 7; i++) { //copy over the joint-command values
         trajectory_point.positions[i] = q_ARM_INIT[i];
     }
     trajectory_point.time_from_start = ros::Duration(5.0); //allow 3 sec for this move
     des_trajectory.points.push_back(trajectory_point);
-    
+    */
     
     
     //put traj in goal message
@@ -97,12 +109,13 @@ int main(int argc, char** argv) {
     /**/
     ROS_INFO("sending goal to arm: ");
     robot_motion_action_client.sendGoal(robot_goal, &doneCb);
-
+    g_done_count = 0;
     while (g_done_count < 1) {
         ROS_INFO("waiting to finish pre-pose..");
         ros::Duration(1.0).sleep();
     }
  
+    ROS_INFO("arm is in pre-pose; optionally, move joints one at a time interactively...");
         int jnum;
         double qval;
     trajectory_point.time_from_start = ros::Duration(2.0);

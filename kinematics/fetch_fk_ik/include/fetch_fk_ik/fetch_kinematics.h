@@ -167,6 +167,8 @@ public:
     int ik_solve(Eigen::Affine3d const& desired_hand_pose,  std::vector<Eigen::VectorXd> &q_ik_solns);
     int ik_solve(Eigen::Affine3d const& desired_hand_pose, double q_shoulder_pan, std::vector<Eigen::VectorXd> &q_ik_solns);
     int ik_solve_elbow_up_given_q1(Eigen::Affine3d const& desired_hand_pose, double q_shoulder_pan, std::vector<Eigen::VectorXd> &q_ik_solns);
+    //the next version assumes q1 computed to point arm towards desired hand position, then solve w/ elbow up
+    int ik_solve_simple_reach(Eigen::Affine3d const& desired_hand_pose,  std::vector<Eigen::VectorXd> &q_ik_solns);
  
     void get_solns(std::vector<Eigen::VectorXd> &q_solns);
     bool fit_joints_to_range(Eigen::VectorXd &qvec);

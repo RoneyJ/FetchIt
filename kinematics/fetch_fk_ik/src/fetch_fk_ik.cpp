@@ -258,6 +258,55 @@ int Fetch_IK_solver::ik_solve(Eigen::Affine3d const& desired_hand_pose,  std::ve
   return nsolns;
 }
 
+//for this case, have the shoulder-pan joint point towards the hand goal
+int Fetch_IK_solver::ik_solve_simple_reach(Eigen::Affine3d const& desired_hand_pose,  std::vector<Eigen::VectorXd> &q_ik_solns) {
+        q_ik_solns.clear();
+        std::vector<Eigen::VectorXd> q_ik_solns1234;   
+        q_ik_solns1234.clear();
+        Eigen::Affine3d desired_hand_pose_wrt_DH0 = Affine_shoulder_wrt_torso_inv_*desired_hand_pose;
+        Eigen::Vector3d desired_hand_origin_wrt_DH0 =  desired_hand_pose_wrt_DH0.translation();
+        double q_shoulder_pan = atan2(desired_hand_origin_wrt_DH0[1],desired_hand_origin_wrt_DH0[0]);
+        ROS_INFO("choosing q_shoulder_pan = %f",q_shoulder_pan);
+        ik_solve_elbow_up_given_q1(desired_hand_pose, q_shoulder_pan, q_ik_solns1234);
+    bool reachable = compute_q234_solns_elbow_up(desired_hand_pose_wrt_DH0, q_shoulder_pan, q_ik_solns1234);
+    if (!reachable) {
+        return 0;
+    }
+    int    nsolns = q_ik_solns1234.size();
+    //for (int isoln=0;isoln<nsolns;isoln++) {
+    for (int isoln=0;isoln<1;isoln++) {        
+            test_q1234(q_ik_solns1234[isoln]);
+    }
+    Eigen::VectorXd q_soln;
+    q_soln.resize(NJNTS);
+    std::vector<Eigen::VectorXd> q_wrist_solns;
+    Eigen::Matrix3d R_des;
+    R_des = desired_hand_pose_wrt_DH0.linear();
+    reachable=false; //guilty until proven innocent
+    for (int i=0;i<nsolns;i++) {
+        q_soln = q_ik_solns1234[i];
+            if (solve_spherical_wrist(q_soln,R_des, q_wrist_solns)) {  
+                int n_wrist_solns = q_wrist_solns.size();
+                for (int iwrist=0;iwrist<1;iwrist++) { //ONLY consider positive wrist bend...single soln
+                    q_soln = q_wrist_solns[iwrist];
+                    q_ik_solns.push_back(q_soln);
+                    reachable = true; // note that we have at least one reachable solution
+                }
+            }
+            else {
+                ROS_WARN("singularity in wrist solns!");
+            }
+    }
+    if (!reachable) {
+        return 0;
+    }
+    
+    //if here, have reachable solutions in q_ik_solns
+    nsolns = q_ik_solns.size();
+    return nsolns;        
+}
+
+
 //uses q_shoulder_pan provided and solves for remaining 6 jnt angles:
 int Fetch_IK_solver::ik_solve(Eigen::Affine3d const& desired_hand_pose, double q_shoulder_pan, std::vector<Eigen::VectorXd> &q_ik_solns) {
     //q_solns_.clear();
