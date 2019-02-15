@@ -64,7 +64,8 @@ cart_move_as_(*nodehandle, "cartMoveActionServer", boost::bind(&ArmMotionInterfa
     //TEST TEST TEST
     ROS_INFO("arm_motion_interface, testing fk pointer...");
     Eigen::VectorXd q_vec;
-    q_vec.resize(6);
+    q_vec.resize(NJNTS_);
+    for (int i=0;i<NJNTS_;i++) q_vec[i]=0.0;
     q_vec << 0, 0, 0, 0, 0, 0;
     //Eigen::Affine3d fwd_kin_solve(Eigen::VectorXd const& q_vec)
     Eigen::Affine3d test_affine;

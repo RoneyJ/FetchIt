@@ -41,8 +41,10 @@
   <buildtool_depend>catkin</buildtool_depend>
   <buildtool_depend>catkin_simple</buildtool_depend>
   <build_depend>roscpp</build_depend>
+<build_depend>generic_cartesian_planner</build_depend>
 <build_depend>std_msgs</build_depend>
 <build_depend>fetch_fk_ik</build_depend>
+<build_depend>fk_ik_virtual</build_depend>
 <build_depend>actionlib</build_depend>
 <build_depend>trajectory_msgs</build_depend>
 <build_depend>geometry_msgs</build_depend>
@@ -52,6 +54,7 @@
 <build_depend>arm_motion_interface</build_depend>
 <build_depend>arm_motion_action</build_depend>
   <run_depend>roscpp</run_depend>
+<run_depend>generic_cartesian_planner</run_depend>
 <run_depend>std_msgs</run_depend>
 <run_depend>fetch_fk_ik</run_depend>
 <run_depend>actionlib</run_depend>
