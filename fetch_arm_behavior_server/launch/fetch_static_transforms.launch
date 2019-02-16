@@ -1,7 +1,12 @@
 <launch>
-<node pkg="tf" type="static_transform_publisher" name="system_ref_frame" args="0 0 0 0 0 0 1 world system_ref_frame 100" />
+
+
+<node pkg="tf2_ros" type="static_transform_publisher" name="system_ref_frame" args="0 0 0 0 0 0 1 world system_ref_frame" />
+
 <!--node pkg="tf" type="static_transform_publisher" name="base_link_ref_frame" args="0 0 0 0 0 0 1 link1 base_link 100" /-->
-<node pkg="tf" type="static_transform_publisher" name="generic_gripper_frame" args="0 0 0 0 0 0 1 gripper_frame generic_gripper_frame 100" />
+
+<!--need to check next line xform: my gripper frame differs from URDF gripper frame -->
+<node pkg="tf2_ros" type="static_transform_publisher" name="generic_gripper_frame" args="0 0 0 0 0 1 0 gripper_frame  generic_gripper_frame" />
 <!--synonym: tool_frame and gripper_frame, since the "tool" (e.g. paint head) might not be a gripper -->
-<node pkg="tf" type="static_transform_publisher" name="generic_tool_frame" args="0 0 0 0 0 0 1 generic_gripper_frame generic_tool_frame 100" />
+<node pkg="tf2_ros" type="static_transform_publisher" name="generic_tool_frame" args="0 0 0 0 0 0 1 generic_gripper_frame generic_tool_frame" />
 </launch>

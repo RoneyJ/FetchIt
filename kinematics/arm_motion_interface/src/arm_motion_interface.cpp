@@ -66,7 +66,7 @@ cart_move_as_(*nodehandle, "cartMoveActionServer", boost::bind(&ArmMotionInterfa
     Eigen::VectorXd q_vec;
     q_vec.resize(NJNTS_);
     for (int i=0;i<NJNTS_;i++) q_vec[i]=0.0;
-    q_vec << 0, 0, 0, 0, 0, 0;
+    //q_vec << 0, 0, 0, 0, 0, 0;
     //Eigen::Affine3d fwd_kin_solve(Eigen::VectorXd const& q_vec)
     Eigen::Affine3d test_affine;
     test_affine = pFwdSolver_->fwd_kin_solve(q_vec);

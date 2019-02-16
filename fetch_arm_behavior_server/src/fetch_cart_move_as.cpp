@@ -1,5 +1,5 @@
-// irb140_cart_move_as: 
-// wsn,  Nov, 2018
+// fetch_cart_move_as: 
+// wsn,  Feb, 2019
 // action server to accept commands and perform planning and motion requests
 
 
@@ -23,8 +23,9 @@ int main(int argc, char** argv) {
 
     //TEST TEST TEST
     Eigen::VectorXd q_vec;
-    q_vec.resize(6);
-    q_vec<<0,0,0,0,0,0;
+    q_vec.resize(NJNTS); //from robot_specific_fk_ik_mappings.h
+    for (int i=0;i<NJNTS;i++) q_vec[i]=0.0;
+
     //Eigen::Affine3d fwd_kin_solve(Eigen::VectorXd const& q_vec)
     Eigen::Affine3d test_affine;
     test_affine = robotSpecificFK.fwd_kin_solve(q_vec);
@@ -35,7 +36,7 @@ int main(int argc, char** argv) {
     
 
     
-    int njnts = g_jnt_names.size();
+    //int njnts = g_jnt_names.size();
     ArmMotionInterfaceInits armMotionInterfaceInits;
     armMotionInterfaceInits.urdf_base_frame_name = g_urdf_base_frame_name;
     armMotionInterfaceInits.urdf_flange_frame_name = g_urdf_flange_frame_name;            
@@ -48,7 +49,7 @@ int main(int argc, char** argv) {
     armMotionInterfaceInits.pFwdSolver_arg = pFwdSolver;
     armMotionInterfaceInits.use_trajectory_action_server = g_use_trajectory_action_server;
     
-    for (int i=0;i<njnts;i++) {
+    for (int i=0;i<NJNTS;i++) {
        armMotionInterfaceInits.q_lower_limits.push_back(q_lower_limits[i]);
        armMotionInterfaceInits.q_upper_limits.push_back(q_upper_limits[i]);
        armMotionInterfaceInits.qdot_max_vec.push_back(g_qdot_max_vec[i]);
