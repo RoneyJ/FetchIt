@@ -1,14 +1,14 @@
-// example_irb140_cart_path_planner_main: 
-// wsn, Nov, 2018
-// example using cartesian path planner to compute viable horizontal moves for irb140
-// choose: tool-flange z-axis pointing down
+// example_fetch_cart_path_planner_main: 
+// wsn, Feb, 2019
+// example using cartesian path planner to compute viable horizontal moves for fetch arm
+// choose: gripper z-axis pointing down
 // try to move horizontally along x axis, preserving orientation
 
 // uses library of arm-motion planning functions
-#include <irb140_fk_ik/irb140_kinematics.h> //in this case, choose irb140; change this for different robots
+#include <fetch_fk_ik/fetch_kinematics.h> //in this case, choose fetch; change this for different robots
 #include <fk_ik_virtual/fk_ik_virtual.h> //defines the base class with virtual fncs
 #include <generic_cartesian_planner/generic_cartesian_planner.h>
-#include "irb140_planner.h" //defines virtual fncs for irb120
+#include "fetch_planner.h" //defines virtual fncs for fetch
 
 #include <eigen3/Eigen/src/Geometry/Transform.h>
 #include <iostream>
@@ -26,14 +26,14 @@ const double y_mid = 0.0;
 const double z_mid = 0.2;
 
 int main(int argc, char** argv) {
-    ros::init(argc, argv, "example_irb140_cart_path_planner_main");
+    ros::init(argc, argv, "example_fetch_cart_path_planner_main");
     ros::NodeHandle nh; //standard ros node handle    
     Eigen::VectorXd q_in_vecxd;
     //some handy constants...
     Eigen::Matrix3d R_gripper_horiz, R_gripper_dn, R_rot_z, R_start,R_mid,R_angle_axis;
     Eigen::Vector3d gripper_n_des, gripper_t_des, gripper_b_des;
     Eigen::Vector3d gripper_n_start, gripper_t_start, gripper_b_start;
-    Eigen::Vector3d flange_origin_start,flange_origin_end,flange_origin_mid;
+    Eigen::Vector3d gripper_origin_start,gripper_origin_end,gripper_origin_mid;
     bool found_path = false;
     
    CartTrajPlanner cartTrajPlanner;
@@ -47,20 +47,20 @@ int main(int argc, char** argv) {
    FwdSolver * pFwdSolver = &robotSpecificFK;
    IKSolver * pIKSolver = &robotSpecificIK;
    
-   Eigen::VectorXd jspace_planner_weights;
-   jspace_planner_weights.resize(njnts);
-   jspace_planner_weights<<1,1,1,1,1,1;
-   cartTrajPlanner.set_jspace_planner_weights(jspace_planner_weights);    
+   //Eigen::VectorXd jspace_planner_weights;
+   //jspace_planner_weights.resize(njnts);
+   //jspace_planner_weights<<1,1,1,1,1,1;
+   //cartTrajPlanner.set_jspace_planner_weights(jspace_planner_weights);    
     
     ofstream outfile; //open a file in which to save the results
-    outfile.open("irb120_poses.path");    
+    outfile.open("fetch_poses.path");    
     
-    flange_origin_start<<x_start,y_start,z_des;
-    flange_origin_end<<x_end,y_end,z_des;
-    flange_origin_mid<<x_mid,y_mid,z_mid;
+    gripper_origin_start<<x_start,y_start,z_des;
+    gripper_origin_end<<x_end,y_end,z_des;
+    gripper_origin_mid<<x_mid,y_mid,z_mid;
 
     //trajectory_msgs::JointTrajectory g_des_trajectory; // an empty trajectory
-    Eigen::Affine3d a_tool_start, a_tool_end, a_tool_mid; //really, these refer to the tool flange
+    Eigen::Affine3d a_tool_start, a_tool_end, a_tool_mid; //
 
     std::vector<Eigen::VectorXd> optimal_path;
     Eigen::VectorXd qvec;
@@ -81,26 +81,26 @@ int main(int argc, char** argv) {
     //specify start and end poses:
     R_start = R_gripper_dn;
     a_tool_start.linear() = R_start;
-    a_tool_start.translation() = flange_origin_start;
+    a_tool_start.translation() = gripper_origin_start;
     a_tool_end.linear() = R_rot_z*R_gripper_dn;
-    a_tool_end.translation() = flange_origin_end;
+    a_tool_end.translation() = gripper_origin_end;
     //also a mid pose, to test multipoint paths:
-    a_tool_mid.translation() = flange_origin_mid;
+    a_tool_mid.translation() = gripper_origin_mid;
     Eigen::Vector3d k_rot_axis;
     k_rot_axis<< 0,1,0; // rotate about the y axis
     double theta = 1.0; //by 1 rad
     R_angle_axis = Eigen::AngleAxisd(theta, k_rot_axis);
     R_mid = R_angle_axis*R_start;
     a_tool_mid.linear() = R_mid;
-    std::vector<Eigen::Affine3d> a_flange_poses;
-    a_flange_poses.push_back(a_tool_start);
-     a_flange_poses.push_back(a_tool_mid);
-    a_flange_poses.push_back(a_tool_end);   
+    std::vector<Eigen::Affine3d> a_gripper_poses;
+    a_gripper_poses.push_back(a_tool_start);
+     a_gripper_poses.push_back(a_tool_mid);
+    a_gripper_poses.push_back(a_tool_end);   
     std::vector<int> nsteps_vec;
     std::vector<int> nsteps_to_via_pt;
     nsteps_vec.push_back(3);
     nsteps_vec.push_back(3);
-    found_path = cartTrajPlanner.multipoint_cartesian_path_planner(a_flange_poses,nsteps_vec, optimal_path,nsteps_to_via_pt);
+    found_path = cartTrajPlanner.multipoint_cartesian_path_planner(a_gripper_poses,nsteps_vec, optimal_path,nsteps_to_via_pt);
     if (found_path) {
       ROS_INFO("found multistep path");
     }

@@ -142,6 +142,7 @@ cart_move_as_(*nodehandle, "cartMoveActionServer", boost::bind(&ArmMotionInterfa
     ROS_INFO("tf is good for system_ref_frame and base_link");
     xformUtils.printStampedTf(base_link_wrt_system_ref_frame_stf_);
 
+    /*
     ROS_INFO("waiting for tf between base_link and world...");
     tferr = true;
     while (tferr) {
@@ -157,7 +158,7 @@ cart_move_as_(*nodehandle, "cartMoveActionServer", boost::bind(&ArmMotionInterfa
     }
     ROS_INFO("tf is good for world and base_link");
     xformUtils.printStampedTf(base_link_wrt_world_stf_);
-
+*/
     //establish publisher to command joints; assumes interface is simple publish/subscribe
     traj_publisher_ = nh_.advertise<trajectory_msgs::JointTrajectory>(armMotionInterfaceInits.traj_pub_topic_name.c_str(), 1, true);
 
