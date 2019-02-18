@@ -120,7 +120,7 @@ int main(int argc, char** argv) {
        nsegs++;
        arrival_times.push_back(arrival_time);   
     }
-    tool_pose.pose.position.y+=0.2;
+    tool_pose.pose.position.y-=0.2;
      ROS_INFO("requesting plan move along -y axis:");
     xformUtils.printPose(tool_pose);
     rtn_val=cart_motion_commander.append_multi_traj_cart_segment(nsteps, arrival_time,tool_pose);
@@ -132,6 +132,35 @@ int main(int argc, char** argv) {
        nsegs++;
        arrival_times.push_back(arrival_time);   
     }    
+
+    //O_des<<0.5, 0.0, 0.2; //this is too close; arm hits head
+    tool_pose.pose.position.x = 0.7;
+    tool_pose.pose.position.y = 0.0;
+    tool_pose.pose.position.z = 0.2;
+    ROS_INFO("requesting plan move to 0.7, 0.9, 0.2");
+    xformUtils.printPose(tool_pose);
+    rtn_val=cart_motion_commander.append_multi_traj_cart_segment(nsteps, arrival_time,tool_pose);
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+         ROS_WARN("unsuccessful plan; rtn_code = %d",rtn_val);
+         exit(1);
+    }     
+    else {
+       nsegs++;
+       arrival_times.push_back(arrival_time);   
+    }    
+
+    tool_pose.pose.position.z -= 0.2;
+    xformUtils.printPose(tool_pose);
+    rtn_val=cart_motion_commander.append_multi_traj_cart_segment(nsteps, arrival_time,tool_pose);
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+         ROS_WARN("unsuccessful plan; rtn_code = %d",rtn_val);
+         exit(1);
+    }     
+    else {
+       nsegs++;
+       arrival_times.push_back(arrival_time);   
+    }   
+
     //execute multi-traj:
     double wait_time;
     for (int iseg=0;iseg<nsegs;iseg++) {
@@ -140,7 +169,36 @@ int main(int argc, char** argv) {
         rtn_val = cart_motion_commander.execute_traj_nseg(iseg);
         //ros::Duration(wait_time).sleep();
     }
-    
+
+    int xyz_num;
+   xyz_num=0;
+   while(xyz_num>=0)  {
+    cout<<"enter 0,1,2 for incremental move in x,y,z: ";
+    cin>>xyz_num;
+    cout<<"enter desired ds (in m): ";
+    double ds;
+    cin>>ds;
+    if (xyz_num==0) tool_pose.pose.position.x += ds;
+    if (xyz_num==1) tool_pose.pose.position.y += ds;
+    if (xyz_num==2) tool_pose.pose.position.z += ds;
+    ROS_INFO("desired tool pose: ");
+    xformUtils.printPose(tool_pose);
+    arrival_times.clear();
+    //note: bug in plan_cartesian_traj_qprev_to_des_tool_pose(); if no valid IK soln along path, action server crashes!
+    //...first call only???
+    // for single move (not multisegment), use plan_cartesian_traj_current_to_des_tool_pose
+    // and TODO: find/fix this bug
+    rtn_val=cart_motion_commander.plan_cartesian_traj_current_to_des_tool_pose(nsteps, arrival_time,tool_pose);
+    if (rtn_val == arm_motion_action::arm_interfaceResult::SUCCESS)  { 
+        ROS_INFO("successful plan; command execution of trajectory");
+        rtn_val=cart_motion_commander.execute_planned_traj();
+        ros::Duration(arrival_time+0.2).sleep(); 
+    }
+    else {
+        ROS_WARN("unsuccessful plan; rtn_code = %d",rtn_val);
+    }    
+ }
+
     return 0;
 }
 

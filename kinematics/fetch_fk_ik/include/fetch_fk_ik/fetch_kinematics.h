@@ -102,6 +102,7 @@ const double deg2rad = M_PI/180.0;
 
 const double DH_q_max1 = 1.6056;
 const double DH_q_max2 = 1.518;
+const double FETCH_qmax2 = 1.518;
 const double DH_q_max3 = M_PI; //continuous
 const double DH_q_max4 = 2.251;
 const double DH_q_max5 = M_PI; //continuous
@@ -110,7 +111,8 @@ const double FETCH_WRIST_BEND_MAX = DH_q_max6;
 const double DH_q_max7 = M_PI; //continuous
 
 const double DH_q_min1 = -1.6056;
-const double DH_q_min2 = -1.221;
+const double DH_q_min2 = -1.221; //THIS IS ACTUALLY FETCH Q_MIN
+const double FETCH_qmin2 = -1.22; 
 const double DH_q_min3 = -M_PI; //
 const double DH_q_min4 = -2.251;
 const double DH_q_min5 = -M_PI;

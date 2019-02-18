@@ -718,7 +718,8 @@ void ArmMotionInterface::replan_discontinuities() {
      cart_move_as_.setSucceeded(cart_result_); 
 }
 
-
+//XXX BUG HERE: if invalid IK along path (at least for first call?), this causes server to crash!!!
+// FIX ME!
 bool ArmMotionInterface::plan_cartesian_traj_qprev_to_des_tool_pose() {
     goal_gripper_pose_ = cart_goal_.des_pose_gripper;
     xformUtils.printStampedPose(goal_gripper_pose_);

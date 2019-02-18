@@ -267,7 +267,7 @@ int Fetch_IK_solver::ik_solve_simple_reach(Eigen::Affine3d const& desired_hand_p
         Eigen::Vector3d desired_hand_origin_wrt_DH0 =  desired_hand_pose_wrt_DH0.translation();
         double q_shoulder_pan = atan2(desired_hand_origin_wrt_DH0[1],desired_hand_origin_wrt_DH0[0]);
         ROS_INFO("choosing q_shoulder_pan = %f",q_shoulder_pan);
-        ik_solve_elbow_up_given_q1(desired_hand_pose, q_shoulder_pan, q_ik_solns1234);
+        //ik_solve_elbow_up_given_q1(desired_hand_pose, q_shoulder_pan, q_ik_solns1234);
     bool reachable = compute_q234_solns_elbow_up(desired_hand_pose_wrt_DH0, q_shoulder_pan, q_ik_solns1234);
     if (!reachable) {
         return 0;
@@ -285,17 +285,19 @@ int Fetch_IK_solver::ik_solve_simple_reach(Eigen::Affine3d const& desired_hand_p
     reachable=false; //guilty until proven innocent
     for (int i=0;i<nsolns;i++) {
         q_soln = q_ik_solns1234[i];
-            if (solve_spherical_wrist(q_soln,R_des, q_wrist_solns)) {  
-                int n_wrist_solns = q_wrist_solns.size();
+        solve_spherical_wrist(q_soln,R_des, q_wrist_solns);
+        int n_wrist_solns = q_wrist_solns.size();
+        if (n_wrist_solns>0) {  
                 for (int iwrist=0;iwrist<1;iwrist++) { //ONLY consider positive wrist bend...single soln
                     q_soln = q_wrist_solns[iwrist];
                     q_ik_solns.push_back(q_soln);
                     reachable = true; // note that we have at least one reachable solution
                 }
             }
-            else {
-                ROS_WARN("singularity in wrist solns!");
-            }
+            //else {
+            //    ROS_WARN("no wrist solns");
+                //ROS_WARN("singularity in wrist solns!");
+            //}
     }
     if (!reachable) {
         return 0;
@@ -330,18 +332,21 @@ int Fetch_IK_solver::ik_solve(Eigen::Affine3d const& desired_hand_pose, double q
     reachable=false; //guilty until proven innocent
     for (int i=0;i<nsolns;i++) {
         q_soln = q_ik_solns1234[i];
-            if (solve_spherical_wrist(q_soln,R_des, q_wrist_solns)) {  
-                int n_wrist_solns = q_wrist_solns.size();
-                for (int iwrist=0;iwrist<n_wrist_solns;iwrist++) {
+               solve_spherical_wrist(q_soln,R_des, q_wrist_solns);
+        int n_wrist_solns = q_wrist_solns.size();
+        if (n_wrist_solns>0) {  
+                for (int iwrist=0;iwrist<1;iwrist++) { //ONLY consider positive wrist bend...single soln
                     q_soln = q_wrist_solns[iwrist];
                     q_ik_solns.push_back(q_soln);
                     reachable = true; // note that we have at least one reachable solution
                 }
             }
-            else {
-                ROS_WARN("singularity in wrist solns!");
-            }
+            //else {
+            //    ROS_WARN("no wrist solns");
+                //ROS_WARN("singularity in wrist solns!");
+            //}
     }
+
     if (!reachable) {
         return 0;
     }
@@ -490,6 +495,7 @@ bool Fetch_IK_solver::compute_q234_solns(Eigen::Affine3d const& desired_hand_pos
 
            for (int i_shoulder_lift=0;i_shoulder_lift<2;i_shoulder_lift++) {
                q_shoulder_lift_soln=q_shoulder_lift_solns[i_shoulder_lift];
+               if ((FETCH_qmin2<q_shoulder_lift_soln)&&(FETCH_qmax2>q_shoulder_lift_soln)) {
                //ROS_INFO("q_shoulder_lift_soln soln: %f",q_shoulder_lift_soln);
 
                O5_wrt_1=compute_O5_wrt_1(O5_wrt_2,q_shoulder_lift_soln);  
@@ -505,6 +511,8 @@ bool Fetch_IK_solver::compute_q234_solns(Eigen::Affine3d const& desired_hand_pos
                    ROS_INFO("\n \n");
                }
            }
+               else ROS_WARN("shoulder soln %f out of range",q_shoulder_lift_soln);
+          }
        }
     }
    int nsolns = q_solns.size();
