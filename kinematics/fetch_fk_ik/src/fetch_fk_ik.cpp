@@ -602,7 +602,7 @@ bool Fetch_IK_solver::compute_q234_solns_elbow_up(Eigen::Affine3d const& desired
            for (int i_shoulder_lift=0;i_shoulder_lift<2;i_shoulder_lift++) {
                q_shoulder_lift_soln=q_shoulder_lift_solns[i_shoulder_lift];
                //ROS_INFO("q_shoulder_lift_soln soln: %f",q_shoulder_lift_soln);
-
+               if ((FETCH_qmin2<q_shoulder_lift_soln)&&(FETCH_qmax2>q_shoulder_lift_soln)) {
                O5_wrt_1=compute_O5_wrt_1(O5_wrt_2,q_shoulder_lift_soln);  
                O5_wrt_1_3d = O5_wrt_1.head(3);
                w_err = (O5_wrt_1_3d-w_wrt_1_des).norm();
@@ -615,6 +615,7 @@ bool Fetch_IK_solver::compute_q234_solns_elbow_up(Eigen::Affine3d const& desired
                    q_solns.push_back(q_soln);
                    //ROS_INFO("\n \n");
                }
+           }
            }
        }
     }
