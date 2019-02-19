@@ -87,7 +87,7 @@
 
    <model name="gear_box">
     <link name='link'>
-      <pose>4.422 -2.116 0.7765 1.5789 -1.46322 -1.5681</pose>
+      <pose>4.422 -2.116 0.8 1.5789 -1.46322 -1.5681</pose>
       <inertial>
         <mass>0.1</mass>
         <inertia>
@@ -140,7 +140,7 @@
   </model>
 <model name="gear_box">
     <link name='link'>
-      <pose>5.422 -2.116 0.7765 1.5789 -1.46322 -1.5681</pose>
+      <pose>5.422 -2.116 0.8 1.5789 -1.46322 -1.5681</pose>
       <inertial>
         <mass>0.1</mass>
         <inertia>
@@ -194,7 +194,7 @@
 
     <model name="small gear">
     <link name='link'>
-      <pose>5.422 -1.7116 0.7765 1.5789 -1.46322 -1.5681</pose>
+      <pose>5.422 -1.7116 0.8 1.5789 -1.46322 -1.5681</pose>
       <inertial>
         <mass>0.1</mass>
         <inertia>
@@ -209,8 +209,8 @@
      <collision name='collision'>
         <geometry>
           <cylinder>
-            <radius>0.001</radius>
-            <length>0.015</length>
+            <radius>0.02</radius>
+            <length>0.15</length>
           </cylinder>
         </geometry>
         
@@ -251,7 +251,7 @@
 
     <model name="bolt_1">
     <link name='link'>
-      <pose>5.422 -1.981 0.7765 1.5789 -1.46322 -1.5681</pose>
+      <pose>5.422 -1.981 0.8 1.5789 -1.46322 -1.5681</pose>
       <inertial>
         <mass>0.1</mass>
         <inertia>
@@ -266,8 +266,8 @@
      <collision name='collision'>
         <geometry>
           <cylinder>
-            <radius>0.002</radius>
-            <length>0.015</length>
+            <radius>0.02</radius>
+            <length>0.07</length>
           </cylinder>
         </geometry>
         
@@ -308,7 +308,7 @@
 
     <model name="bolt_2">
     <link name='link'>
-      <pose>5.422 -1.892 0.7765 1.5789 -1.46322 -1.5681</pose>
+      <pose>5.422 -1.892 0.8 1.5789 -1.46322 -1.5681</pose>
       <inertial>
         <mass>0.1</mass>
         <inertia>
@@ -323,8 +323,8 @@
      <collision name='collision'>
         <geometry>
           <cylinder>
-            <radius>0.002</radius>
-            <length>0.015</length>
+            <radius>0.02</radius>
+            <length>0.07</length>
           </cylinder>
         </geometry>
         
