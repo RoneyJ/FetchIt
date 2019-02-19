@@ -2,11 +2,13 @@
 This package contains some examples of using PCL.  
 make_and_display_ellipse shows how to manually populate a point-cloud object, convert the PCL object to a ROS pointCloud message, and publish this message, viewable by Rviz.
 
-pcd_snapshot is an example utility that exploits the pcl_utils library.  It waits for valid Kinect pointcloud message, then saves this message to disk as a 
-PCD file by the name of kinect_snapshot.pcd.
+pcd_snapshot is an example utility that exploits the pcl_utils library.  It waits for valid  pointcloud message, then saves this message to disk as a 
+PCD file by the name of fetch_snapshot.pcd.
 
 display_pcd_file prompts for a file name, loads the file, converts it to a ROS message, and publishes this message for display in Rviz.  The
-topic is "pcd" and the frame is "camera_depth_optical_frame".
+topic is "pcd" and the frame is "head_camera_rgb_optical_frame".
+
+xxx have not yet completed porting the following to 18.04/Melodic/Fetch xxx
 
 find_plane_pcd_file illustrates use of pclUtils functions, as well as use of native PCL functions.  It prompts for a PCD file name, reads the file,
 and (like display_pcd) converts to a ROS message and publishes it (topic is "pcd" and the frame is "camera_depth_optical_frame").  It then prompts the
