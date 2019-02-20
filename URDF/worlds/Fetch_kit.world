@@ -3,7 +3,7 @@
   <world name="default">
 
      <model name="kit">
-     <pose>5.958056 -2.067436 0.783351 0 -0 0.280733</pose>
+     <pose>6.200438 -1.784480 0.71558 0 0 0.280733</pose>
      <static>true</static>
            <link name='link'>
 	<inertial>
@@ -47,23 +47,23 @@
       <uri>model://sun</uri>
     </include>
     <include>
-        <uri>model://cafe_table</uri>
+        <uri>model://davinci_table</uri>
         <pose>6.664898 -1.397426 0 0 -0 0</pose>
     </include>
    <include>
-        <uri>model://cafe_table</uri>
+        <uri>model://davinci_table</uri>
         <pose>5.226423 -1.889488 0 0 -0 0</pose>
     </include>
    <include>
-        <uri>model://cafe_table</uri>
+        <uri>model://davinci_table</uri>
         <pose>7.812943 -2.365025 0 0 -0 0</pose>
     </include>
    <include>
-        <uri>model://cafe_table</uri>
+        <uri>model://davinci_table</uri>
         <pose>7.084308 -3.520992 0 0 -0 0</pose>
     </include>
    <include>
-        <uri>model://cafe_table</uri>
+        <uri>model://davinci_table</uri>
         <pose>6.042780 -3.544366 0 0 -0 0</pose>
     </include>
 
@@ -78,16 +78,16 @@
     </include>
  <include>
         <uri>model://grey_wall</uri>
-        <pose>4.823890 -4.008980 0 0 -0 0</pose>
+        <pose>4.823890 -4.108980 0 0 -0 0</pose>
     </include>
  <include>
         <uri>model://grey_wall</uri>
-        <pose>8.195705 -2.308397 0 0 -0 -1.571061</pose>
+        <pose>8.195705 -2.108397 0 0 -0 -1.571061</pose>
     </include>
 
    <model name="gear_box">
     <link name='link'>
-      <pose>4.422 -2.116 0.7765 1.5789 -1.46322 -1.5681</pose>
+      <pose>4.422 -2.116 0.8 1.5789 -1.46322 -1.5681</pose>
       <inertial>
         <mass>0.1</mass>
         <inertia>
@@ -140,7 +140,7 @@
   </model>
 <model name="gear_box">
     <link name='link'>
-      <pose>5.422 -2.116 0.7765 1.5789 -1.46322 -1.5681</pose>
+      <pose>5.422 -2.116 0.8 1.5789 -1.46322 -1.5681</pose>
       <inertial>
         <mass>0.1</mass>
         <inertia>
@@ -194,7 +194,7 @@
 
     <model name="small gear">
     <link name='link'>
-      <pose>5.422 -1.7116 0.7765 1.5789 -1.46322 -1.5681</pose>
+      <pose>5.422 -1.7116 0.8 1.5789 -1.46322 -1.5681</pose>
       <inertial>
         <mass>0.1</mass>
         <inertia>
@@ -209,8 +209,8 @@
      <collision name='collision'>
         <geometry>
           <cylinder>
-            <radius>0.001</radius>
-            <length>0.015</length>
+            <radius>0.02</radius>
+            <length>0.15</length>
           </cylinder>
         </geometry>
         
@@ -251,7 +251,7 @@
 
     <model name="bolt_1">
     <link name='link'>
-      <pose>5.422 -1.981 0.7765 1.5789 -1.46322 -1.5681</pose>
+      <pose>5.422 -1.981 0.8 1.5789 -1.46322 -1.5681</pose>
       <inertial>
         <mass>0.1</mass>
         <inertia>
@@ -266,8 +266,8 @@
      <collision name='collision'>
         <geometry>
           <cylinder>
-            <radius>0.002</radius>
-            <length>0.015</length>
+            <radius>0.02</radius>
+            <length>0.07</length>
           </cylinder>
         </geometry>
         
@@ -308,7 +308,7 @@
 
     <model name="bolt_2">
     <link name='link'>
-      <pose>5.422 -1.892 0.7765 1.5789 -1.46322 -1.5681</pose>
+      <pose>5.422 -1.892 0.8 1.5789 -1.46322 -1.5681</pose>
       <inertial>
         <mass>0.1</mass>
         <inertia>
@@ -323,8 +323,8 @@
      <collision name='collision'>
         <geometry>
           <cylinder>
-            <radius>0.002</radius>
-            <length>0.015</length>
+            <radius>0.02</radius>
+            <length>0.07</length>
           </cylinder>
         </geometry>
         
