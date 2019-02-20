@@ -11,21 +11,23 @@ int main (int argc, char **argv) {
 	//Recheck the name of the action server
 	
 	control_msgs::GripperCommandGoal goal;
+	control_msgs::GripperCommandResult result;
 	ROS_INFO("Waiting for server"); //Take this out after testing
 	ac.waitForServer(); 
 	ROS_INFO("Connected");
 
-	//For test purposes, just open and close
-	while(ros::ok()) {
-		ROS_INFO("Open");
 		goal.command.position = 0.05; //Open by just 5cm
 		goal.command.max_effort = 1;
 		ac.sendGoal(goal);
+	//For test purposes, just open and close
+	while(ros::ok()) {
+		ROS_INFO("Open");
 		//Doesnt seem like the fetch gripper action server gives feedback :( 
 		
 		ac.waitForResult();
-		
-		ROS_INFO("Zero");
+		result = *ac.getResult();
+		ROS_INFO_STREAM("Result is"<< result);
+		ROS_INFO("Got result");
 		goal.command.position = 0.05;
 		goal.command.max_effort = 1;
 		//ac.sendGoal(goal);
