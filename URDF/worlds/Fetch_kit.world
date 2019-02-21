@@ -4,7 +4,7 @@
 
      <model name="kit">
      <pose>6.200438 -1.784480 0.71558 0 0 0.280733</pose>
-     <static>true</static>
+     
            <link name='link'>
 	<inertial>
         <mass>0.1</mass>
@@ -19,18 +19,34 @@
       </inertial>
 	    
             <collision name='collision'>
-              <geometry>
-               <mesh>
-		  <uri>model://Fetch_kit/meshes/kit3.stl</uri>
-
-               </mesh>
-              </geometry>
-            </collision>
+	<pose>0 0 -0.08 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.22 0.22 0.005</size>
+          </box>
+        </geometry>
+       <surface>
+            <friction>
+              <ode>
+                <mu>50.0</mu>
+                <mu2>50.0</mu2>
+              </ode>
+            </friction>
+            <contact>
+              <ode>
+                <kp>1000000.0</kp>
+                <kd>100.0</kd>
+                <max_vel>1.0</max_vel>
+                <min_depth>0.0005</min_depth>
+              </ode>
+            </contact>
+          </surface>
+      </collision>
 
            <visual name='visual'>
              <geometry>
                <mesh>
-		  <uri>model://Fetch_kit/meshes/kit3.stl</uri>
+		  <uri>model://Fetch_kit/meshes/kit6.stl</uri>
 
                </mesh>
              </geometry>
@@ -67,7 +83,7 @@
         <pose>6.042780 -3.544366 0 0 -0 0</pose>
     </include>
 
-         <include>
+        <!-- <include>
         <uri>model://grey_wall</uri>
         <pose>4.747150 -0.943460 0 0 -0 0</pose>
     </include>
@@ -83,64 +99,12 @@
  <include>
         <uri>model://grey_wall</uri>
         <pose>8.195705 -2.108397 0 0 -0 -1.571061</pose>
-    </include>
+    </include>-->
 
-   <model name="gear_box">
-    <link name='link'>
-      <pose>4.422 -2.116 0.7765 1.5789 -1.46322 -1.5681</pose>
-      <inertial>
-        <mass>0.1</mass>
-        <inertia>
-          <ixx>0.01</ixx>
-          <ixy>0</ixy>
-          <ixz>0</ixz>
-          <iyy>0.01</iyy>
-          <iyz>0</iyz>
-          <izz>0.01</izz>
-        </inertia>
-      </inertial>
-     <collision name='collision'>
-        <geometry>
-          <box>
-            <size>0.035 0.2 0.035</size>
-          </box>
-        </geometry>
-       <surface>
-            <friction>
-              <ode>
-                <mu>50.0</mu>
-                <mu2>50.0</mu2>
-              </ode>
-            </friction>
-            <contact>
-              <ode>
-                <kp>1000000.0</kp>
-                <kd>100.0</kd>
-                <max_vel>1.0</max_vel>
-                <min_depth>0.0005</min_depth>
-              </ode>
-            </contact>
-          </surface>
-      </collision>
- 
-      <visual name='visual'>
-        <geometry>
-          <box>
-            <size>0.035 0.2 0.035</size>
-          </box>
-        </geometry>
-  <material>
-    <ambient>1 0 0 1</ambient>
-    <diffuse>1 0 0 1</diffuse>
-    <specular>0.1 0.1 0.1 1</specular>
-    <emissive>0 0 0 0</emissive>
-  </material>
-      </visual>
-    </link>     
-  </model>
+  
 <model name="gear_box">
     <link name='link'>
-      <pose>5.422 -2.116 0.7765 1.5789 -1.46322 -1.5681</pose>
+      <pose>0 0 0 0 0 0</pose>
       <inertial>
         <mass>0.1</mass>
         <inertia>
@@ -153,9 +117,10 @@
         </inertia>
       </inertial>
      <collision name='collision'>
+<pose>0 0 0 0 0 0</pose>
         <geometry>
           <box>
-            <size>0.035 0.2 0.035</size>
+            <size>0.035 0.035 0.18</size>
           </box>
         </geometry>
        <surface>
@@ -177,20 +142,17 @@
       </collision>
  
       <visual name='visual'>
-        <geometry>
-          <box>
-            <size>0.035 0.2 0.035</size>
-          </box>
-        </geometry>
-  <material>
-    <ambient>1 0 0 1</ambient>
-    <diffuse>1 0 0 1</diffuse>
-    <specular>0.1 0.1 0.1 1</specular>
-    <emissive>0 0 0 0</emissive>
-  </material>
-      </visual>
+             <geometry>
+               <mesh>
+		  <uri>model://gearBox/meshes/gearBoxBottom_v3.stl</uri>
+
+               </mesh>
+             </geometry>
+            </visual>
     </link>     
   </model>
+
+
 
     <model name="small gear">
     <link name='link'>
