@@ -3,7 +3,7 @@
   <world name="default">
 
      <model name="kit">
-     <pose>5.958056 -2.067436 0.783351 0 -0 0.280733</pose>
+     <pose>6.200438 -1.784480 0.71558 0 0 0.280733</pose>
      <static>true</static>
            <link name='link'>
 	<inertial>
@@ -47,23 +47,23 @@
       <uri>model://sun</uri>
     </include>
     <include>
-        <uri>model://cafe_table</uri>
+        <uri>model://davinci_table</uri>
         <pose>6.664898 -1.397426 0 0 -0 0</pose>
     </include>
    <include>
-        <uri>model://cafe_table</uri>
+        <uri>model://davinci_table</uri>
         <pose>5.226423 -1.889488 0 0 -0 0</pose>
     </include>
    <include>
-        <uri>model://cafe_table</uri>
+        <uri>model://davinci_table</uri>
         <pose>7.812943 -2.365025 0 0 -0 0</pose>
     </include>
    <include>
-        <uri>model://cafe_table</uri>
+        <uri>model://davinci_table</uri>
         <pose>7.084308 -3.520992 0 0 -0 0</pose>
     </include>
    <include>
-        <uri>model://cafe_table</uri>
+        <uri>model://davinci_table</uri>
         <pose>6.042780 -3.544366 0 0 -0 0</pose>
     </include>
 
@@ -78,11 +78,11 @@
     </include>
  <include>
         <uri>model://grey_wall</uri>
-        <pose>4.823890 -4.008980 0 0 -0 0</pose>
+        <pose>4.823890 -4.108980 0 0 -0 0</pose>
     </include>
  <include>
         <uri>model://grey_wall</uri>
-        <pose>8.195705 -2.308397 0 0 -0 -1.571061</pose>
+        <pose>8.195705 -2.108397 0 0 -0 -1.571061</pose>
     </include>
 
    <model name="gear_box">
