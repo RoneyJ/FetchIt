@@ -19,6 +19,7 @@
 #include <std_msgs/Float32MultiArray.h>
 
 //#include <cwru_srv/simple_bool_service_message.h> // this is a pre-defined service message, contained in shared "cwru_srv" package
+#include<geometry_msgs/Pose.h> 
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/TwistStamped.h>
 #include <geometry_msgs/Point.h>
@@ -35,11 +36,11 @@
 
 const double UPDATE_RATE = 50.0; // choose the desired-state publication update rate
 const double K_PHI= 10.0; // control gains for steering
-const double K_DISP = 3.0;
-const double K_TRIP_DIST = 1.0;
+const double K_DISP = 6.0;
+const double K_TRIP_DIST = 3.0;
 // dynamic limitations:  these apply to the steering controller; they may be larger than the limits on des state generation
-const double MAX_SPEED = 1.0; // m/sec; adjust this
-const double MAX_OMEGA = 1.0; //1.0; // rad/sec; adjust this
+const double MAX_SPEED = 2; // m/sec; adjust this
+const double MAX_OMEGA = 2; //1.0; // rad/sec; adjust this
 
 
 // define a class, including a constructor, member variables and member functions
@@ -58,7 +59,7 @@ private:
     // some objects to support subscriber, service, and publisher
     ros::Subscriber odom_subscriber_; //these will be set up within the class constructor, hiding these ugly details
     ros::Subscriber des_state_subscriber_;
-    
+    //ros::Subscriber gazebo_state_subscriber_;    
     ros::Publisher cmd_publisher_; // = nh.advertise<geometry_msgs::Twist>("cmd_vel",1);
     ros::Publisher cmd_publisher2_; // = nh.advertise<geometry_msgs::TwistStamped>("cmd_vel_stamped",1);
     ros::Publisher steering_errs_publisher_;
@@ -104,7 +105,8 @@ private:
     void initializeServices();
  
     void odomCallback(const nav_msgs::Odometry& odom_rcvd);
-    void desStateCallback(const nav_msgs::Odometry& des_state_rcvd);    
+    void desStateCallback(const nav_msgs::Odometry& des_state_rcvd);   
+    //void gazeboStateCallback(const geometry_msgs::Pose);
         
 }; 
 

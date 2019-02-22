@@ -1,6 +1,9 @@
 // arm_motion_interface.cpp: 
 // wsn,  Dec, 2017
 // implementaton for ArmMotionInterface, used in the action server
+// Feb, 2019: change arm kinematic base frame reference to arm_kin_base_frame
+// need to publish transform to this  frame in static_transforms.launch
+// need this to distinguish mobile base frame from  base frame of arm kinematics fk/ik
 
 #include<arm_motion_interface/arm_motion_interface.h>
 #include "arm_motion_interface_switcher.cpp"
@@ -64,8 +67,9 @@ cart_move_as_(*nodehandle, "cartMoveActionServer", boost::bind(&ArmMotionInterfa
     //TEST TEST TEST
     ROS_INFO("arm_motion_interface, testing fk pointer...");
     Eigen::VectorXd q_vec;
-    q_vec.resize(6);
-    q_vec << 0, 0, 0, 0, 0, 0;
+    q_vec.resize(NJNTS_);
+    for (int i=0;i<NJNTS_;i++) q_vec[i]=0.0;
+    //q_vec << 0, 0, 0, 0, 0, 0;
     //Eigen::Affine3d fwd_kin_solve(Eigen::VectorXd const& q_vec)
     Eigen::Affine3d test_affine;
     test_affine = pFwdSolver_->fwd_kin_solve(q_vec);
@@ -141,6 +145,7 @@ cart_move_as_(*nodehandle, "cartMoveActionServer", boost::bind(&ArmMotionInterfa
     ROS_INFO("tf is good for system_ref_frame and base_link");
     xformUtils.printStampedTf(base_link_wrt_system_ref_frame_stf_);
 
+    /*
     ROS_INFO("waiting for tf between base_link and world...");
     tferr = true;
     while (tferr) {
@@ -156,7 +161,7 @@ cart_move_as_(*nodehandle, "cartMoveActionServer", boost::bind(&ArmMotionInterfa
     }
     ROS_INFO("tf is good for world and base_link");
     xformUtils.printStampedTf(base_link_wrt_world_stf_);
-
+*/
     //establish publisher to command joints; assumes interface is simple publish/subscribe
     traj_publisher_ = nh_.advertise<trajectory_msgs::JointTrajectory>(armMotionInterfaceInits.traj_pub_topic_name.c_str(), 1, true);
 
@@ -713,7 +718,8 @@ void ArmMotionInterface::replan_discontinuities() {
      cart_move_as_.setSucceeded(cart_result_); 
 }
 
-
+//XXX BUG HERE: if invalid IK along path (at least for first call?), this causes server to crash!!!
+// FIX ME!
 bool ArmMotionInterface::plan_cartesian_traj_qprev_to_des_tool_pose() {
     goal_gripper_pose_ = cart_goal_.des_pose_gripper;
     xformUtils.printStampedPose(goal_gripper_pose_);
@@ -870,9 +876,9 @@ Eigen::Affine3d ArmMotionInterface::xform_gripper_pose_to_affine_flange_wrt_base
     while (tferr) {
         tferr = false;
         try {
-            tfListener_->waitForTransform("base_link", flange_gmps.header.frame_id,
+            tfListener_->waitForTransform("arm_kin_base_frame", flange_gmps.header.frame_id,
                     now, ros::Duration(1.0)); //waits up to N sec for transform to be valid
-            tfListener_->transformPose("base_link", flange_gmps, flange_wrt_base_gmps);
+            tfListener_->transformPose("arm_kin_base_frame", flange_gmps, flange_wrt_base_gmps);
         } catch (tf::TransformException &exception) {
             ROS_WARN("%s; transform problem; retrying...", exception.what());
             tferr = true;

@@ -20,5 +20,6 @@
     <arg name="headless" value="$(arg headless)"/>
   </include>
 
+
 <include file="$(find fetch_gazebo)/launch/include/fetch.launch.xml" />
 </launch>
