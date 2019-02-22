@@ -46,7 +46,7 @@
            <visual name='visual'>
              <geometry>
                <mesh>
-		  <uri>model://Fetch_kit/meshes/kit6.stl</uri>
+		  <uri>model://Fetch_kit/meshes/kit7.stl</uri>
 
                </mesh>
              </geometry>
@@ -102,9 +102,10 @@
     </include>-->
 
   
-<model name="gear_box">
-    <link name='link'>
+<model name="gear_box_bottom">
       <pose>0 0 0 0 0 0</pose>
+    <link name='link'>
+
       <inertial>
         <mass>0.1</mass>
         <inertia>
@@ -117,10 +118,10 @@
         </inertia>
       </inertial>
      <collision name='collision'>
-<pose>0 0 0 0 0 0</pose>
+
         <geometry>
           <box>
-            <size>0.035 0.035 0.18</size>
+            <size>0.035 0.046 0.18</size>
           </box>
         </geometry>
        <surface>
@@ -152,11 +153,61 @@
     </link>     
   </model>
 
-
-
-    <model name="small gear">
+<model name="gear_box_top">
+      <pose>3 0 0 0 0 0</pose>
     <link name='link'>
-      <pose>5.422 -1.7116 0.7765 1.5789 -1.46322 -1.5681</pose>
+
+      <inertial>
+        <mass>0.1</mass>
+        <inertia>
+          <ixx>0.01</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.01</iyy>
+          <iyz>0</iyz>
+          <izz>0.01</izz>
+        </inertia>
+      </inertial>
+     <collision name='collision'>
+      <pose>0 0 -0.01 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.18 0.046 0.015</size>
+          </box>
+        </geometry>
+       <surface>
+            <friction>
+              <ode>
+                <mu>50.0</mu>
+                <mu2>50.0</mu2>
+              </ode>
+            </friction>
+            <contact>
+              <ode>
+                <kp>1000000.0</kp>
+                <kd>100.0</kd>
+                <max_vel>1.0</max_vel>
+                <min_depth>0.0005</min_depth>
+              </ode>
+            </contact>
+          </surface>
+      </collision>
+ 
+      <visual name='visual'>
+             <geometry>
+               <mesh>
+		  <uri>model://gearboxtop/meshes/gearBoxTop_v1.stl</uri>
+
+               </mesh>
+             </geometry>
+            </visual>
+    </link>     
+  </model>
+
+    <model name="large_gear">
+      <pose>0 1 0 0 0 0</pose>
+    <link name='link'>
+
       <inertial>
         <mass>0.1</mass>
         <inertia>
@@ -171,8 +222,8 @@
      <collision name='collision'>
         <geometry>
           <cylinder>
-            <radius>0.001</radius>
-            <length>0.015</length>
+            <radius>0.03</radius>
+            <length>0.058</length>
           </cylinder>
         </geometry>
         
@@ -194,22 +245,72 @@
           </surface>
       </collision>
  
-      <visual name='visual'>
-        <geometry>
-          <cylinder>
-            <radius>0.02</radius>
-            <length>0.15</length>
-          </cylinder>
-        </geometry>
-  <material>
-    <ambient>1 0 0 1</ambient>
-    <diffuse>1 0 0 1</diffuse>
-    <specular>0.1 0.1 0.1 1</specular>
-    <emissive>0 0 0 0</emissive>
-  </material>
-      </visual>
+	<visual name='visual'>
+
+             <geometry>
+               <mesh>
+		  <uri>model://large_gear/meshes/largeGear_v2.stl</uri>
+
+               </mesh>
+             </geometry>
+            </visual>
     </link>     
   </model>
+
+
+   <model name="small_gear">
+      <pose>1 1 0 0 0 0</pose>
+    <link name='link'>
+
+      <inertial>
+        <mass>0.1</mass>
+        <inertia>
+          <ixx>0.01</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.01</iyy>
+          <iyz>0</iyz>
+          <izz>0.01</izz>
+        </inertia>
+      </inertial>
+     <collision name='collision'>
+        <geometry>
+          <cylinder>
+            <radius>0.015</radius>
+            <length>0.04</length>
+          </cylinder>
+        </geometry>
+        
+       <surface>
+            <friction>
+              <ode>
+                <mu>50.0</mu>
+                <mu2>50.0</mu2>
+              </ode>
+            </friction>
+            <contact>
+              <ode>
+                <kp>1000000.0</kp>
+                <kd>100.0</kd>
+                <max_vel>1.0</max_vel>
+                <min_depth>0.0005</min_depth>
+              </ode>
+            </contact>
+          </surface>
+      </collision>
+ 
+	<visual name='visual'>
+
+             <geometry>
+               <mesh>
+		  <uri>model://small_gear/meshes/smallGear_v1.stl</uri>
+
+               </mesh>
+             </geometry>
+            </visual>
+    </link>     
+  </model>
+
 
     <model name="bolt_1">
     <link name='link'>
