@@ -2,6 +2,9 @@ Here is a simulated workspace for Fetch robot. The Fetch.stl file is in .zip sin
 
 Please copy and paste the davinci_table from exmple_models to .gazebo. .gazebo can be found at your home repository by typing ctrl + h. After that, the davinci table can be launched from models. (recent add)
 
+Please also copy all the contents within the Fetch_parts folder to your .gazebo models as well. All the .STL files are linked from the stl files in .gazebo for fetch world. 
+
+
 To launch the workspace, simply type `roslaunch worlds Fetch_kit.launch`.
 Make sure to use Gazebo 9 and melodic since thats the requirements for the competition.
 
