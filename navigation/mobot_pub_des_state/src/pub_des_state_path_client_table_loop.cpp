@@ -44,39 +44,65 @@ int main(int argc, char **argv) {
     while (true) { //repeat forever
         path_srv.request.path.poses.clear();
 	//go to table 1
-        pose.position.x = 7.0; 
-        pose.position.y = -2.35;
-        pose.position.z = 0.0;
-	quat = convertPlanarPhi2Quaternion(0);
-        pose.orientation = quat;
-        pose_stamped.pose = pose;
-        path_srv.request.path.poses.push_back(pose_stamped);
-	//go to table 2
-        pose.position.y = -2.78;
-	quat = convertPlanarPhi2Quaternion(-1.5708);
-	pose.orientation = quat;
-        pose_stamped.pose = pose;
-        path_srv.request.path.poses.push_back(pose_stamped);
+		 pose.position.x = 0.72; 
+        	pose.position.y = 0.38;
+       	 	pose.position.z = 0.0;
+		quat = convertPlanarPhi2Quaternion(0);
+        	pose.orientation = quat;
+        	pose_stamped.pose = pose;
+        	path_srv.request.path.poses.push_back(pose_stamped);
+		// pose 1.1
+ 		pose.position.x = 0.721; 
+ 		pose.position.y = 0.38;
+ 		pose_stamped.pose = pose;
+		path_srv.request.path.poses.push_back(pose_stamped);
+
+	
+       //go to table 2
+                quat = convertPlanarPhi2Quaternion(-1.5708);
+		pose.orientation = quat;
+		pose.position.x = 0.61;
+		pose.position.y = -1.13;
+		pose_stamped.pose = pose;
+		path_srv.request.path.poses.push_back(pose_stamped);
+		//pose 2.1
+		pose.position.y = -1.131;
+		pose_stamped.pose = pose;
+		path_srv.request.path.poses.push_back(pose_stamped);
+
 	//go to table 3
-        pose.position.x = 6.03;
-	quat = convertPlanarPhi2Quaternion(-1.5708);
-	pose.orientation = quat;
-        pose_stamped.pose = pose;
-        path_srv.request.path.poses.push_back(pose_stamped);
-	//go to table 4
-        pose.position.x = 5.97;
-	pose.position.y = -2.18;
-	quat = convertPlanarPhi2Quaternion(-3.1416);
-	pose.orientation = quat;
-        pose_stamped.pose = pose;
-        path_srv.request.path.poses.push_back(pose_stamped);
-	//go to table 5
-        pose.position.x = 6.67;
-	pose.position.y = -2.18;
-	quat = convertPlanarPhi2Quaternion(1.5708);
-	pose.orientation = quat;
-        pose_stamped.pose = pose;
-        path_srv.request.path.poses.push_back(pose_stamped);
+                quat = convertPlanarPhi2Quaternion(-1.5708);
+		pose.orientation = quat;
+		pose.position.x = -0.72;
+		pose.position.y = -1.0;
+		pose_stamped.pose = pose;
+		path_srv.request.path.poses.push_back(pose_stamped);
+		//pose 3.1
+                pose.position.y = -1.01;
+		pose_stamped.pose = pose;
+		path_srv.request.path.poses.push_back(pose_stamped);
+       //go to table 4
+                quat = convertPlanarPhi2Quaternion(-3.1415);
+		pose.orientation = quat;
+		pose.position.x = -0.98;
+		pose.position.y = 0.27;
+		pose_stamped.pose = pose;
+		path_srv.request.path.poses.push_back(pose_stamped);
+		//pose 4.1
+		pose.position.x = -0.981;
+		pose_stamped.pose = pose;
+		path_srv.request.path.poses.push_back(pose_stamped);
+       //go to table 5
+		quat = convertPlanarPhi2Quaternion(-3.1415);
+		pose.orientation = quat;
+		pose.position.x = -0.24;
+		pose.position.y = 0.26;
+		pose_stamped.pose = pose;
+		path_srv.request.path.poses.push_back(pose_stamped);
+		//pose 5.1
+		pose.position.y = 0.261;
+		pose_stamped.pose = pose;
+		path_srv.request.path.poses.push_back(pose_stamped);
 
         client.call(path_srv);
 
