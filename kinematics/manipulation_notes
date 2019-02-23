@@ -1,0 +1,13 @@
+manipulation notes:
+
+example: 0.7, 0, 0.045 is origin w/rt torso_lift_link such that gripper tips just touch a table top
+
+try fetch at pose: 0.42, -1.2, 0, 0,0,-1.5707
+
+elbow max at 2.25?
+
+-0.15646695313083292, -0.8554187877711357, -1.8653400116974694e-05, 2.2510801778000467, 0.002652888404881537, 0.11626853938277293, -0.16015682631787342
+
+oddly, gripper is not vertical.
+
+???

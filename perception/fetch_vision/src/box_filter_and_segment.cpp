@@ -54,6 +54,9 @@ const float MAX_Y = 0.5; //include points up to 0.5m to right of robot
 const float MIN_Z = -0.05; //2cm above the table top
 const float MAX_Z = 0.05; //consider points up to 0.12m above table top
 
+const float TABLE_TOP_MIN = -0.1;
+const float TABLE_TOP_MAX = 0.05;
+
 //choose, e.g., resolution of 5mm, so 100x200 image for 0.5m x 1.0m pointcloud
 // adjustable--> image  size
 // try 400 pix/m...works fine, i.e. 2.5mm resolution
@@ -237,12 +240,12 @@ int main(int argc, char** argv) {
 
     //don't need this any more; already found the table height
     // but run it just for fun; remove later for better speed
-    double table_height = find_table_height(transformed_cloud_ptr, -2.0, 2.0, 0.01);
+    double table_height = find_table_height(transformed_cloud_ptr, TABLE_TOP_MIN, TABLE_TOP_MAX, 0.01);
 
     //specify opposite corners of a box to box-filter the transformed points
     //magic numbers are at top of this program
     Eigen::Vector3f box_pt_min, box_pt_max;
-    box_pt_min << MIN_X, MIN_Y, MIN_Z;
+    box_pt_min << MIN_X, MIN_Y, table_height+0.01; //1cm above table top
     box_pt_max << MAX_X, MAX_Y, MAX_Z;
 
     //find which points in the transformed cloud are within the specified box

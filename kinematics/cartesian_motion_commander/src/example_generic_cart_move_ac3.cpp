@@ -149,7 +149,7 @@ int main(int argc, char** argv) {
        arrival_times.push_back(arrival_time);   
     }    
 
-    tool_pose.pose.position.z -= 0.2;
+    tool_pose.pose.position.z -= 0.1;
     xformUtils.printPose(tool_pose);
     rtn_val=cart_motion_commander.append_multi_traj_cart_segment(nsteps, arrival_time,tool_pose);
     if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
