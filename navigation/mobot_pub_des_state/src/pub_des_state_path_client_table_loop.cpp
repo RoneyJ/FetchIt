@@ -43,14 +43,22 @@ int main(int argc, char **argv) {
     geometry_msgs::Pose pose;
     while (true) { //repeat forever
         path_srv.request.path.poses.clear();
-	//go to table 1
-        pose.position.x = 7.0; 
-        pose.position.y = -2.35;
+	//go to table 1, pose 1
+        pose.position.x = 0.72; 
+        pose.position.y = 0.38;
         pose.position.z = 0.0;
 	quat = convertPlanarPhi2Quaternion(0);
         pose.orientation = quat;
         pose_stamped.pose = pose;
         path_srv.request.path.poses.push_back(pose_stamped);
+// pose 1.1
+ quat = convertPlanarPhi2Quaternion(-0.486);
+pose.orientation = quat;
+ pose.position.x = 0.719; 
+ pose.position.y = 0.38;
+ pose_stamped.pose = pose;
+path_srv.request.path.poses.push_back(pose_stamped);
+/*
 	//go to table 2
         pose.position.y = -2.78;
 	quat = convertPlanarPhi2Quaternion(-1.5708);
@@ -77,6 +85,7 @@ int main(int argc, char **argv) {
 	pose.orientation = quat;
         pose_stamped.pose = pose;
         path_srv.request.path.poses.push_back(pose_stamped);
+*/
 
         client.call(path_srv);
 
