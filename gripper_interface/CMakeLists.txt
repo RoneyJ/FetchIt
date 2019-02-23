@@ -136,7 +136,7 @@ add_library(gripper_interface
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/gripper_interface_node.cpp)
-
+add_executable(gripper_test src/gripper_test.cpp)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -150,6 +150,12 @@ add_library(gripper_interface
 ## Specify libraries to link a library or executable target against
 target_link_libraries(gripper_interface
    ${catkin_LIBRARIES}
+${control_msgs_EXPORTED_TARGETS}
+)
+
+target_link_libraries(gripper_test
+gripper_interface
+${catkin_LIBRARIES}
 ${control_msgs_EXPORTED_TARGETS}
 )
 
