@@ -3,8 +3,8 @@
   <world name="default">
 
      <model name="kit">
-     <pose>5.958056 -2.067436 0.783351 0 -0 0.280733</pose>
-     <static>true</static>
+     <pose>-0.033010 0.804048 0.857000 0 0 0.01666</pose>
+     
            <link name='link'>
 	<inertial>
         <mass>0.1</mass>
@@ -19,18 +19,34 @@
       </inertial>
 	    
             <collision name='collision'>
-              <geometry>
-               <mesh>
-		  <uri>model://Fetch_kit/meshes/kit3.stl</uri>
-
-               </mesh>
-              </geometry>
-            </collision>
+	<pose>0 0 -0.08 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.22 0.22 0.005</size>
+          </box>
+        </geometry>
+       <surface>
+            <friction>
+              <ode>
+                <mu>50.0</mu>
+                <mu2>50.0</mu2>
+              </ode>
+            </friction>
+            <contact>
+              <ode>
+                <kp>1000000.0</kp>
+                <kd>100.0</kd>
+                <max_vel>1.0</max_vel>
+                <min_depth>0.0005</min_depth>
+              </ode>
+            </contact>
+          </surface>
+      </collision>
 
            <visual name='visual'>
              <geometry>
                <mesh>
-		  <uri>model://Fetch_kit/meshes/kit3.stl</uri>
+		  <uri>model://Fetch_kit/meshes/kit7.stl</uri>
 
                </mesh>
              </geometry>
@@ -46,28 +62,254 @@
     <include>
       <uri>model://sun</uri>
     </include>
-    <include>
-        <uri>model://cafe_table</uri>
-        <pose>6.664898 -1.397426 0 0 -0 0</pose>
-    </include>
-   <include>
-        <uri>model://cafe_table</uri>
-        <pose>5.226423 -1.889488 0 0 -0 0</pose>
-    </include>
-   <include>
-        <uri>model://cafe_table</uri>
-        <pose>7.812943 -2.365025 0 0 -0 0</pose>
-    </include>
-   <include>
-        <uri>model://cafe_table</uri>
-        <pose>7.084308 -3.520992 0 0 -0 0</pose>
-    </include>
-   <include>
-        <uri>model://cafe_table</uri>
-        <pose>6.042780 -3.544366 0 0 -0 0</pose>
-    </include>
+  
+<model name="cafe_table_0">
+        <pose>-1.798368 0.49641 0 0 0 0</pose>
+    <static>true</static>
+    <link name="link">
+      <collision name="surface">
+        <pose>0 0 0.755 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.913 0.913 0.04</size>
+          </box>
+        </geometry>
+      </collision>
 
-         <include>
+      <collision name="column">
+        <pose>0 0 0.37 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.042 0.042 0.74</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <collision name="base">
+        <pose>0 0 0.02 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.56 0.56 0.04</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://cafe_table/meshes/cafe_table.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+
+<model name="cafe_table_1">
+        <pose>-0.72668 -1.89741 0 0 0 0</pose>
+    <static>true</static>
+    <link name="link">
+      <collision name="surface">
+        <pose>0 0 0.755 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.913 0.913 0.04</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <collision name="column">
+        <pose>0 0 0.37 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.042 0.042 0.74</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <collision name="base">
+        <pose>0 0 0.02 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.56 0.56 0.04</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://cafe_table/meshes/cafe_table.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+
+<model name="cafe_table_2">
+        <pose>0.60668 -1.93741 0 0 0 0</pose>
+    <static>true</static>
+    <link name="link">
+      <collision name="surface">
+        <pose>0 0 0.755 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.913 0.913 0.04</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <collision name="column">
+        <pose>0 0 0.37 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.042 0.042 0.74</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <collision name="base">
+        <pose>0 0 0.02 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.56 0.56 0.04</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://cafe_table/meshes/cafe_table.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+
+
+<model name="cafe_table_3">
+        <pose>1.670655 0.767741 0 0 0 0</pose>
+    <static>true</static>
+    <link name="link">
+      <collision name="surface">
+        <pose>0 0 0.755 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.913 0.913 0.04</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <collision name="column">
+        <pose>0 0 0.37 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.042 0.042 0.74</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <collision name="base">
+        <pose>0 0 0.02 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.56 0.56 0.04</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://cafe_table/meshes/cafe_table.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+
+<model name="cafe_table_4">
+        <pose>-0.162082 1.087638 0 0 0 0</pose>
+    <static>true</static>
+    <link name="link">
+      <collision name="surface">
+        <pose>0 0 0.755 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.913 0.913 0.04</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <collision name="column">
+        <pose>0 0 0.37 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.042 0.042 0.74</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <collision name="base">
+        <pose>0 0 0.02 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.56 0.56 0.04</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://cafe_table/meshes/cafe_table.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+
+<model name="cafe_table_5">
+        <pose>1.667654 -0.146844 0 0 0 0</pose>
+    <static>true</static>
+    <link name="link">
+      <collision name="surface">
+        <pose>0 0 0.755 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.913 0.913 0.04</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <collision name="column">
+        <pose>0 0 0.37 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.042 0.042 0.74</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <collision name="base">
+        <pose>0 0 0.02 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.56 0.56 0.04</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://cafe_table/meshes/cafe_table.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+        <!-- <include>
         <uri>model://grey_wall</uri>
         <pose>4.747150 -0.943460 0 0 -0 0</pose>
     </include>
@@ -78,16 +320,18 @@
     </include>
  <include>
         <uri>model://grey_wall</uri>
-        <pose>4.823890 -4.008980 0 0 -0 0</pose>
+        <pose>4.823890 -4.108980 0 0 -0 0</pose>
     </include>
  <include>
         <uri>model://grey_wall</uri>
-        <pose>8.195705 -2.308397 0 0 -0 -1.571061</pose>
-    </include>
+        <pose>8.195705 -2.108397 0 0 -0 -1.571061</pose>
+    </include>-->
 
-   <model name="gear_box">
+  
+<model name="gear_box_bottom">
+      <pose>0.441422 -1.776104 0.797500 -1.570796 0 0.043728</pose>
     <link name='link'>
-      <pose>4.422 -2.116 0.7765 1.5789 -1.46322 -1.5681</pose>
+
       <inertial>
         <mass>0.1</mass>
         <inertia>
@@ -100,9 +344,10 @@
         </inertia>
       </inertial>
      <collision name='collision'>
+
         <geometry>
           <box>
-            <size>0.035 0.2 0.035</size>
+            <size>0.035 0.046 0.18</size>
           </box>
         </geometry>
        <surface>
@@ -124,23 +369,20 @@
       </collision>
  
       <visual name='visual'>
-        <geometry>
-          <box>
-            <size>0.035 0.2 0.035</size>
-          </box>
-        </geometry>
-  <material>
-    <ambient>1 0 0 1</ambient>
-    <diffuse>1 0 0 1</diffuse>
-    <specular>0.1 0.1 0.1 1</specular>
-    <emissive>0 0 0 0</emissive>
-  </material>
-      </visual>
+             <geometry>
+               <mesh>
+		  <uri>model://gearBox/meshes/gearBoxBottom_v3.stl</uri>
+
+               </mesh>
+             </geometry>
+            </visual>
     </link>     
   </model>
-<model name="gear_box">
+
+<model name="gear_box_top">
+      <pose>0.363259 -1.788728 0.792000 0 0 -1.53</pose>
     <link name='link'>
-      <pose>5.422 -2.116 0.7765 1.5789 -1.46322 -1.5681</pose>
+
       <inertial>
         <mass>0.1</mass>
         <inertia>
@@ -153,9 +395,10 @@
         </inertia>
       </inertial>
      <collision name='collision'>
+      <pose>0 0 -0.01 0 0 0</pose>
         <geometry>
           <box>
-            <size>0.035 0.2 0.035</size>
+            <size>0.18 0.046 0.015</size>
           </box>
         </geometry>
        <surface>
@@ -177,24 +420,20 @@
       </collision>
  
       <visual name='visual'>
-        <geometry>
-          <box>
-            <size>0.035 0.2 0.035</size>
-          </box>
-        </geometry>
-  <material>
-    <ambient>1 0 0 1</ambient>
-    <diffuse>1 0 0 1</diffuse>
-    <specular>0.1 0.1 0.1 1</specular>
-    <emissive>0 0 0 0</emissive>
-  </material>
-      </visual>
+             <geometry>
+               <mesh>
+		  <uri>model://gearboxtop/meshes/gearBoxTop_v1.stl</uri>
+
+               </mesh>
+             </geometry>
+            </visual>
     </link>     
   </model>
 
-    <model name="small gear">
+    <model name="large_gear">
+      <pose>-1.401918 0.502376 0.803773 -0.003354 -0.002926 -0.850318</pose>
     <link name='link'>
-      <pose>5.422 -1.7116 0.7765 1.5789 -1.46322 -1.5681</pose>
+
       <inertial>
         <mass>0.1</mass>
         <inertia>
@@ -209,8 +448,10 @@
      <collision name='collision'>
         <geometry>
           <cylinder>
-            <radius>0.001</radius>
-            <length>0.015</length>
+
+            <radius>0.03</radius>
+            <length>0.058</length>
+
           </cylinder>
         </geometry>
         
@@ -232,26 +473,23 @@
           </surface>
       </collision>
  
-      <visual name='visual'>
-        <geometry>
-          <cylinder>
-            <radius>0.02</radius>
-            <length>0.15</length>
-          </cylinder>
-        </geometry>
-  <material>
-    <ambient>1 0 0 1</ambient>
-    <diffuse>1 0 0 1</diffuse>
-    <specular>0.1 0.1 0.1 1</specular>
-    <emissive>0 0 0 0</emissive>
-  </material>
-      </visual>
+	<visual name='visual'>
+
+             <geometry>
+               <mesh>
+		  <uri>model://large_gear/meshes/largeGear_v2.stl</uri>
+
+               </mesh>
+             </geometry>
+            </visual>
     </link>     
   </model>
 
-    <model name="bolt_1">
+
+   <model name="small_gear">
+      <pose>-1.405003 0.378158 0.794627 -0.006217 -0.005827 -0.000268</pose>
     <link name='link'>
-      <pose>5.422 -1.981 0.7765 1.5789 -1.46322 -1.5681</pose>
+
       <inertial>
         <mass>0.1</mass>
         <inertia>
@@ -266,8 +504,10 @@
      <collision name='collision'>
         <geometry>
           <cylinder>
-            <radius>0.002</radius>
-            <length>0.015</length>
+
+            <radius>0.015</radius>
+            <length>0.04</length>
+
           </cylinder>
         </geometry>
         
@@ -289,26 +529,23 @@
           </surface>
       </collision>
  
-      <visual name='visual'>
-        <geometry>
-          <cylinder>
-            <radius>0.02</radius>
-            <length>0.07</length>
-          </cylinder>
-        </geometry>
-  <material>
-    <ambient>1 0 0 1</ambient>
-    <diffuse>1 0 0 1</diffuse>
-    <specular>0.1 0.1 0.1 1</specular>
-    <emissive>0 0 0 0</emissive>
-  </material>
-      </visual>
+	<visual name='visual'>
+
+             <geometry>
+               <mesh>
+		  <uri>model://small_gear/meshes/smallGear_v1.stl</uri>
+
+               </mesh>
+             </geometry>
+            </visual>
     </link>     
   </model>
 
-    <model name="bolt_2">
+
+    <model name="screw">
+<pose>-1.418091 0.434293 0.7905 1.570791 -1.462967 -1.560094</pose>
     <link name='link'>
-      <pose>5.422 -1.892 0.7765 1.5789 -1.46322 -1.5681</pose>
+
       <inertial>
         <mass>0.1</mass>
         <inertia>
@@ -323,8 +560,10 @@
      <collision name='collision'>
         <geometry>
           <cylinder>
-            <radius>0.002</radius>
-            <length>0.015</length>
+
+            <radius>0.016</radius>
+            <length>0.06</length>
+
           </cylinder>
         </geometry>
         
@@ -346,20 +585,15 @@
           </surface>
       </collision>
  
-      <visual name='visual'>
-        <geometry>
-          <cylinder>
-            <radius>0.02</radius>
-            <length>0.07</length>
-          </cylinder>
-        </geometry>
-  <material>
-    <ambient>1 0 0 1</ambient>
-    <diffuse>1 0 0 1</diffuse>
-    <specular>0.1 0.1 0.1 1</specular>
-    <emissive>0 0 0 0</emissive>
-  </material>
-      </visual>
+	<visual name='visual'>
+
+             <geometry>
+               <mesh>
+		  <uri>model://screw/meshes/screw_v1.stl</uri>
+
+               </mesh>
+             </geometry>
+            </visual>
     </link>     
   </model>
 

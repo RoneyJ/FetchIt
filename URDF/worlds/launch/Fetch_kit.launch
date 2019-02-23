@@ -19,6 +19,7 @@
     <arg name="use_sim_time" value="$(arg use_sim_time)"/>
     <arg name="headless" value="$(arg headless)"/>
   </include>
-<include file="$(find exmpl_models)/launch/add_toy_block.launch" />
 
+
+<include file="$(find fetch_gazebo)/launch/include/fetch.launch.xml" />
 </launch>
