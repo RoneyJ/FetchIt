@@ -43,11 +43,11 @@ int main(int argc, char** argv) {
             << " data points from file "<<fname<<std::endl;
 
    //publish the point cloud in a ROS-compatible message; here's a publisher:
-    ros::Publisher pubCloud = nh.advertise<sensor_msgs::PointCloud2> ("/pcd", 1);
+    ros::Publisher pubCloud = nh.advertise<sensor_msgs::PointCloud2> ("/head_camera/depth_registered/points", 1);
     sensor_msgs::PointCloud2 ros_cloud;  //here is the ROS-compatible message
     pcl::toROSMsg(*pcl_clr_ptr, ros_cloud); //convert from PCL to ROS type this way
     ros_cloud.header.frame_id = "head_camera_rgb_optical_frame";
-    cout << "view in rviz; choose: topic= pcd; and fixed frame= head_camera_rgb_optical_frame" << endl; 
+    cout << "view in rviz; choose: topic= /head_camera/depth_registered/points; and fixed frame= head_camera_rgb_optical_frame" << endl; 
     //publish the ROS-type message on topic "/ellipse"; can view this in rviz
     while (ros::ok()) {
 

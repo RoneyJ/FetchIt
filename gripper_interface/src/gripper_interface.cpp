@@ -24,7 +24,8 @@ GripperInterface::GripperInterface() : ac_("gripper_controller/gripper_action", 
 
 
 bool GripperInterface::graspObject() { //dummy func for testing
-	std::string object = "dummy_part";
+	//std::string object = "dummy_part";
+	std::string object("dummy_part");
 	double timeout = 0;
 	return graspObject(object); 
 }

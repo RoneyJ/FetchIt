@@ -6,19 +6,21 @@
 #include <actionlib/client/simple_action_client.h>
 #include <actionlib/client/terminal_state.h>
 #include <object_finder/objectFinderAction.h>
-#include <object_manipulation_properties/object_ID_codes.h>
+
 
 #include <Eigen/Eigen>
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
 
-geometry_msgs::PoseStamped g_perceived_object_pose;
+std::vector <geometry_msgs::PoseStamped> g_perceived_object_poses;
 ros::Publisher *g_pose_publisher;
 
 int g_found_object_code;
 void objectFinderDoneCb(const actionlib::SimpleClientGoalState& state,
         const object_finder::objectFinderResultConstPtr& result) {
+    geometry_msgs::PoseStamped perceived_object_pose;
+    g_perceived_object_poses.clear();
     ROS_INFO(" objectFinderDoneCb: server responded with state [%s]", state.toString().c_str());
     g_found_object_code=result->found_object_code;
     ROS_INFO("got object code response = %d; ",g_found_object_code);
@@ -26,17 +28,23 @@ void objectFinderDoneCb(const actionlib::SimpleClientGoalState& state,
         ROS_WARN("object code not recognized");
     }
     else if (g_found_object_code==object_finder::objectFinderResult::OBJECT_FOUND) {
-        ROS_INFO("found object!");
-         g_perceived_object_pose= result->object_pose;
-         ROS_INFO("got pose x,y,z = %f, %f, %f",g_perceived_object_pose.pose.position.x,
-                 g_perceived_object_pose.pose.position.y,
-                 g_perceived_object_pose.pose.position.z);
+        //ROS_INFO("found objects!");
+        int n_objects = result->object_poses.size();
+        for (int i_object=0;i_object<n_objects;i_object++) {
+         //g_perceived_object_pose= result->object_pose; //MAKE MORE GENERAL FOR  POSES
+            ROS_INFO("object %d: ",i_object);
+            perceived_object_pose = result->object_poses[i_object];
+            ROS_INFO("   pose x,y,z = %f, %f, %f",perceived_object_pose.pose.position.x,
+                 perceived_object_pose.pose.position.y,
+                 perceived_object_pose.pose.position.z);
 
-         ROS_INFO("got quaternion x,y,z, w = %f, %f, %f, %f",g_perceived_object_pose.pose.orientation.x,
-                 g_perceived_object_pose.pose.orientation.y,
-                 g_perceived_object_pose.pose.orientation.z,
-                 g_perceived_object_pose.pose.orientation.w);
-         g_pose_publisher->publish(g_perceived_object_pose);
+            ROS_INFO("   quaternion x,y,z, w = %f, %f, %f, %f",perceived_object_pose.pose.orientation.x,
+                 perceived_object_pose.pose.orientation.y,
+                 perceived_object_pose.pose.orientation.z,
+                 perceived_object_pose.pose.orientation.w);
+            g_perceived_object_poses.push_back(perceived_object_pose);
+        }
+         //g_pose_publisher->publish(g_perceived_object_pose);
     }
     else {
         ROS_WARN("object not found!");
@@ -65,49 +73,20 @@ int main(int argc, char** argv) {
     object_finder::objectFinderGoal object_finder_goal;
     //object_finder::objectFinderResult object_finder_result;
 
-    object_finder_goal.object_id = ObjectIdCodes::TABLE_SURFACE;
-    object_finder_goal.known_surface_ht = false; //require find table height
-    //object_finder_goal.object_id=object_finder::objectFinderGoal::COKE_CAN_UPRIGHT;
-    //object_finder_goal.object_id=object_finder::objectFinderGoal::TOY_BLOCK;
-    //object_finder_goal.known_surface_ht=true;
-    //object_finder_goal.known_surface_ht=false; //require find table height
-    //object_finder_goal.surface_ht = 0.05;
-    double surface_height;
-    ROS_INFO("sending goal: ");
+       
+        object_finder_goal.object_id = object_finder::objectFinderGoal::GEARBOX_TOP;
+
+     ROS_INFO("sending goal to find GEARBOX_TOP: ");
         object_finder_ac.sendGoal(object_finder_goal,&objectFinderDoneCb); 
         
         bool finished_before_timeout = object_finder_ac.waitForResult(ros::Duration(10.0));
-        //bool finished_before_timeout = action_client.waitForResult(); // wait forever...
-        if (!finished_before_timeout) {
-            ROS_WARN("giving up waiting on result ");
-            return 1;
-        }
-        
-    if (g_found_object_code == object_finder::objectFinderResult::OBJECT_FOUND) {
-                        ROS_INFO("surface-finder success");
-                        surface_height = g_perceived_object_pose.pose.position.z; // table-top height, as found by object_finder 
-                        ROS_INFO("found table ht = %f",surface_height);   }
-    else {
-        ROS_WARN("did not find table height; quitting:");
-        return 1;
-    }
-    //if here, then find block using known table height:
-    object_finder_goal.known_surface_ht = true;
-    object_finder_goal.surface_ht = surface_height;
-    ROS_INFO("using surface ht = %f",surface_height);        
-    object_finder_goal.object_id=ObjectIdCodes::TOY_BLOCK_ID;
-     ROS_INFO("sending goal to find TOY_BLOCK: ");
-        object_finder_ac.sendGoal(object_finder_goal,&objectFinderDoneCb); 
-        
-        finished_before_timeout = object_finder_ac.waitForResult(ros::Duration(10.0));
-        //bool finished_before_timeout = action_client.waitForResult(); // wait forever...
         if (!finished_before_timeout) {
             ROS_WARN("giving up waiting on result ");
             return 1;
         }       
         
     if (g_found_object_code == object_finder::objectFinderResult::OBJECT_FOUND)   {
-        ROS_INFO("found object!");
+        ROS_INFO("found object(s)!");
         return 0;
     }    
     else {
