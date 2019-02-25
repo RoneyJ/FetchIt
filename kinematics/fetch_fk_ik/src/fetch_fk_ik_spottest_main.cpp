@@ -35,7 +35,8 @@ int main(int argc, char **argv) {
     //q_in<<0,1,0,-1, 1,1,1;
     //q_goal<<0.0, 1.1, 0.0, -1.4, 0, 0.6, 1, 0.0; //box hover pose:
     //q_in<<0.0, 1.1, 0.0, -1.4, 0, 0.6, 1;
-    q_in<< -1, -1,-1,-1,0,0,0;
+    //q_in<< -1, -1,-1,-1,0,0,0;
+    q_in<<1.32, 0.7, 0.0, -2.0, 0.0, -0.57, 0.0;
     Eigen::Affine3d A_fwd_DH = fwd_solver.fwd_kin_solve(q_in); //fwd_kin_solve
 
         std::cout << "q_in: " << q_in.transpose() << std::endl;        

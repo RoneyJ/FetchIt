@@ -98,7 +98,7 @@ void SteeringController::initializePublishers()
     ROS_INFO("Initializing Publishers: cmd_vel and cmd_vel_stamped");
     cmd_publisher_ = nh_.advertise<geometry_msgs::Twist>("/base_controller/command", 1, true); // talks to the robot!
     cmd_publisher2_ = nh_.advertise<geometry_msgs::TwistStamped>("cmd_vel_stamped",1, true); //alt topic, includes time stamp
-    //steering_errs_publisher_ =  nh_.advertise<std_msgs::Float32MultiArray>("steering_errs",1, true);
+    steering_errs_publisher_ =  nh_.advertise<std_msgs::Float32MultiArray>("steering_errs",1, true);
 }
 
 
@@ -213,12 +213,12 @@ void SteeringController::lin_steering_algorithm() {
     //std::cout<<des_xy_vec_<<std::endl;
     //std::cout<<odom_xy_vec_<<std::endl;
     // let's put these in a message to publish, for rqt_plot to display
-    //steering_errs_.data.clear();
-    //steering_errs_.data.push_back(lateral_err);
-    //steering_errs_.data.push_back(heading_err); 
-    //steering_errs_.data.push_back(trip_dist_err);
+    steering_errs_.data.clear();
+    steering_errs_.data.push_back(lateral_err);
+    steering_errs_.data.push_back(heading_err); 
+    steering_errs_.data.push_back(trip_dist_err);
 
-    //steering_errs_publisher_.publish(steering_errs_); // suitable for plotting w/ rqt_plot
+    steering_errs_publisher_.publish(steering_errs_); // suitable for plotting w/ rqt_plot
     //END OF DEBUG STUFF
     
      // do something clever with this information     
