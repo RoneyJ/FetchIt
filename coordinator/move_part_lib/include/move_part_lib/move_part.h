@@ -12,7 +12,15 @@
 
 #include <object_finder/objectFinderAction.h>
 #include <gripper_interface/gripper_interface.h>
+#include <arm_motion_action/arm_interfaceAction.h>
+#include <cartesian_motion_commander/cart_motion_commander.h>
+#include <xform_utils/xform_utils.h>
+#include <gripper_interface/gripper_interface.h>
 
+const double GRASP_HEIGHT = 0.055;
+const double PART_X_VAL = 0.625; //0.64; for testing only
+const double PART_Y_VAL = 0.2; //0.059; //minus-sign error w/ object-finder?
+const double APPROACH_HT = 0.15;
 
 using namespace std;
 
@@ -21,11 +29,16 @@ class MovePart
 public:
 	MovePart(); //constructor
         //public member fncs
-        GripperInterface gripperInterface_;
+        //GripperInterface gripperInterface_;
 	bool get_part(int part_code);
         bool place_grasped_part(int part_code, geometry_msgs::PoseStamped destination_pose);
         bool stow_grasped_part(int part_code);
-
+        bool preset_arm();
+        //bool preset_torso();
+        //bool preset_head();
+	CartMotionCommander cart_motion_commander_; //need this to talk to arm behavior server
+        XformUtils xformUtils;
+        GripperInterface gripper_interface_;
 private:
         //private fncs and data
         ros::NodeHandle nh_;
@@ -37,7 +50,7 @@ private:
         void objectFinderDoneCb(const actionlib::SimpleClientGoalState& state,
             const object_finder::objectFinderResultConstPtr& result);
         object_finder::objectFinderGoal object_finder_goal_;
-        bool g_found_object_code_;
+        bool found_object_code_; 
         std::vector <geometry_msgs::PoseStamped> perceived_object_poses_;
 
     //for arm control:
@@ -56,6 +69,10 @@ private:
     //goal message compatible with robot action server
     trajectory_msgs::JointTrajectory arm_des_trajectory_;
 
+    Eigen::Matrix3d R_gripper_down_;
+    Eigen::Vector3d b_des_, n_des_, t_des_, O_des_;
+    Eigen::Affine3d tool_affine_;
+    geometry_msgs::PoseStamped tool_pose_;//, tool_pose_home;
 
     //for torso:
     actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction> torso_action_client_;

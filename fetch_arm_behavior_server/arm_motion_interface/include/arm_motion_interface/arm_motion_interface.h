@@ -29,6 +29,7 @@ struct ArmMotionInterfaceInits {
     vector<double> q_upper_limits;
     vector<double> qdot_max_vec;
     vector<double> q_home_pose;
+    vector<double> q_waiting_pose;
     vector<double> planner_joint_weights;
     bool use_trajectory_action_server; //
 };
@@ -50,7 +51,7 @@ private:
     trajectory_msgs::JointTrajectory des_trajectory_, des_trajectory_segment_; // holder for planned trajectory
     std::vector<trajectory_msgs::JointTrajectory> multi_traj_vec_; //holder for multiple traj segments
     
-    Eigen::VectorXd q_lower_limits_,q_upper_limits_,qdot_max_vec_,q_home_pose_; 
+    Eigen::VectorXd q_lower_limits_,q_upper_limits_,qdot_max_vec_,q_home_pose_,q_waiting_pose_; 
 
     ros::Publisher traj_publisher_; //<trajectory_msgs::JointTrajectory>;// = nh.advertise<trajectory_msgs::JointTrajectory>;//("joint_path_command", 1);   
     ros::Subscriber joint_states_subscriber_; 

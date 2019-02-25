@@ -301,7 +301,7 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot,vector<float
     //convert to dpixel_x, dpixel_y w/rt image centroid, scale by pixels/m, and add offset from PCL cropping, x,y
     for (int label = 1; label < nLabels; ++label) {    
         x_centroids_wrt_robot[label] = ((dst.rows/2) - g_x_centroids[label])/PIXELS_PER_METER + (MIN_X+MAX_X)/2.0;
-        y_centroids_wrt_robot[label] = (g_y_centroids[label]- (dst.cols/2))/PIXELS_PER_METER + (MIN_Y+MAX_Y)/2.0;
+        y_centroids_wrt_robot[label] = ((dst.cols/2) - g_y_centroids[label])/PIXELS_PER_METER + (MIN_Y+MAX_Y)/2.0;
         ROS_INFO("label %d has centroid w/rt robot: %f, %f:",label,x_centroids_wrt_robot[label],y_centroids_wrt_robot[label]);
                 
     }    

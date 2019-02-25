@@ -1,3 +1,34 @@
+Start up with:
+
+roslaunch worlds Fetch_kit.launch
+
+Initialize the robot pose (if not already done):
+rosrun test_fetch_arm_ac fetch_torso_lift_preset
+rosrun test_fetch_arm_ac fetch_head_tilt_preset
+rosrun test_fetch_arm_ac fetch_arm_pre_pose
+
+for testing, can manually pre-position the robot, e.g.:
+try fetch at pose: 0.42, -1.1, 0, 0,0,-1.5707
+
+freeze the robot here:
+rosrun gazebo_set_state freeze_robot_service
+rosservice call freeze_robot_state true
+
+rosrun object_finder object_finder_as
+
+roslaunch fetch_arm_behavior_server fetch_static_transforms.launch
+
+rosrun fetch_arm_behavior_server fetch_cart_move_as
+
+rosrun move_part_lib example_move_part_main
+
+
+------------------------------- 
+
+
+
+
+
 coordinator strategy:
 
 top level: this program should:
@@ -51,6 +82,19 @@ for arm control:
 
 for gripper:
 gripper_interface
+
+
+---testing---
+start w:
+roscore
+roscd pcd_images;  rosrun pcl_utils display_pcd_file
+  (enter fname)
+rosrun object_finder object_finder_as
+
+rosrun move_part_lib example_move_part_main
+  this much gets move_part object talking to object_finder action server
+
+-------add kinematics-------
 
 
 

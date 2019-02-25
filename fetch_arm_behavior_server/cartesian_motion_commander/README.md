@@ -13,14 +13,25 @@ This library communicates with an action server named "cartMoveActionServer".
 
 ## Example usage
 Start up robot simulation in Gazebo with: 
-roslaunch irb120_description irb120.launch 
+roslaunch worlds Fetch_kit.launch
 
-start up Cartesian-move action server:
-rosrun irb120_planner irb120_cart_move_as 
+Initialize the robot pose (if not already done):
+rosrun test_fetch_arm_ac fetch_torso_lift_preset
+rosrun test_fetch_arm_ac fetch_head_tilt_preset
+rosrun test_fetch_arm_ac fetch_arm_pre_pose
 
-Try running a sample action client:
-rosrun cartesian_motion_commander example_generic_cartesian_move_ac
+for testing, can manually pre-position the robot, e.g.:
+try fetch at pose: 0.42, -1.1, 0, 0,0,-1.5707
 
+freeze the robot here (only needed for Gazebo):
+`rosrun gazebo_set_state freeze_robot_service`
+`rosservice call freeze_robot_state true`
+
+run static transforms publisher:
+`roslaunch fetch_arm_behavior_server fetch_static_transforms.launch`
+
+start the cartesian-move behavior server:
+rosrun fetch_arm_behavior_server fetch_cart_move_as
 or:
 rosrun cartesian_motion_commander example_generic_cartesian_move_ac3
 which demonstrates how to build and execute multi-segment trajectories.

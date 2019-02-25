@@ -39,6 +39,7 @@ cart_move_as_(*nodehandle, "cartMoveActionServer", boost::bind(&ArmMotionInterfa
     q_upper_limits_.resize(njnts);
     qdot_max_vec_.resize(njnts);
     q_home_pose_.resize(njnts);
+    q_waiting_pose_.resize(njnts);
 
     urdf_base_frame_name_ = armMotionInterfaceInits.urdf_base_frame_name;
     urdf_flange_frame_name_ = armMotionInterfaceInits.urdf_flange_frame_name;
@@ -55,6 +56,7 @@ cart_move_as_(*nodehandle, "cartMoveActionServer", boost::bind(&ArmMotionInterfa
         q_upper_limits_[i] = armMotionInterfaceInits.q_upper_limits[i];
         qdot_max_vec_[i] = armMotionInterfaceInits.qdot_max_vec[i];
         q_home_pose_[i] = armMotionInterfaceInits.q_home_pose[i];
+        q_waiting_pose_[i] = armMotionInterfaceInits.q_waiting_pose[i];
 
     }
     q_pre_pose_Xd_ = q_home_pose_; // synonym; but could define alternative pre-pose;
@@ -217,6 +219,7 @@ cart_move_as_(*nodehandle, "cartMoveActionServer", boost::bind(&ArmMotionInterfa
     traj_publisher_.publish(des_trajectory_);
     ros::Duration(1.0).sleep();
 
+    /* optional--send robot arm to home pose
     ROS_INFO("sending arm to home position: ");
     optimal_path_[1] = q_home_pose_;
     stuff_trajectory(optimal_path_, des_trajectory_);
@@ -246,6 +249,7 @@ cart_move_as_(*nodehandle, "cartMoveActionServer", boost::bind(&ArmMotionInterfa
     }       
     //wait to settle:
     ros::Duration(2.0).sleep();
+    */
     //get jnt angles
     for (int i = 0; i < 5; i++) {
         ros::spinOnce();
@@ -254,7 +258,7 @@ cart_move_as_(*nodehandle, "cartMoveActionServer", boost::bind(&ArmMotionInterfa
     cout << "jnt vals: " << q_vec_arm_Xd_.transpose() << endl;
 
     test_affine = pFwdSolver_->fwd_kin_solve(q_vec_arm_Xd_); //tool-flange frame
-    std::cout << "fwd kin of home pose: origin = " << test_affine.translation().transpose() << std::endl;
+    std::cout << "fwd kin of current pose: origin = " << test_affine.translation().transpose() << std::endl;
 
 
     ROS_INFO("starting action server: cartMoveActionServer ");
@@ -506,7 +510,7 @@ bool ArmMotionInterface::plan_jspace_traj_current_to_waiting_pose() {
     //invoke general joint-space planner fnc; specify q_start = q_current and q_goal in home pose;
     //set trajectory arg to member var des_trajectory_
     //set member var traj_is_valid_ to result of plan
-    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_vec_arm_Xd_, q_home_pose_, nsteps, arrival_time, des_trajectory_);
+    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_vec_arm_Xd_, q_waiting_pose_, nsteps, arrival_time, des_trajectory_);
     if (traj_is_valid_) multi_traj_vec_.push_back(des_trajectory_segment_);
     if (traj_is_valid_) {
         multi_traj_vec_.clear(); //whenever plan a single traj, make this default start of multi-seg trajectory

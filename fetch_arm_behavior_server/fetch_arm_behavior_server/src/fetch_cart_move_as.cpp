@@ -54,6 +54,7 @@ int main(int argc, char** argv) {
        armMotionInterfaceInits.q_upper_limits.push_back(q_upper_limits[i]);
        armMotionInterfaceInits.qdot_max_vec.push_back(g_qdot_max_vec[i]);
        armMotionInterfaceInits.q_home_pose.push_back(g_q_home_pose[i]);
+       armMotionInterfaceInits.q_waiting_pose.push_back(g_q_waiting_pose[i]);
        armMotionInterfaceInits.planner_joint_weights.push_back(g_planner_joint_weights[i]);
     }
      

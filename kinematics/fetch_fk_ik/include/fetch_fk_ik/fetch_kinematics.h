@@ -131,6 +131,7 @@ const double q_lower_limits[] = {DH_q_min1, DH_q_min2, DH_q_min3, DH_q_min4, DH_
 const double q_upper_limits[] = {DH_q_max1, DH_q_max2, DH_q_max3, DH_q_max4, DH_q_max5, DH_q_max6, DH_q_max7};
 const double g_qdot_max_vec[] = {1.256, 1.454, 1.571, 1.521, 1.571, 2.268, 2.268}; //values per URDF 
 const double g_q_home_pose[] = {0,0,0,0,0,0,0};
+const double g_q_waiting_pose[] = {0.8,     -1,      0, 1.5707,      0,      1,      0};
 //put these in planner_joint_weights.h
 //const double jspace_planner_weights[] = {5,5,3,0.5,0.2,0.2}; //default weights for jspace planner (changeable in planner)
 
