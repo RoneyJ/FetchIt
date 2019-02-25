@@ -1,6 +1,12 @@
 #include <move_part_lib/move_part.h>
 
-MovePart::MovePart() { //constructor
+MovePart::MovePart() :
+robot_arm_motion_action_client_("/arm_controller/follow_joint_trajectory",true),
+torso_action_client_("/torso_controller/follow_joint_trajectory", true),
+head_action_client_("/head_controller/follow_joint_trajectory", true),
+object_finder_ac_("object_finder_action_service", true)
+{ //constructor
+  ROS_INFO("MovePart constructor");
 
 }
 

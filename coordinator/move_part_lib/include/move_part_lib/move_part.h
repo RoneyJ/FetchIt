@@ -41,7 +41,7 @@ private:
         std::vector <geometry_msgs::PoseStamped> perceived_object_poses_;
 
     //for arm control:
-    actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction> robot_arm_motion_action_client;
+    actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction> robot_arm_motion_action_client_;
     void armMotionCb(const actionlib::SimpleClientGoalState& state,
         const control_msgs::FollowJointTrajectoryResultConstPtr& result); 
 
@@ -58,7 +58,7 @@ private:
 
 
     //for torso:
-    actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction> torso_action_client;
+    actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction> torso_action_client_;
    void torsoDoneCb(const actionlib::SimpleClientGoalState& state,
         const control_msgs::FollowJointTrajectoryResultConstPtr& result); 
     control_msgs::FollowJointTrajectoryGoal robot_torso_goal;
@@ -68,7 +68,7 @@ private:
 
 
     //for head:
-    actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction> head_action_client;
+    actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction> head_action_client_;
     void headDoneCb(const actionlib::SimpleClientGoalState& state,
         const control_msgs::FollowJointTrajectoryResultConstPtr& result);
     control_msgs::FollowJointTrajectoryGoal head_goal;
