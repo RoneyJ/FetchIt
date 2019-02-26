@@ -8,7 +8,7 @@ Another possibility is using the boolean "reached_goal" which is sent as a resul
 Why I have not used this: Reached goal returns true when the gripper position is within a tolerance of the goal position
 This is not neccessarily an indication of successful grasps due to tolerance in measured dimensions. 
 While this works in simulation, the actual hardware gripper might consider "stalled" status to be an error state. This could cause problems, need to check
-*/
+*/ 
 GripperInterface::GripperInterface() : ac_("gripper_controller/gripper_action", true) {
 	ROS_INFO("Connecting to gripper action server");
 	ac_.waitForServer();
@@ -19,12 +19,17 @@ GripperInterface::GripperInterface() : ac_("gripper_controller/gripper_action", 
 	goal_.command.max_effort = OPEN_EFFORT_;
 	ac_.sendGoal(goal_);
 	ROS_INFO("Connected!");
+        sticky_finger_client = nh_.serviceClient<std_srvs::SetBool>("/sticky_finger/r_gripper_finger_link");
+        srv_stick.request.data = true;
+        srv_release.request.data = false;
 }
 
 
 
 bool GripperInterface::graspObject() { //dummy func for testing
 	//std::string object = "dummy_part";
+        sticky_finger_client.call(srv_stick);
+        ROS_INFO("sticky-finger grasp response: %d",srv_stick.response.success);
 	std::string object("dummy_part");
 	double timeout = 0;
 	return graspObject(object); 
@@ -35,6 +40,8 @@ open loop grasp commander. doesnt check if grasp is successful or not
 */
 
 bool GripperInterface::graspObject(std::string object) {
+        sticky_finger_client.call(srv_stick);
+        ROS_INFO("sticky-finger response: %d",srv_stick.response.success);
 	result_ = *ac_.getResult();
 	if (isGrasping()) return false;
 	goal_.command.position = part_width_map_[object];
@@ -89,6 +96,8 @@ bool GripperInterface::isGrasping() {
 */
 
 bool GripperInterface::releaseObject() { 
+        sticky_finger_client.call(srv_release);
+        ROS_INFO("sticky-finger release response: %d",srv_release.response.success);
 	goal_.command.position = OPEN_POSITION_;
 	goal_.command.max_effort = OPEN_EFFORT_;
 	ac_.sendGoal(goal_);

@@ -5,6 +5,7 @@
 #include <actionlib/client/simple_action_client.h>
 #include <actionlib/client/terminal_state.h>
 #include <control_msgs/GripperCommandAction.h>
+#include <std_srvs/SetBool.h>
 
 
 
@@ -19,8 +20,11 @@ public:
 	bool releaseObject(std::string, double); 
 	bool releaseObject(double);
 	bool releaseObject();
-
+        ros::ServiceClient sticky_finger_client;// = n.serviceClient<std_srvs::SetBool>("/sticky_finger/r_gripper_finger_link");
+        std_srvs::SetBool srv_stick,srv_release;
 private:
+        ros::NodeHandle nh_; 
+    
 	std::map<std::string,double> part_width_map_ = 
 	{
 		{"dummy_part", 0.01}
