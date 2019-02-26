@@ -1,8 +1,7 @@
 # teamCase_fetch_model
 
-Your description goes here
+modified fetch model to include stickyfingers plugin on right finger link
+to launch and use this model:
 
-## Example usage
-
-## Running tests/demos
+`roslaunch worlds Fetch_kit.launch`
     
