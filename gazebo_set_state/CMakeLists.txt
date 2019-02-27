@@ -35,7 +35,9 @@ catkin_simple()
 #cs_add_executable(set_block_state src/set_block_state.cpp)
 #cs_add_executable(reset_block_state src/reset_block_state.cpp)
 cs_add_executable(freeze_robot_service src/freeze_robot_service.cpp)
+
 cs_add_executable(set_kit_service src/set_kit_service.cpp)
+
 #the following is required, if desire to link a node in this package with a library created in this same package
 # edit the arguments to reference the named node and named library within this package
 # target_link_libraries(example my_lib)

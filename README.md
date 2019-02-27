@@ -3,6 +3,12 @@ code for TeamCase Fetch competition
 see docs from Fetch here:
 https://github.com/fetchrobotics/docs/tree/master/source
 
+NOTE:  modified fetch/fetch_gazebo/robots/fetch.gazebo.xacro to add sticky-fingers plugin
+saved this in: teamCase_fetch_model/fetch.launch.xml
+modified our launch file to refer to this model:
+roslaunch worlds Fetch_kit.launch
+
+
 see package test_fetch_arm_ac for an example of how to populate and send trajectory goals to the arm.
 
 Can teleoperate the base with:

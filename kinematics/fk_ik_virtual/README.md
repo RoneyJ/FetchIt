@@ -1,8 +1,6 @@
 # fk_ik_virtual
 
-Your description goes here
+This package specifies a virtual fk/ik library in order to generalize different FK/IK specialized functions
+foor use in generic arm motion interface
 
-## Example usage
-
-## Running tests/demos
     

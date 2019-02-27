@@ -588,6 +588,7 @@ bool Fetch_IK_solver::compute_q234_solns_elbow_up(Eigen::Affine3d const& desired
    double w_err;
     for (int i_elbow=0;i_elbow<1;i_elbow++) { //only consider first elbow soln
        q_elbow_soln = q_elbow_solns[i_elbow]; //consider first elbow soln:
+       if ((q_elbow_soln<FETCH_ELBOW_MAX)&&(q_elbow_soln>FETCH_ELBOW_MIN))
        //ROS_INFO("q_elbow soln: %f",q_elbow_soln);
        O5_wrt_3=compute_O5_wrt_3(q_elbow_soln);
        solve_for_q_humerus_roll(w_wrt_1_des,q_elbow_soln,q_humerus_roll_solns);
