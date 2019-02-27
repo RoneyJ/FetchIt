@@ -1,6 +1,4 @@
 # fetch_vision
-This has been replaced with action server in object_finder
-
 package to find position and orientation of parts on tables using Fetch robot head camera.
 Several assumptions: torso fully lifted, head tilted 1.0 rad, table height = 0.7m
 Does box filtering to find points above the table.  These points are converted to white pixels in
