@@ -43,7 +43,7 @@ loop:
     ...acquire kit, place on pedestal
    }
  *move_to_goal(gearbox_table_code);
-      (turn on robot freeze, if Gazebo)
+      (enable robot freeze, if Gazebo)
 
  *success = get_part(part_code) {
    *invoke object-finder (for expected part)
