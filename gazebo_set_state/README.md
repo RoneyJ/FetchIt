@@ -10,7 +10,15 @@ it keeps resetting the robot to that state, thus counteracting the drift.
 
 Service calls to this function should be embedded in control code to turn the "freeze" on and off.
 
+# set_kit_service
+this node sets the kit on top of the bottom of Fetch robot. So run this node after pre pose the arm and torso.
+
 ## Example usage
+`rosrun gazebo_set_state set_kit_service`
+
+
+## Example usage
+
 
 Start Gazebo with:
 `roslaunch worlds Fetch_kit.launch`
