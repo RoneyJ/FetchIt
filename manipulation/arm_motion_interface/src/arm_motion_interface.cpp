@@ -608,6 +608,35 @@ bool ArmMotionInterface::plan_jspace_traj_current_to_kit_dropoff3() {
     return traj_is_valid_;
 }
 
+//should invoke planning for joint-space trajectory to extract arm safely from near pedestal
+bool ArmMotionInterface::plan_jspace_traj_recover_from_dropoff() {
+   int nsteps = cart_goal_.nsteps;
+    double arrival_time = cart_goal_.arrival_time;
+    //invoke general joint-space planner fnc; specify q_start = q_current and q_goal in home pose;
+    //set trajectory arg to member var des_trajectory_
+    //set member var traj_is_valid_ to result of plan
+    
+    //JOSH: FIX ME PLEASE!!!
+    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_vec_arm_Xd_, q_stow_pose1_, nsteps, arrival_time, des_trajectory_);
+     if (traj_is_valid_) {
+        multi_traj_vec_.clear(); //whenever plan a single traj, make this default start of multi-seg trajectory
+        multi_traj_vec_.push_back(des_trajectory_);
+    }   
+    
+
+    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose1_, q_waiting_pose_, nsteps, arrival_time, des_trajectory_);
+    if (traj_is_valid_) multi_traj_vec_.push_back(des_trajectory_);
+    
+    //maybe need another intermediate pose???
+    //traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose1_, q_stow_pose2_, nsteps, arrival_time, des_trajectory_);
+    //if (traj_is_valid_) multi_traj_vec_.push_back(des_trajectory_);    
+
+
+    traj_plan_wrapup();
+    return traj_is_valid_;    
+    
+}
+
 bool ArmMotionInterface::plan_jspace_traj_current_to_qgoal() {
 
     int njnts = cart_goal_.q_goal.size();

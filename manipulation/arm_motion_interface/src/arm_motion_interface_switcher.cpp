@@ -69,6 +69,12 @@ void ArmMotionInterface::executeCB(const actionlib::SimpleActionServer<arm_motio
             busy_working_on_a_request_ = false;
             break;  
             
+        case arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_RECOVER_FROM_DROPOFF:
+            ROS_INFO("responding to request PLAN_JSPACE_TRAJ_RECOVER_FROM_DROPOFF");
+            plan_jspace_traj_recover_from_dropoff(); //q_start_Xd_, q_pre_pose_Xd_);
+            busy_working_on_a_request_ = false;
+            break;                     
+                    
         //prepares a jspace trajectory plan to move arm from current pose to specified goal pose
         case arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_CURRENT_TO_QGOAL:
             ROS_INFO("responding to request PLAN_JSPACE_TRAJ_CURRENT_TO_QGOAL");

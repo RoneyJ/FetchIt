@@ -326,7 +326,14 @@ int CartMotionCommander::plan_jspace_traj_current_to_kit_dropoff3(int nsteps, do
     return rtn_val;    
 }
 
-
+bool CartMotionCommander::plan_jspace_traj_recover_from_dropoff(int nsteps, double arrival_time) {
+    cart_goal_.command_code = arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_RECOVER_FROM_DROPOFF;
+    cart_goal_.nsteps = nsteps; //send 10 sub-commands
+    cart_goal_.arrival_time = arrival_time; //move over 2 sec
+    double t_wait = 2.0; //max wait this long for planning result
+    int rtn_val = send_planning_goal_get_result( t_wait);
+    return rtn_val;      
+}
 
 int CartMotionCommander::plan_jspace_traj_current_to_qgoal(int nsteps, double arrival_time, Eigen::VectorXd q_goal) {
     cart_goal_.command_code = arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_CURRENT_TO_QGOAL;
