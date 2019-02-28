@@ -1,18 +1,5 @@
-
-
-
+//library (class) to simplify navigation interactions with function calls
 #include<move_base_lib/move_base.h>
-
-
-#include <ros/ros.h>
-#include <mobot_pub_des_state/path.h>
-#include <mobot_pub_des_state/integer_query.h>
-
-#include <iostream>
-#include <string>
-#include <nav_msgs/Path.h>
-#include <geometry_msgs/Pose.h>
-#include <geometry_msgs/PoseStamped.h>
 using namespace std;
 
 
@@ -28,6 +15,9 @@ geometry_msgs::Quaternion MoveBase::convertPlanarPhi2Quaternion(double phi) {
 MoveBase::MoveBase() { //constructor
     path_client_ = nh_.serviceClient<mobot_pub_des_state::path>("append_path_queue_service");
     queue_client_= nh_.serviceClient<mobot_pub_des_state::integer_query>("path_queue_query_service");
+    path_set_end_state_client_ = nh_.serviceClient<mobot_pub_des_state::path>("path_set_end_state_service");
+    freeze_base_client_= nh_.serviceClient<std_srvs::SetBool>("freeze_robot_state");
+    
     //srv_stick.request.data = true;
     //srv_release.request.data = false;
     gearbox_table_approach_pose_.header.frame_id = "world";
@@ -50,27 +40,42 @@ MoveBase::MoveBase() { //constructor
     startup_pose_.pose.orientation.w = 1;    
     
     while (!path_client_.exists()) {
-        ROS_INFO("waiting for path service...");
+        ROS_INFO("waiting for path service...(from pub_des_state node)");
         ros::Duration(1.0).sleep();
+        ros::spinOnce();
     }
     ROS_INFO("connected path_client_ to service");
+    
+    freeze_robot_.request.data = true;
+    unfreeze_robot_.request.data = false;
+    while (!freeze_base_client_.exists()) {
+        ROS_INFO("waiting for freeze_robot_state service...");
+        ros::Duration(1.0).sleep();
+        ros::spinOnce();
+    }
+    ROS_INFO("connected to freeze_robot_state service");      
+    
     gazebo_state_subscriber_ = nh_.subscribe("/gazebo_fetch_pose", 1, &MoveBase::gazeboStateCallback, this); // for gazebo state 
+    gazebo_pose_.orientation.w = 100.0;
+    ROS_INFO("waiting for publication from mobot_gazebo_state node...");
+    while (gazebo_pose_.orientation.w>2) {
+        ROS_INFO("waiting for gazebo state...");
+        ros::Duration(1.0).sleep();       
+        ros::spinOnce();
+    }
 
+  
 }
 
 void MoveBase::gazeboStateCallback(const geometry_msgs::Pose gazebo_pose) {
-    //gazebo_x_ = gazebo_pose.position.x;
-    //gazebo_y_= gazebo_pose.position.y;
     gazebo_pose_ = gazebo_pose;
-    //double qz = gazebo_pose.orientation.z;
-    //double qw = gazebo_pose.orientation.w;
-    
-    //gazebo_phi_= 2.0 * atan2(qz, qw);
+    gazebo_pose_stamped_.header.stamp = ros::Time::now();
+    gazebo_pose_stamped_.pose = gazebo_pose_;
 }
 
 bool MoveBase::move_to_location_code(int location_code, geometry_msgs::Pose &result_pose)  {
     //geometry_msgs/PoseStamped[] poses;
-    geometry_msgs/PoseStamped pose;
+    geometry_msgs::PoseStamped pose;
 
     
     if (location_code == GEARBOX_TABLE)  {  //navigate to gearbox table
@@ -81,7 +86,9 @@ bool MoveBase::move_to_location_code(int location_code, geometry_msgs::Pose &res
         path_srv_msg_.request.path.poses.push_back(pose);
         pose = gearbox_table_approach_pose_;
         path_srv_msg_.request.path.poses.push_back(pose);
-        //path_srv_msg_.request.poses = poses;
+        
+        freeze_base_client_.call(unfreeze_robot_); //unfreeze the robot base
+
         //send the request:
         path_client_.call(path_srv_msg_);
         wait_for_path_done();
@@ -96,13 +103,26 @@ bool MoveBase::move_to_location_code(int location_code, geometry_msgs::Pose &res
 
 void MoveBase::wait_for_path_done() {
         int npts = 1;
+        queue_client_.call(int_query_srv_msg_);
+        ros::spinOnce();
+        npts = int_query_srv_msg_.response.int_val;
         while (npts > 0) {
+            ROS_INFO("waiting... %d points left in path queue", npts);
+            ros::Duration(1.0).sleep();
+            ros::spinOnce();
             queue_client_.call(int_query_srv_msg_);
             ros::spinOnce();
             npts = int_query_srv_msg_.response.int_val;
-            ROS_INFO("waiting... %d points left in path queue", npts);
-            ros::Duration(1.0).sleep();
         }
+        freeze_base_client_.call(freeze_robot_); //freeze the robot base here
+        
+        //have the pub_des_state node publish the current Gazebo pose as the desired pose, so
+        // the linear steering controller won't fight the "freeze" service
+        //NOTE: can also use this mechanism to command the robot to move WITHOUT velocity profiling,
+        // e.g. to point to a new heading, or move fwd or reverse by some small amount
+        path_srv_set_end_state_msg_.request.path.poses.clear();
+        path_srv_set_end_state_msg_.request.path.poses.push_back(gazebo_pose_stamped_);
+        path_set_end_state_client_.call(path_srv_set_end_state_msg_);
 }
 
 /*  //Jason's code:

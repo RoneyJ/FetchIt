@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(move_base_lib)
+project(object_finder_lib)
 
 find_package(catkin_simple REQUIRED)
 
@@ -12,10 +12,10 @@ find_package(catkin_simple REQUIRED)
 
 
 #uncomment the following 4 lines to use the Eigen library
-find_package(cmake_modules REQUIRED)
-find_package(Eigen3 REQUIRED)
-include_directories(${EIGEN3_INCLUDE_DIR})
-add_definitions(${EIGEN_DEFINITIONS})
+#find_package(cmake_modules REQUIRED)
+#find_package(Eigen3 REQUIRED)
+#include_directories(${EIGEN3_INCLUDE_DIR})
+#add_definitions(${EIGEN_DEFINITIONS})
 
 catkin_simple()
 
@@ -27,15 +27,15 @@ catkin_simple()
 # SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 
 # Libraries: uncomment the following and edit arguments to create a new library
-cs_add_library(move_base src/move_base.cpp)   
+cs_add_library(object_finder_lib src/object_finder_lib.cpp)   
 
 # Executables: uncomment the following and edit arguments to compile new nodes
 # may add more of these lines for more nodes from the same package
-cs_add_executable(move_base_example_main src/move_base_example_main.cpp)
+cs_add_executable(example_main_object_finder_lib src/example_main_object_finder_lib.cpp)
 
 #the following is required, if desire to link a node in this package with a library created in this same package
 # edit the arguments to reference the named node and named library within this package
-target_link_libraries(move_base_example_main move_base)
+target_link_libraries(example_main_object_finder_lib object_finder_lib)
 
 cs_install()
 cs_export()

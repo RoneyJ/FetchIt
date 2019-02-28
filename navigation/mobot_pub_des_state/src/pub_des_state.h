@@ -28,6 +28,8 @@ const int SETTLING =4;
 
 const int MAX_SETTLE_COUNT = 100;
 
+using namespace std;
+
 class DesStatePublisher {
 private:
 
@@ -68,6 +70,7 @@ private:
     ros::ServiceServer flush_path_queue_;
     ros::ServiceServer append_path_;
     ros::ServiceServer path_queue_query_;
+    ros::ServiceServer set_end_state_;
     
     ros::Publisher desired_state_publisher_;
     ros::Publisher des_psi_publisher_;
@@ -83,7 +86,8 @@ private:
     bool flushPathQueueCB(std_srvs::TriggerRequest& request, std_srvs::TriggerResponse& response);
     bool appendPathQueueCB(mobot_pub_des_state::pathRequest& request,mobot_pub_des_state::pathResponse& response);
     bool queryPathQueueCB(mobot_pub_des_state::integer_queryRequest& request,mobot_pub_des_state::integer_queryResponse& response);
-
+    bool setEndStateCB(mobot_pub_des_state::pathRequest& request, mobot_pub_des_state::pathResponse& response);
+    
 public:
     DesStatePublisher(ros::NodeHandle& nh);//constructor
     int get_motion_mode() {return motion_mode_;}

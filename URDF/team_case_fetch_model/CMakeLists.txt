@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(teamCase_fetch_model)
+project(team_case_fetch_model)
 
 find_package(catkin_simple REQUIRED)
 

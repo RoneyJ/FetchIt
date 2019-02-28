@@ -1,3 +1,27 @@
+organization:  major subsystems are navigation, perception and manipulation
+
+navigation uses a node, mobot_pub_des_state:
+rosrun mobot_pub_des_state mobot_pub_des_state
+
+interactions with this node are through SERVICES 
+    ros::ServiceServer estop_service_;
+    ros::ServiceServer estop_clear_service_;
+    ros::ServiceServer flush_path_queue_;
+    ros::ServiceServer append_path_;
+    ros::ServiceServer path_queue_query_;
+    ros::ServiceServer set_end_state_;
+
+simplify interactions with LIBRARY move_base (in package "move_base_lib")
+  example: bool success = moveBase.move_to_location_code(GEARBOX_TABLE, result_pose);
+  where "result_pose" will contain the pose of the robot at the end of the move.
+  This automatically sets to desired state to result_pose (so linear feedaback err is zeroed),
+  AND invokes freeze_robot_service to have Gazebo hold the robot pose stationary at this pose.
+  NOTE: automatically does "unfreeze" before attempting move_to_location_code()
+  This function will block until the commmanded move has finished streaming.
+
+
+
+#
 Start up with:
 
 roslaunch worlds Fetch_kit.launch

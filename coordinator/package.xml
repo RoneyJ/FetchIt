@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <package>
-  <name>move_base_lib</name>
+  <name>coordinator</name>
   <version>0.0.0</version>
-  <description>The move_base_lib package</description>
+  <description>The coordinator package</description>
   
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="atlas3@todo.todo">atlas3</maintainer>
+  <maintainer email="wyatt@todo.todo">wyatt</maintainer>
 
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
@@ -41,15 +41,15 @@
   <buildtool_depend>catkin</buildtool_depend>
   <buildtool_depend>catkin_simple</buildtool_depend>
   <build_depend>roscpp</build_depend>
-<build_depend>mobot_pub_des_state</build_depend>
-<build_depend>nav_msgs</build_depend>
-<build_depend>geometry_msgs</build_depend>
-<build_depend>std_srvs</build_depend>
+<build_depend>object_finder_lib</build_depend>
+<build_depend>part_codes</build_depend>
+<build_depend>move_base_lib</build_depend>
+<build_depend>move_part_lib</build_depend>
   <run_depend>roscpp</run_depend>
-<run_depend>mobot_pub_des_state</run_depend>
-<run_depend>nav_msgs</run_depend>
-<run_depend>geometry_msgs</run_depend>
-<run_depend>std_srvs</run_depend>
+<run_depend>object_finder_lib</run_depend>
+<run_depend>part_codes</run_depend>
+<run_depend>move_base_lib</run_depend>
+<run_depend>move_part_lib</run_depend>
   <!-- The export tag contains other, unspecified, tags -->
   <export>
     <!-- You can specify that this package is a metapackage here: -->

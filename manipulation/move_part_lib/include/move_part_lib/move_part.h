@@ -10,17 +10,19 @@
 
 #include <fetch_fk_ik/fetch_kinematics.h>
 
-#include <object_finder/objectFinderAction.h>
+//#include <object_finder/objectFinderAction.h>
 #include <gripper_interface/gripper_interface.h>
 #include <arm_motion_action/arm_interfaceAction.h>
 #include <cartesian_motion_commander/cart_motion_commander.h>
 #include <xform_utils/xform_utils.h>
 #include <gripper_interface/gripper_interface.h>
+#include <part_codes/part_codes.h>
 
 const double GRASP_HEIGHT = 0.055;
 const double PART_X_VAL = 0.625; //0.64; for testing only
 const double PART_Y_VAL = 0.2; //0.059; //minus-sign error w/ object-finder?
 const double APPROACH_HT = 0.15;
+const double APPROACH_CLEARANCE = 0.08;
 
 using namespace std;
 
@@ -30,7 +32,7 @@ public:
 	MovePart(); //constructor
         //public member fncs
         //GripperInterface gripperInterface_;
-	bool get_part(int part_code);
+	bool get_part(int part_code, geometry_msgs::PoseStamped source_pose);
         bool place_grasped_part(int part_code, geometry_msgs::PoseStamped destination_pose);
         bool stow_grasped_part(int part_code);
         bool preset_arm();
@@ -45,6 +47,7 @@ private:
     	void initializeSubscribers();
     	void initializePublishers();
 
+        /*  REMOVE object finder dependency
        //object finder:
         actionlib::SimpleActionClient<object_finder::objectFinderAction> object_finder_ac_;
         void objectFinderDoneCb(const actionlib::SimpleClientGoalState& state,
@@ -52,7 +55,7 @@ private:
         object_finder::objectFinderGoal object_finder_goal_;
         bool found_object_code_; 
         std::vector <geometry_msgs::PoseStamped> perceived_object_poses_;
-
+        */
     //for arm control:
     actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction> robot_arm_motion_action_client_;
     void armMotionCb(const actionlib::SimpleClientGoalState& state,
