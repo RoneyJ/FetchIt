@@ -50,10 +50,10 @@ int main(int argc, char **argv) {
     model_state_srv_msg.request.model_state.reference_frame = "world";
     string block("kit");
     
-    double x = 0;
+    double x = 0.1;
     double y = 0;
-    double z = 0.4;
-    double yaw = 0;
+    double z = 0.45;
+    double yaw = 1.5707;
     
   
     model_state_srv_msg.request.model_state.model_name = "kit";

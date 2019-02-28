@@ -25,5 +25,10 @@ Start the perception action server:
 Start the navigation nodes: 
 `roslaunch navigation_launch navigation.launch`
 
+If desired, place kit on pedestal with:
+`rosrun gazebo_set_state set_kit_service`
+then "glue" the kit to the pedestal with:
+`rosservice call sticky_finger/base_link  true`
+
 Start the coordinator:
 `roslaunch coordinator_launch coordinator.launch`
