@@ -61,6 +61,10 @@ public:
 
     
     int plan_jspace_traj_current_to_waiting_pose(int nsteps, double arrival_time); //traj current pose to a jspace home pose
+    int plan_jspace_traj_current_to_kit_dropoff1(int nsteps, double arrival_time); //traj current pose to a jspace home pose
+    int plan_jspace_traj_current_to_kit_dropoff2(int nsteps, double arrival_time); //traj current pose to a jspace home pose
+    int plan_jspace_traj_current_to_kit_dropoff3(int nsteps, double arrival_time); //traj current pose to a jspace home pose
+
     int plan_jspace_traj_current_to_qgoal(int nsteps, double arrival_time,Eigen::VectorXd q_goal); //traj current to a specified jspace pose
     //int plan_jspace_traj_qstart_to_qend(int nsteps, double arrival_time,Eigen::VectorXd q_start,Eigen::VectorXd q_goal);   //jspace traj from specified q_start to q_end
     int plan_jspace_traj_current_to_tool_pose(int nsteps, double arrival_time,geometry_msgs::PoseStamped des_pose);   //computes a jspace traj from start pose to some IK soln of desired tool pose

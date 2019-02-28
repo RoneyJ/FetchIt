@@ -35,6 +35,10 @@ public:
 	bool get_part(int part_code, geometry_msgs::PoseStamped source_pose);
         bool place_grasped_part(int part_code, geometry_msgs::PoseStamped destination_pose);
         bool stow_grasped_part(int part_code);
+        bool move_to_dropoff_kit1();
+        bool move_to_dropoff_kit2();
+        bool move_to_dropoff_kit3();
+
         bool preset_arm();
         //bool preset_torso();
         //bool preset_head();

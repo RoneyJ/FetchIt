@@ -52,6 +52,8 @@ private:
     std::vector<trajectory_msgs::JointTrajectory> multi_traj_vec_; //holder for multiple traj segments
     
     Eigen::VectorXd q_lower_limits_,q_upper_limits_,qdot_max_vec_,q_home_pose_,q_waiting_pose_; 
+    //some hard-coded values for stereotyped motions
+    Eigen::VectorXd q_stow_pose1_,q_stow_pose2_,q_stow_pose3_,q_stow_pose4_,q_stow_pose5_,q_stow_pose6_;    
 
     ros::Publisher traj_publisher_; //<trajectory_msgs::JointTrajectory>;// = nh.advertise<trajectory_msgs::JointTrajectory>;//("joint_path_command", 1);   
     ros::Subscriber joint_states_subscriber_; 
@@ -178,6 +180,10 @@ public:
     void execute_traj_nseg();
     //jspace trajectory planners:
     bool plan_jspace_traj_current_to_waiting_pose(); //traj current pose to a jspace home pose
+    bool plan_jspace_traj_current_to_kit_dropoff1(); //fixed pattern motion to dropoff above kit large pocket on pedestal
+    bool plan_jspace_traj_current_to_kit_dropoff2(); //fixed pattern motion to dropoff above kit large pocket on pedestal
+    bool plan_jspace_traj_current_to_kit_dropoff3(); //fixed pattern motion to dropoff above kit large pocket on pedestal
+
     bool plan_jspace_traj_current_to_qgoal(); //traj current to a specified jspace pose
     bool plan_jspace_traj_qstart_to_qend();   //jspace traj from specified q_start to q_end
     bool plan_jspace_traj_current_to_tool_pose();   //computes a jspace traj from start pose to some IK soln of desired tool pose

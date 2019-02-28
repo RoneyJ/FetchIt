@@ -47,6 +47,27 @@ bool MovePart::preset_arm() {
     ros::Duration(2.0).sleep();// wait for execution
 }
 
+bool MovePart::move_to_dropoff_kit1() {
+    cart_motion_commander_.plan_jspace_traj_current_to_kit_dropoff1(2, 2.0); 
+    cart_motion_commander_.execute_planned_traj();
+    ros::Duration(2.0).sleep();// wait for execution
+    gripper_interface_.releaseObject();
+}
+
+bool MovePart::move_to_dropoff_kit2() {
+    cart_motion_commander_.plan_jspace_traj_current_to_kit_dropoff2(2, 2.0); 
+    cart_motion_commander_.execute_planned_traj();
+    ros::Duration(2.0).sleep();// wait for execution
+    gripper_interface_.releaseObject();
+}
+
+bool MovePart::move_to_dropoff_kit3() {
+    cart_motion_commander_.plan_jspace_traj_current_to_kit_dropoff3(2, 2.0); 
+    cart_motion_commander_.execute_planned_traj();
+    ros::Duration(2.0).sleep();// wait for execution
+    gripper_interface_.releaseObject();
+}
+
 //specified source_pose should use torso_lift_link frame to specify part pose
 //THIS FNC SHOULD TRANSFORM from  source reference to torso_lift_link reference frame...
 // NOT YET IMPLEMENTED, SO USER BEWARE

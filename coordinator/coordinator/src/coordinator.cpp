@@ -56,6 +56,12 @@ int main(int argc, char** argv) {
    //cin>>ans;
    //invoke the  "get_part()" function to acquire specified part from specified  pose
    success = movePart.get_part(partCode,source_pose);
+   
+   success = movePart.preset_arm();
+   ros::Duration(1.0).sleep(); //not necessary?
+   success = movePart.move_to_dropoff_kit1();
+   
+   
 
    ROS_INFO("done");
    return 0;

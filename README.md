@@ -16,14 +16,14 @@ A typical sequence would consist of: invoking navigation (e.g. to a pre-coded zo
 To start up the code, launch the Gazebo simulation with:
 `roslaunch worlds Fetch_kit.launch`
 
-Start the manipulation action server (includes pre-positioning the head, torso and arm):
-`roslaunch manipulation_launch manipulation.launch`
-
 Start the perception action server:
 `roslaunch  object_finder_launch object_finder.launch`
 
 Start the navigation nodes: 
 `roslaunch navigation_launch navigation.launch`
+
+Start the manipulation nodes: 
+`roslaunch manipulation_launch manipulation.launch`
 
 If desired, place kit on pedestal with:
 `rosrun gazebo_set_state set_kit_service`

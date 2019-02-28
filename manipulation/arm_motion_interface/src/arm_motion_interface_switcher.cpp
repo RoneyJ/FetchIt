@@ -53,6 +53,21 @@ void ArmMotionInterface::executeCB(const actionlib::SimpleActionServer<arm_motio
             plan_jspace_traj_current_to_waiting_pose(); //q_start_Xd_, q_pre_pose_Xd_);
             busy_working_on_a_request_ = false;
             break;   
+        case arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_CURRENT_TO_KIT_DROPOFF1:
+            ROS_INFO("responding to request PLAN_TRAJ_CURRENT_TO_WAITING_POSE");
+            plan_jspace_traj_current_to_kit_dropoff1(); //q_start_Xd_, q_pre_pose_Xd_);
+            busy_working_on_a_request_ = false;
+            break;  
+        case arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_CURRENT_TO_KIT_DROPOFF2:
+            ROS_INFO("responding to request PLAN_TRAJ_CURRENT_TO_WAITING_POSE");
+            plan_jspace_traj_current_to_kit_dropoff2(); //q_start_Xd_, q_pre_pose_Xd_);
+            busy_working_on_a_request_ = false;
+            break;  
+        case arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_CURRENT_TO_KIT_DROPOFF3:
+            ROS_INFO("responding to request PLAN_TRAJ_CURRENT_TO_WAITING_POSE");
+            plan_jspace_traj_current_to_kit_dropoff3(); //q_start_Xd_, q_pre_pose_Xd_);
+            busy_working_on_a_request_ = false;
+            break;  
             
         //prepares a jspace trajectory plan to move arm from current pose to specified goal pose
         case arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_CURRENT_TO_QGOAL:
