@@ -57,7 +57,6 @@ int main(int argc, char **argv) {
  		pose_stamped.pose = pose;
 		path_srv.request.path.poses.push_back(pose_stamped);
 
-	
        //go to table 2
                 quat = convertPlanarPhi2Quaternion(-1.5708);
 		pose.orientation = quat;
@@ -81,17 +80,19 @@ int main(int argc, char **argv) {
                 pose.position.y = -1.01;
 		pose_stamped.pose = pose;
 		path_srv.request.path.poses.push_back(pose_stamped);
+
        //go to table 4
                 quat = convertPlanarPhi2Quaternion(-3.1415);
 		pose.orientation = quat;
-		pose.position.x = -0.98;
-		pose.position.y = 0.27;
+		pose.position.x = -0.98;//need to try: -0.99
+		pose.position.y = 0.27; //need to try: 0.37
 		pose_stamped.pose = pose;
 		path_srv.request.path.poses.push_back(pose_stamped);
 		//pose 4.1
 		pose.position.x = -0.981;
 		pose_stamped.pose = pose;
 		path_srv.request.path.poses.push_back(pose_stamped);
+
        //go to table 5
 		quat = convertPlanarPhi2Quaternion(-3.1415);
 		pose.orientation = quat;

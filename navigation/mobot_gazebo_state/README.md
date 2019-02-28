@@ -4,7 +4,7 @@ learning and code-development purposes only.  It assumes a mobile-robot model
 called "mobot" is known to gazebo.  It subscribes to the topic
 gazebo/model_states.  It searches the list of model names to find a match to "mobot".
 It extracts the corresponding Pose from the model states, and re-publishes this
-pose to the topic "gazebo_mobot_pose."  
+pose to the topic "gazebo_fetch_pose."  
 
 A steering algorithm can consult this topic for use in feedback, relative to
 some path of interest.

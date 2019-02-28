@@ -33,6 +33,8 @@ DesStatePublisher::DesStatePublisher(ros::NodeHandle& nh) : nh_(nh) {
     current_pose_ = trajBuilder_.xyPsi2PoseStamped(0,0,0);
     start_pose_ = current_pose_;
     end_pose_ = current_pose_;
+    current_des_state_.header.frame_id="odom";
+    current_des_state_.child_frame_id = "base_link";
     current_des_state_.twist.twist = halt_twist_;
     current_des_state_.pose.pose = current_pose_.pose;
     halt_state_ = current_des_state_;
@@ -52,6 +54,8 @@ void DesStatePublisher::initializeServices() {
             &DesStatePublisher::appendPathQueueCB, this);
     path_queue_query_ = nh_.advertiseService("path_queue_query_service",
             &DesStatePublisher::queryPathQueueCB, this);   
+    set_end_state_ = nh_.advertiseService("path_set_end_state_service",
+            &DesStatePublisher::setEndStateCB, this);       
 }
 
 //member helper function to set up publishers;
@@ -92,6 +96,26 @@ bool DesStatePublisher::appendPathQueueCB(mobot_pub_des_state::pathRequest& requ
     }
     return true;
 }
+
+bool DesStatePublisher::setEndStateCB(mobot_pub_des_state::pathRequest& request, mobot_pub_des_state::pathResponse& response) {
+
+    int npts = request.path.poses.size();
+    if (npts!=1) {
+        ROS_WARN("setEndState request has %d poses; something is amiss",npts);
+    }
+    if (npts>0) {
+        ROS_INFO_STREAM("setting end state to: "<< request.path.poses[0]<<endl);
+        //nav_msgs::Odometry
+        seg_end_state_.pose.pose=request.path.poses[0].pose;
+        seg_end_state_.twist.twist = halt_twist_;
+        response.status = true;
+        return true;
+    }
+    response.status = false;  //if here, something is wrong
+    return true; 
+}
+
+
 
 bool DesStatePublisher::queryPathQueueCB(mobot_pub_des_state::integer_queryRequest& request,mobot_pub_des_state::integer_queryResponse& response) {
     int npts;

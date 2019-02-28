@@ -1,5 +1,4 @@
-//pub_des_state_path_client:
-// this node loops from table 1->2->3->4->5->1->...
+//Prompts commands for the table numbers
 
 #include <ros/ros.h>
 #include <mobot_pub_des_state/path.h>
@@ -44,79 +43,94 @@ int main(int argc, char **argv) {
     pose_stamped.header.frame_id = "world";
     geometry_msgs::Pose pose;
     while (true) { //repeat forever
+        //starting pose
+        /*
+        pose.position.x = 0; 
+        pose.position.y = 0;
+        pose.position.z = 0;
+	quat = convertPlanarPhi2Quaternion();
+        pose.orientation = quat;
+        pose_stamped.pose = pose;
+        path_srv.request.path.poses.push_back(pose_stamped);
+        */
         path_srv.request.path.poses.clear();
 	cout << "Input a table number to move to: " << endl;
 	cin >> table_num;
-
-	if(table_num == 1){
+        switch(table_num){
+            case 1:
 		//go to table 1
-		 pose.position.x = 0.72; 
+	pose.position.x = 0.72; 
         pose.position.y = 0.38;
         pose.position.z = 0.0;
 	quat = convertPlanarPhi2Quaternion(0);
         pose.orientation = quat;
         pose_stamped.pose = pose;
         path_srv.request.path.poses.push_back(pose_stamped);
-// pose 1.1
+        // pose 1.1
  
- pose.position.x = 0.721; 
- pose.position.y = 0.38;
- pose_stamped.pose = pose;
-path_srv.request.path.poses.push_back(pose_stamped);
-	}
+        pose.position.x = 0.721; 
+        pose.position.y = 0.38;
+        pose_stamped.pose = pose;
+        path_srv.request.path.poses.push_back(pose_stamped);
+	break; 
 
-	else if(table_num == 2){
-		//go to table 2
-                quat = convertPlanarPhi2Quaternion(-1.57);
-		pose.orientation = quat;
+            case 2:
+	//go to table 2
 		pose.position.x = 0.61;
 		pose.position.y = -1.13;
+                quat = convertPlanarPhi2Quaternion(-1.57);
+		pose.orientation = quat;
 		pose_stamped.pose = pose;
 		path_srv.request.path.poses.push_back(pose_stamped);
-//pose 2.1
+        //pose 2.1
 		pose.position.y = -1.131;
 		pose_stamped.pose = pose;
 		path_srv.request.path.poses.push_back(pose_stamped);
-	}
-	else if(table_num == 3){
+                break; 
+	
+            case 3:
 		//go to table 3
-               quat = convertPlanarPhi2Quaternion(-1.57);
-		pose.orientation = quat;
 		pose.position.x = -0.72;
-		pose.position.y = -1.09;
+		pose.position.y = -1.0;
+                quat = convertPlanarPhi2Quaternion(-1.57);
+		pose.orientation = quat;
 		pose_stamped.pose = pose;
 		path_srv.request.path.poses.push_back(pose_stamped);
-//pose 3.1
-                pose.position.y = -1.091;
+                //pose 3.1
+                pose.position.y = -1.01;
 		pose_stamped.pose = pose;
 		path_srv.request.path.poses.push_back(pose_stamped);
-	}
-	else if(table_num == 4){
+                break;
+	
+            case 4:
 		//go to table 4
+               
+		pose.position.x = -0.98;
+		pose.position.y = 0.26;
                 quat = convertPlanarPhi2Quaternion(-3.14);
 		pose.orientation = quat;
-		pose.position.x = -0.98;
-		pose.position.y = 0.27;
-	
 		pose_stamped.pose = pose;
 		path_srv.request.path.poses.push_back(pose_stamped);
-//pose 4.1
+                //pose 4.1
 		pose.position.x = -0.981;
 		pose_stamped.pose = pose;
 		path_srv.request.path.poses.push_back(pose_stamped);
-	}
-	else if(table_num == 5){
+                break; 
+	
+            case 5:
 		//go to table 5
-quat = convertPlanarPhi2Quaternion(-3.14);
-		pose.orientation = quat;
+                
 		pose.position.x = -0.24;
 		pose.position.y = 0.26;
+                quat = convertPlanarPhi2Quaternion(1.5708);
+		pose.orientation = quat;
 		pose_stamped.pose = pose;
 		path_srv.request.path.poses.push_back(pose_stamped);
-//pose 5.1
-pose.position.y = 0.261;
+                //pose 5.1
+                pose.position.y = 0.261;
 		pose_stamped.pose = pose;
 		path_srv.request.path.poses.push_back(pose_stamped);
+                break; 
 	}
 
         client.call(path_srv);
