@@ -1,0 +1,7 @@
+<launch> 
+<node name= "mobot_gazebo_state" pkg= "mobot_gazebo_state" type= "mobot_gazebo_state" output="screen" respawn="true"/> 
+<node name= "lin_steering_wrt_gazebo_state" pkg= "lin_steering" type= "lin_steering_wrt_gazebo_state"  respawn="true"/> 
+<node name= "mobot_pub_des_state" pkg= "mobot_pub_des_state" type= "mobot_pub_des_state" output="screen" respawn="true"/> 
+<node name= "freeze_robot_service" pkg= "gazebo_set_state" type= "freeze_robot_service" output="screen" respawn="true"/> 
+</launch>  
+

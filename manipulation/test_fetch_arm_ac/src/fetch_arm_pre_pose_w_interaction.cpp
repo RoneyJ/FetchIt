@@ -115,9 +115,62 @@ int main(int argc, char** argv) {
         ros::Duration(1.0).sleep();
     }
  
-    ROS_INFO("arm is in pre-pose");
+    ROS_INFO("arm is in pre-pose; optionally, move joints one at a time interactively...");
+        int jnum;
+        double qval;
+    trajectory_point.time_from_start = ros::Duration(2.0);
+    for (int i=0;i<7;i++) q_in[i]=trajectory_point.positions[i];
+    while (true) {
+        cout<<"enter jnt num, 0-6: ";
+        cin>>jnum;
+        cout<<"enter jnt val: ";
+        cin>>qval;
+        des_trajectory.points.clear();
+        trajectory_point.positions[jnum] = qval;
+        q_in[jnum]=qval;
+        des_trajectory.points.push_back(trajectory_point);
+        robot_goal.trajectory = des_trajectory;
+        robot_motion_action_client.sendGoal(robot_goal, &doneCb);
+        A_fwd_DH = fwd_solver.fwd_kin_solve(q_in); //fwd_kin_solve
 
+        std::cout << "q_in: " << q_in.transpose() << std::endl;        
 
+        std::cout << "A rot: " << std::endl;
+        std::cout << A_fwd_DH.linear() << std::endl;
+        std::cout << "A origin (torso_lift_link to gripper_frame): " << A_fwd_DH.translation().transpose() << std::endl;
+        
+        double q_shoulder_pan = q_in[0];
+        //int nsolns = ik_solver.ik_solve(A_fwd_DH,q_shoulder_pan,q_solns);
+        //following ASSUMES q1=0
+        //int nsolns = ik_solver.ik_solve(A_fwd_DH,q_solns);
+        
+        //int nsolns = ik_solver.ik_solve_elbow_up_given_q1(A_fwd_DH,q_shoulder_pan,q_solns);     
+        int nsolns = ik_solver.ik_solve_simple_reach(A_fwd_DH,q_solns);      
+
+        //ROS_INFO_STREAM("desired wrist point: "<<wrist_pt.transpose()<<endl);
+
+        
+        
+        nsolns = q_solns.size();
+        std::cout << "number of IK solutions: " << nsolns << std::endl;    
+        
+        //test fwd kin:
+        std::cout << "q_in: " << q_in.transpose() << std::endl;        
+        
+
+        O_7_des = A_fwd_DH.translation();
+        ROS_INFO_STREAM("desired hand position: " <<O_7_des.transpose() <<endl);
+        
+
+        ROS_INFO("test solns: ");
+        for (int i=0;i<nsolns;i++) {
+            ROS_INFO_STREAM("q_soln: "<<q_solns[i].transpose()<<endl);
+            A_fwd_DH = fwd_solver.fwd_kin_solve(q_solns[i]);
+            O_7 = A_fwd_DH.translation();
+            double hand_err = (O_7_des-O_7).norm();
+            ROS_INFO_STREAM("fwd kin hand position err: " <<hand_err <<endl);
+        }        
+    }
 
     return 0;
 }

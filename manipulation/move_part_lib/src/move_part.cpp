@@ -93,11 +93,25 @@ bool MovePart::get_part(int part_code, geometry_msgs::PoseStamped source_pose) {
         //ros::Duration(arrival_time + 0.2).sleep();
     } else {
         ROS_WARN("unsuccessful plan; rtn_code = %d", rtn_val);
+        return false;
     }    
     gripper_interface_.graspObject();
+    ros::Duration(3.0).sleep();  //have to wait on gripper; get some feedback??
+    
+       tool_pose_.pose.position.z = source_pose.pose.position.z+APPROACH_CLEARANCE; //descend to grasp pose
+    ROS_INFO("requesting plan depart with grasped object:");
+    xformUtils.printPose(tool_pose_);
+    rtn_val = cart_motion_commander_.plan_cartesian_traj_qprev_to_des_tool_pose(nsteps, arrival_time, tool_pose_);
+    if (rtn_val == arm_motion_action::arm_interfaceResult::SUCCESS) {
+        ROS_INFO("successful plan; command execution of trajectory");
+        rtn_val = cart_motion_commander_.execute_planned_traj();
+        //ros::Duration(arrival_time + 0.2).sleep();
+    } else {
+        ROS_WARN("unsuccessful plan; rtn_code = %d", rtn_val);
+    }  
         
         
-return false;
+return true;
 }
 
 bool MovePart::place_grasped_part(int part_code, geometry_msgs::PoseStamped destination_pose){

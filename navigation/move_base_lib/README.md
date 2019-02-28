@@ -15,4 +15,4 @@ Start up the navigation nodes:
 
 ## Running tests/demos
 can run this subsystem test for navigation dev/debug/test:
-`rosrun move_base_lib move_base_example_main`
+`rosrun move_base_lib move_base_example_main` 

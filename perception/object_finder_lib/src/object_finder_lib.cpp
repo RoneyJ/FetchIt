@@ -11,7 +11,7 @@ FindPart::FindPart() : object_finder_ac_("/object_finder_action_service", true) 
         ROS_INFO("retrying...");
     }
     ROS_INFO("connected to object_finder action server");
-
+    pose_publisher_ = nh_.advertise<geometry_msgs::PoseStamped>("triad_display_pose", 1, true);
 }
 
 void FindPart::objectFinderDoneCb(const actionlib::SimpleClientGoalState& state,
@@ -75,3 +75,13 @@ bool FindPart::find_part(int part_code, std::vector <geometry_msgs::PoseStamped>
  return true;
 
 }
+
+void   FindPart::display_triad(geometry_msgs::PoseStamped triad_pose)  {
+        //publish the desired frame pose to be displayed as a triad marker:   
+    for (int i=0;i<3;i++) {
+        pose_publisher_.publish(triad_pose);  
+        ros::spinOnce();
+        ros::Duration(0.05).sleep();
+    }
+}
+

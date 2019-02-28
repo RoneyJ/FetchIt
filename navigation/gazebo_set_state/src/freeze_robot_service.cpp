@@ -117,9 +117,9 @@ int main(int argc, char **argv) {
                 bool result = model_state_srv_msg.response.success;
                 if (!result)
                     ROS_WARN("service call to set_model_state failed!");
-                else
-                    ROS_INFO("freezing robot");
-            
+                else {
+                    //ROS_INFO("freezing robot");
+                }
         }
             ros::spinOnce();
             ros::Duration(0.1).sleep();

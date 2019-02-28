@@ -73,6 +73,14 @@ void MoveBase::gazeboStateCallback(const geometry_msgs::Pose gazebo_pose) {
     gazebo_pose_stamped_.pose = gazebo_pose_;
 }
 
+void MoveBase::freeze(void) {
+freeze_base_client_.call(freeze_robot_); 
+}
+
+void MoveBase::unfreeze(void) {
+freeze_base_client_.call(unfreeze_robot_); 
+}
+
 bool MoveBase::move_to_location_code(int location_code, geometry_msgs::Pose &result_pose)  {
     //geometry_msgs/PoseStamped[] poses;
     geometry_msgs::PoseStamped pose;

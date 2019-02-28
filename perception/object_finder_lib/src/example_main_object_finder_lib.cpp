@@ -14,5 +14,14 @@ int main(int argc, char** argv) {
    for  (int i=0;i<nparts;i++) {
      ROS_INFO_STREAM(part_poses[i]<<endl);
    }
+   if (nparts<1) {
+      ROS_WARN("DID NOT FIND ANY PARTS; QUITTING");
+      return 0;
+   }
 
+
+   geometry_msgs::PoseStamped source_pose= part_poses[0];      //choose the first part found:
+   ROS_INFO_STREAM("chosen part: "<<source_pose<<endl);
+   findPart.display_triad(source_pose);
+   ros::Duration(1.0).sleep();
 }

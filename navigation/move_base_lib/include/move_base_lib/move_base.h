@@ -27,6 +27,8 @@ public:
         //cmd to move to a coded location (e.g. GEARBOX_TABLE); returns the actual pose at end of move
     bool move_to_location_code(int location_code, geometry_msgs::Pose &result_pose);
     void wait_for_path_done();
+    void freeze(void); //tell Gazebo to freeze the robot
+    void unfreeze(void); //tell Gazebo to unfreeze the robot
 
 private:
         ros::NodeHandle nh_; 
