@@ -10,41 +10,36 @@
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseStamped.h>
 
+//location codes for navigation:
 const int GEARBOX_TABLE = 1;
 const int BOLT_TABLE = 2;
 const int KIT_PICKUP_TABLE= 3;
-const int KIT_DROPOFF_TABLE = 4;
-const int GEAR_TABLE = 5;
+const int GEAR_TABLE = 4;
+const int KIT_DROPOFF_DEPOT = 5;
 
 class MoveBase 
 {
 public:
 	MoveBase();
         geometry_msgs::Quaternion convertPlanarPhi2Quaternion(double phi);
+        //cmd to move to a coded location (e.g. GEARBOX_TABLE); returns the actual pose at end of move
+    bool move_to_location_code(int location_code, geometry_msgs::Pose &result_pose);
+    void wait_for_path_done();
 
-
-        ros::ServiceClient sticky_finger_client;// = n.serviceClient<std_srvs::SetBool>("/sticky_finger/r_gripper_finger_link");
-        std_srvs::SetBool srv_stick,srv_release;
 private:
         ros::NodeHandle nh_; 
-    ros::ServiceClient path_client;// = n.serviceClient<mobot_pub_des_state::path>("append_path_queue_service");
-    ros::ServiceClient queue_client;// = n.serviceClient<mobot_pub_des_state::integer_query>("path_queue_query_service");
-    
-	std::map<std::string,double> part_width_map_ = 
-	{
-		{"dummy_part", 0.01}
-	}; //more parts go here as we find out about them
-
-	const double MAX_EFFORT_ = 1.0, OPEN_POSITION_ = 0.1, OPEN_EFFORT_ = 1.0, DEFAULT_GRASP_WIDTH_ = 0.1 ;
-	
-	actionlib::SimpleActionClient<control_msgs::GripperCommandAction> ac_;
-	control_msgs::GripperCommandGoal goal_;
-	control_msgs::GripperCommandResult result_;
-	
-	bool waitForGrasp(double timeout);
-	bool isGrasping();
-	bool waitForRelease(double timeout);
-
-
+    ros::ServiceClient path_client_;// = n.serviceClient<mobot_pub_des_state::path>("append_path_queue_service");
+    ros::ServiceClient queue_client_;// = n.serviceClient<mobot_pub_des_state::integer_query>("path_queue_query_service");
+    ros::Subscriber gazebo_state_subscriber_;    
+    void gazeboStateCallback(const geometry_msgs::Pose);
+    geometry_msgs::Pose gazebo_pose_;
+    mobot_pub_des_state::path path_srv_msg_;
+    mobot_pub_des_state::integer_query int_query_srv_msg_;
+    geometry_msgs::PoseStamped gearbox_table_approach_pose_;
+    geometry_msgs::PoseStamped gear_table_approach_pose_;
+    geometry_msgs::PoseStamped bolt_table_approach_pose_;
+    geometry_msgs::PoseStamped kit_pickup_approach_pose_;    
+    geometry_msgs::PoseStamped kit_dropoff_depot_pose_;    
+    geometry_msgs::PoseStamped startup_pose_;  
 };
 #endif
