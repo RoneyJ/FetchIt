@@ -3,10 +3,36 @@ code for TeamCase Fetch competition
 see docs from Fetch here:
 https://github.com/fetchrobotics/docs/tree/master/source
 
-NOTE:  modified fetch/fetch_gazebo/robots/fetch.gazebo.xacro to add sticky-fingers plugin
-saved this in: teamCase_fetch_model/fetch.launch.xml
-modified our launch file to refer to this model:
-roslaunch worlds Fetch_kit.launch
+This code is organized in three major areas: navigation, perception and manipulation.
+See READMEs in these directories regarding their use and how to run subsystem tests.
+
+The coordinator package is responsible for integrating the above.  This is aided by libraries in
+each subsystem that simplify the interfaces to them, including move_base_lib, move_part_lib and object_finder_lib.
+
+A typical sequence would consist of: invoking navigation (e.g. to a pre-coded zone), invoking object finding 
+(using object codes) and object manipulation (with part codes and location  codes or specified poses).
+
+To start up the code, launch the Gazebo simulation with:
+`roslaunch worlds Fetch_kit.launch`
+
+Start the perception action server:
+`rosrun object_finder object_finder_as`
+
+
+Start the manipulation action server: (move these to a single launch file)
+`roslaunch manipulation_launch manipulation.launch`
+
+should include:
+`roslaunch fetch_arm_behavior_server fetch_static_transforms.launch`
+`rosrun fetch_arm_behavior_server fetch_cart_move_as`
+
+Start the navigation nodes: (CREAT ME!)
+`roslaunch perception_launch perception.launch`
+
+Start the coordinator:
+`roslaunch coordinator_launch coordinator`
+
+
 
 
 see package test_fetch_arm_ac for an example of how to populate and send trajectory goals to the arm.

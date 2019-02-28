@@ -2,9 +2,9 @@
 This package is a "shell" for development of an object-finder action service.
 In the goal message, specify a code corresponding to a known object type.
 These codes are defined in:
-#include <object_finder/objectFinderAction.h>
+#include <part_codes/part_codes.h>
 
-e.g.: object_finder::objectFinderGoal::GEARBOX_TOP
+e.g.: part_codes::part_codes::GEARBOX_TOP
 
 The response will contain a return code, e.g. for "object found", "object type not recognized",
 or "object not found".  
