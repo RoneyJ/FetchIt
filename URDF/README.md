@@ -11,3 +11,7 @@ Make sure to use Gazebo 9 and melodic since thats the requirements for the compe
 
 
 Bruce
+
+NOTE:  modified fetch/fetch_gazebo/robots/fetch.gazebo.xacro to add sticky-fingers plugin
+saved this in: teamCase_fetch_model/fetch.launch.xml
+modified our launch file to refer to this model.

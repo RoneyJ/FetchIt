@@ -6,7 +6,7 @@
 #include <actionlib/client/simple_action_client.h>
 #include <actionlib/client/terminal_state.h>
 #include <object_finder/objectFinderAction.h>
-
+#include <part_codes/part_codes.h>
 
 #include <Eigen/Eigen>
 #include <Eigen/Dense>
@@ -74,7 +74,8 @@ int main(int argc, char** argv) {
     //object_finder::objectFinderResult object_finder_result;
 
        
-        object_finder_goal.object_id = object_finder::objectFinderGoal::GEARBOX_TOP;
+      //  object_finder_goal.object_id = object_finder::objectFinderGoal::GEARBOX_TOP;
+        object_finder_goal.object_id = part_codes::part_codes::GEARBOX_TOP;
 
      ROS_INFO("sending goal to find GEARBOX_TOP: ");
         object_finder_ac.sendGoal(object_finder_goal,&objectFinderDoneCb); 

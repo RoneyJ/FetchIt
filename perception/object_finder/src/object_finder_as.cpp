@@ -6,6 +6,7 @@
 #include<pcl_utils/pcl_utils.h>
 #include<object_finder/objectFinderAction.h>
 #include <xform_utils/xform_utils.h>
+#include <part_codes/part_codes.h>
 
 #include <opencv2/core/utility.hpp>
 #include "opencv2/imgproc.hpp"
@@ -418,7 +419,7 @@ void ObjectFinder::executeCB(const actionlib::SimpleActionServer<object_finder::
 
     switch (object_id) {
         //coordinator::ManipTaskResult::FAILED_PERCEPTION:
-        case object_finder::objectFinderGoal::GEARBOX_TOP:
+        case part_codes::part_codes::GEARBOX_TOP:
             //specialized functions to find objects of interest:
             
             found_object = find_gearbox_top(g_x_centroids_wrt_robot,g_y_centroids_wrt_robot, g_avg_z_heights,g_npts_blobs,table_height,object_poses); //special case for gearbox_top; WRITE ME!
