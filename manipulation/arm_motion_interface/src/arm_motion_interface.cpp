@@ -544,16 +544,11 @@ bool ArmMotionInterface::plan_jspace_traj_current_to_kit_dropoff1() {
     //invoke general joint-space planner fnc; specify q_start = q_current and q_goal in home pose;
     //set trajectory arg to member var des_trajectory_
     //set member var traj_is_valid_ to result of plan
-    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_vec_arm_Xd_, q_waiting_pose_, nsteps, arrival_time, des_trajectory_);
+    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_vec_arm_Xd_, q_stow_pose1_, nsteps, arrival_time, des_trajectory_);
      if (traj_is_valid_) {
         multi_traj_vec_.clear(); //whenever plan a single traj, make this default sif (traj_is_valid_) multi_traj_vec_.push_back(des_trajectory_);tart of multi-seg trajectory
         multi_traj_vec_.push_back(des_trajectory_);
-    }   
-    
-
-    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_waiting_pose_, q_stow_pose1_, nsteps, arrival_time, des_trajectory_);
-    if (traj_is_valid_) multi_traj_vec_.push_back(des_trajectory_);
-    
+    }       
     traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose1_, q_stow_pose5_, nsteps, arrival_time, des_trajectory_);
     if (traj_is_valid_) multi_traj_vec_.push_back(des_trajectory_);
 
@@ -572,15 +567,11 @@ bool ArmMotionInterface::plan_jspace_traj_current_to_kit_dropoff2() {
     //invoke general joint-space planner fnc; specify q_start = q_current and q_goal in home pose;
     //set trajectory arg to member var des_trajectory_
     //set member var traj_is_valid_ to result of plan
-    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_vec_arm_Xd_, q_waiting_pose_, nsteps, arrival_time, des_trajectory_);
+    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_vec_arm_Xd_, q_stow_pose1_, nsteps, arrival_time, des_trajectory_);
     if (traj_is_valid_) {
         multi_traj_vec_.clear(); //whenever plan a single traj, make this default start of multi-seg trajectory
         multi_traj_vec_.push_back(des_trajectory_);
     }   
-    
-
-    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_waiting_pose_, q_stow_pose1_, nsteps, arrival_time, des_trajectory_);
-    if (traj_is_valid_) multi_traj_vec_.push_back(des_trajectory_);
     
     traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose1_, q_stow_pose3_, nsteps, arrival_time, des_trajectory_);
     if (traj_is_valid_) multi_traj_vec_.push_back(des_trajectory_);    
@@ -597,15 +588,11 @@ bool ArmMotionInterface::plan_jspace_traj_current_to_kit_dropoff3() {
     //invoke general joint-space planner fnc; specify q_start = q_current and q_goal in home pose;
     //set trajectory arg to member var des_trajectory_
     //set member var traj_is_valid_ to result of plan
-    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_vec_arm_Xd_, q_waiting_pose_, nsteps, arrival_time, des_trajectory_);
+    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_vec_arm_Xd_, q_stow_pose1_, nsteps, arrival_time, des_trajectory_);
      if (traj_is_valid_) {
         multi_traj_vec_.clear(); //whenever plan a single traj, make this default start of multi-seg trajectory
         multi_traj_vec_.push_back(des_trajectory_);
     }   
-    
-
-    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_waiting_pose_, q_stow_pose1_, nsteps, arrival_time, des_trajectory_);
-    if (traj_is_valid_) multi_traj_vec_.push_back(des_trajectory_);
     
     traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose1_, q_stow_pose4_, nsteps, arrival_time, des_trajectory_);
     if (traj_is_valid_) multi_traj_vec_.push_back(des_trajectory_);    
