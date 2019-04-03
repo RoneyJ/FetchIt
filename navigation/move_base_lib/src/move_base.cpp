@@ -20,6 +20,7 @@ MoveBase::MoveBase() { //constructor
     
     //srv_stick.request.data = true;
     //srv_release.request.data = false;
+    //gearbox table = 1; 
     gearbox_table_approach_pose_.header.frame_id = "world";
     gearbox_table_approach_pose_.pose.position.x = 0.42;
     gearbox_table_approach_pose_.pose.position.y = -1.1;
@@ -29,7 +30,47 @@ MoveBase::MoveBase() { //constructor
     gearbox_table_approach_pose_.pose.orientation.z = -0.707;    
     gearbox_table_approach_pose_.pose.orientation.w = 0.707;    
     
+    //BOLT_TABLE = 2:
+    bolt_table_approach_pose_.header.frame_id = "world"; 
+    bolt_table_approach_pose_.pose.position.x = -0.72;
+    bolt_table_approach_pose_.pose.position.y = -1.0;
+    bolt_table_approach_pose_.pose.position.z = 0;  
+    bolt_table_approach_pose_.pose.orientation.x = 0; 
+    bolt_table_approach_pose_.pose.orientation.y = 0; 
+    bolt_table_approach_pose_.pose.orientation.z = -1.578; 
+    bolt_table_approach_pose_.pose.orientation.w = 0; 
     
+    //KIT_PICKUP_TABLE = 3:
+    kit_pickup_approach_pose_.header.frame_id = "world"; 
+    kit_pickup_approach_pose_.pose.position.x = -0.98;
+    kit_pickup_approach_pose_.pose.position.y = 0.27;
+    kit_pickup_approach_pose_.pose.position.z = 0;  
+    kit_pickup_approach_pose_.pose.orientation.x = 0; 
+    kit_pickup_approach_pose_.pose.orientation.y = 0; 
+    kit_pickup_approach_pose_.pose.orientation.z = -3.142; 
+    kit_pickup_approach_pose_.pose.orientation.w = 0; 
+    
+    //GEAR_TABLE = 4: 
+    gear_table_approach_pose_.header.frame_id = "world"; 
+    gear_table_approach_pose_.pose.position.x = -0.24;
+    gear_table_approach_pose_.pose.position.y = 0.26;
+    gear_table_approach_pose_.pose.position.z = 0;  
+    gear_table_approach_pose_.pose.orientation.x = 0; 
+    gear_table_approach_pose_.pose.orientation.y = 0; 
+    gear_table_approach_pose_.pose.orientation.z = -3.142; 
+    gear_table_approach_pose_.pose.orientation.w = 0; 
+    
+    //KIT_DROPOFF_DEPOT = 5: 
+    kit_dropoff_depot_pose_.header.frame_id = "world"; 
+    kit_dropoff_depot_pose_.pose.position.x = 0.72;
+    kit_dropoff_depot_pose_.pose.position.y = 0.38;
+    kit_dropoff_depot_pose_.pose.position.z = 0;  
+    kit_dropoff_depot_pose_.pose.orientation.x = 0; 
+    kit_dropoff_depot_pose_.pose.orientation.y = 0; 
+    kit_dropoff_depot_pose_.pose.orientation.z = 0; 
+    kit_dropoff_depot_pose_.pose.orientation.w = 0; 
+     
+    //start up poses: 
     startup_pose_.header.frame_id = "world";
     startup_pose_.pose.position.x = 0;
     startup_pose_.pose.position.y = 0;
@@ -85,8 +126,8 @@ bool MoveBase::move_to_location_code(int location_code, geometry_msgs::Pose &res
     //geometry_msgs/PoseStamped[] poses;
     geometry_msgs::PoseStamped pose;
 
-    
-    if (location_code == GEARBOX_TABLE)  {  //navigate to gearbox table
+    switch(location_code) {
+    case GEARBOX_TABLE :    //navigate to gearbox table
         path_srv_msg_.request.path.poses.clear();
         //poses.clear();
         pose = gearbox_table_approach_pose_;
@@ -102,10 +143,85 @@ bool MoveBase::move_to_location_code(int location_code, geometry_msgs::Pose &res
         wait_for_path_done();
         result_pose = gazebo_pose_;
         return true;
-    }
-    else {
+        break; 
+    
+    case BOLT_TABLE : 
+         path_srv_msg_.request.path.poses.clear();
+        //poses.clear();
+        pose = bolt_table_approach_pose_;
+        pose.pose.position.y+= 0.1; // back up 0.1m from table approach;
+        path_srv_msg_.request.path.poses.push_back(pose);
+        pose = bolt_table_approach_pose_;
+        path_srv_msg_.request.path.poses.push_back(pose);
+        
+        freeze_base_client_.call(unfreeze_robot_); //unfreeze the robot base
+
+        //send the request:
+        path_client_.call(path_srv_msg_);
+        wait_for_path_done();
+        result_pose = gazebo_pose_;
+        return true;
+        break; 
+        
+    case KIT_PICKUP_TABLE :
+            path_srv_msg_.request.path.poses.clear();
+        //poses.clear();
+        pose = kit_pickup_approach_pose_;
+        pose.pose.position.x+= 0.01; // back up 0.1m from table approach;
+        path_srv_msg_.request.path.poses.push_back(pose);
+        pose = kit_pickup_approach_pose_;
+        path_srv_msg_.request.path.poses.push_back(pose);
+        
+        freeze_base_client_.call(unfreeze_robot_); //unfreeze the robot base
+
+        //send the request:
+        path_client_.call(path_srv_msg_);
+        wait_for_path_done();
+        result_pose = gazebo_pose_;
+        return true;
+        break; 
+        
+        
+    case GEAR_TABLE :
+            path_srv_msg_.request.path.poses.clear();
+        //poses.clear();
+        pose = gear_table_approach_pose_;
+        pose.pose.position.y+= -0.05; // forward 0.05m from table approach;
+        path_srv_msg_.request.path.poses.push_back(pose);
+        pose = gear_table_approach_pose_;
+        path_srv_msg_.request.path.poses.push_back(pose);
+        
+        freeze_base_client_.call(unfreeze_robot_); //unfreeze the robot base
+
+        //send the request:
+        path_client_.call(path_srv_msg_);
+        wait_for_path_done();
+        result_pose = gazebo_pose_;
+        return true;
+        break; 
+        
+    case KIT_DROPOFF_DEPOT:
+            path_srv_msg_.request.path.poses.clear();
+        //poses.clear();
+        pose = kit_dropoff_depot_pose_;
+        pose.pose.position.x+= -0.1; // forward 0.1m from table approach;
+        path_srv_msg_.request.path.poses.push_back(pose);
+        pose = kit_dropoff_depot_pose_;
+        path_srv_msg_.request.path.poses.push_back(pose);
+        
+        freeze_base_client_.call(unfreeze_robot_); //unfreeze the robot base
+        
+        //send the request:
+        path_client_.call(path_srv_msg_);
+        wait_for_path_done();
+        result_pose = gazebo_pose_;
+        return true;
+        break; 
+        
+        default :
         ROS_WARN("location code %d not recognized!",location_code);
         return false;
+        break; 
     }
 }
 
