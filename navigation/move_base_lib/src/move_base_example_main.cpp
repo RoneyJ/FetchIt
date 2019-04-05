@@ -7,8 +7,8 @@ int main(int argc, char** argv) {
    MoveBase moveBase;
    geometry_msgs::Pose result_pose;
    //move to the gearbox table:
-   bool success = moveBase.move_to_location_code(GEARBOX_TABLE, result_pose);
-   ROS_INFO("move_to_location_code GEARBOX_TABLE is done");
+   bool success = moveBase.move_to_location_code(GEAR_TABLE, result_pose);
+   ROS_INFO("move_to_location_code (TABLE NAME) is done");
    ROS_INFO_STREAM("result_pose = "<<result_pose<<endl);
 }
 
