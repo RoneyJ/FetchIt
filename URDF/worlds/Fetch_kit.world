@@ -329,11 +329,7 @@
 
   
 <model name="gear_box_bottom">
-<<<<<<< HEAD
-      <pose>0.441422 -1.776104 0.797500 -1.570796 0 0.043728</pose>
-=======
       <pose>0.62 -1.64 0.797500 -1.570796 0 0.043728</pose>
->>>>>>> c24cd5efbd6ae9f31517e13e62f13b314b0e55ea
     <link name='link'>
 
       <inertial>
@@ -384,11 +380,7 @@
   </model>
 
 <model name="gear_box_top">
-<<<<<<< HEAD
-      <pose>0.363259 -1.788728 0.792000 0 0 -1.53</pose>
-=======
       <pose>0.36 -1.66 0.792000 0 0 -1.57</pose>
->>>>>>> c24cd5efbd6ae9f31517e13e62f13b314b0e55ea
     <link name='link'>
 
       <inertial>
@@ -439,11 +431,7 @@
   </model>
 
     <model name="large_gear">
-<<<<<<< HEAD
-      <pose>-1.401918 0.502376 0.803773 -0.003354 -0.002926 -0.850318</pose>
-=======
       <pose>1.32 0 0.803773 -0.003354 -0.002926 -0.850318</pose>
->>>>>>> c24cd5efbd6ae9f31517e13e62f13b314b0e55ea
     <link name='link'>
 
       <inertial>
@@ -499,11 +487,7 @@
 
 
    <model name="small_gear">
-<<<<<<< HEAD
-      <pose>-1.405003 0.378158 0.794627 -0.006217 -0.005827 -0.000268</pose>
-=======
       <pose>1.31 0.38 0.84 -0.006217 -0.005827 -0.000268</pose>
->>>>>>> c24cd5efbd6ae9f31517e13e62f13b314b0e55ea
     <link name='link'>
 
       <inertial>
@@ -559,11 +543,7 @@
 
 
     <model name="screw">
-<<<<<<< HEAD
-<pose>-1.418091 0.434293 0.7905 1.570791 -1.462967 -1.560094</pose>
-=======
 <pose>-1.42 0.43 0.7905 1.570791 -1.462967 -1.5707</pose>
->>>>>>> c24cd5efbd6ae9f31517e13e62f13b314b0e55ea
     <link name='link'>
 
       <inertial>
