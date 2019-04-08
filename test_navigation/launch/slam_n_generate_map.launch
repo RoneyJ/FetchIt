@@ -1,4 +1,13 @@
 <?xml version="1.0"?>
 <launch>
-    
+    <!-- Mapping node: -->
+    <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen" respawn="false" respawn_delay="0">
+        <remap from="scan" to="base_scan"/>
+    </node>
+    <!-- rviz bringup -->
+    <node pkg="rviz" type="rviz" name="rviz" output="screen" args="-d $(find test_navigation)/rviz/RVIZ_with_everything.rviz" respawn="true" respawn_delay="0">
+
+    </node>
+
+
 </launch>
