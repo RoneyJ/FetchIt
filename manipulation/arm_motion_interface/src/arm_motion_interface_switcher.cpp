@@ -54,17 +54,17 @@ void ArmMotionInterface::executeCB(const actionlib::SimpleActionServer<arm_motio
             busy_working_on_a_request_ = false;
             break;   
         case arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_CURRENT_TO_KIT_DROPOFF1:
-            ROS_INFO("responding to request PLAN_TRAJ_CURRENT_TO_WAITING_POSE");
+            ROS_INFO("responding to request PLAN_JSPACE_TRAJ_CURRENT_TO_KIT_DROPOFF1");
             plan_jspace_traj_current_to_kit_dropoff1(); //q_start_Xd_, q_pre_pose_Xd_);
             busy_working_on_a_request_ = false;
             break;  
         case arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_CURRENT_TO_KIT_DROPOFF2:
-            ROS_INFO("responding to request PLAN_TRAJ_CURRENT_TO_WAITING_POSE");
+            ROS_INFO("responding to request PLAN_JSPACE_TRAJ_CURRENT_TO_KIT_DROPOFF2");
             plan_jspace_traj_current_to_kit_dropoff2(); //q_start_Xd_, q_pre_pose_Xd_);
             busy_working_on_a_request_ = false;
             break;  
         case arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_CURRENT_TO_KIT_DROPOFF3:
-            ROS_INFO("responding to request PLAN_TRAJ_CURRENT_TO_WAITING_POSE");
+            ROS_INFO("responding to request PLAN_JSPACE_TRAJ_CURRENT_TO_KIT_DROPOFF3");
             plan_jspace_traj_current_to_kit_dropoff3(); //q_start_Xd_, q_pre_pose_Xd_);
             busy_working_on_a_request_ = false;
             break;  
