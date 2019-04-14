@@ -48,24 +48,30 @@ bool MovePart::preset_arm() {
 }
 
 bool MovePart::move_to_dropoff_kit1() {
-    cart_motion_commander_.plan_jspace_traj_current_to_kit_dropoff1(2, 2.0); 
+    cart_motion_commander_.plan_jspace_traj_current_to_kit_dropoff1(2, 2.0);  //(nsteps, arrival time) tinker with for optimization
     cart_motion_commander_.execute_planned_traj();
-    ros::Duration(2.0).sleep();// wait for execution
+    //ros::Duration(2.0).sleep();// wait for execution
     gripper_interface_.releaseObject();
 }
 
 bool MovePart::move_to_dropoff_kit2() {
-    cart_motion_commander_.plan_jspace_traj_current_to_kit_dropoff2(2, 2.0); 
+    cart_motion_commander_.plan_jspace_traj_current_to_kit_dropoff2(2, 2.0);  //(nsteps, arrival time) tinker with for optimization
     cart_motion_commander_.execute_planned_traj();
-    ros::Duration(2.0).sleep();// wait for execution
+    //ros::Duration(2.0).sleep();// wait for execution
     gripper_interface_.releaseObject();
 }
 
 bool MovePart::move_to_dropoff_kit3() {
-    cart_motion_commander_.plan_jspace_traj_current_to_kit_dropoff3(2, 2.0); 
+    cart_motion_commander_.plan_jspace_traj_current_to_kit_dropoff3(2, 2.0);  //(nsteps, arrival time) tinker with for optimization
     cart_motion_commander_.execute_planned_traj();
-    ros::Duration(2.0).sleep();// wait for execution
+    //ros::Duration(2.0).sleep();// wait for execution
     gripper_interface_.releaseObject();
+}
+
+bool MovePart::recover_from_dropoff() {
+    cart_motion_commander_.plan_jspace_traj_recover_from_dropoff(2, 2.0); //(nsteps, arrival time) tinker with for optimization
+    cart_motion_commander_.execute_planned_traj();    
+    
 }
 
 //specified source_pose should use torso_lift_link frame to specify part pose

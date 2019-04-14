@@ -38,6 +38,8 @@ public:
         bool move_to_dropoff_kit1();
         bool move_to_dropoff_kit2();
         bool move_to_dropoff_kit3();
+        
+        bool recover_from_dropoff();
 
         bool preset_arm();
         //bool preset_torso();
