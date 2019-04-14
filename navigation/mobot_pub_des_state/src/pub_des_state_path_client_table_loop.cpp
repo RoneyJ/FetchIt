@@ -1,5 +1,3 @@
-//pub_des_state_path_client:
-// this node loops from table 1->2->3->4->5->1->...
 
 #include <ros/ros.h>
 #include <mobot_pub_des_state/path.h>
@@ -41,65 +39,88 @@ int main(int argc, char **argv) {
     geometry_msgs::Pose pose;
     while (true) { //repeat forever
         path_srv.request.path.poses.clear();
-	//go to table 1
-		 pose.position.x = 3.93; 
-        	pose.position.y = -4.57;
+	//go to table 1:
+		pose.position.x = 0.80; 
+        	pose.position.y = 0.17;
        	 	pose.position.z = 0.0;
 		quat = convertPlanarPhi2Quaternion(0);
         	pose.orientation = quat;
         	pose_stamped.pose = pose;
         	path_srv.request.path.poses.push_back(pose_stamped);
-		// pose 1.1
- 		pose.position.x = 3.931; 
- 		pose.position.y = -4.57;
- 		pose_stamped.pose = pose;
-		path_srv.request.path.poses.push_back(pose_stamped);
-
-	
-       //go to table 2
-                quat = convertPlanarPhi2Quaternion(-1.5708);
+                //table 1.1
+                pose.position.x = 0.801; 
+        	pose.position.y = 0.17;
+       	 	pose.position.z = 0.0;
+		quat = convertPlanarPhi2Quaternion(0);
+        	pose.orientation = quat;
+        	pose_stamped.pose = pose;
+        	path_srv.request.path.poses.push_back(pose_stamped);
+                       
+       //go to table 2:
+		pose.position.x = 0.50;
+		pose.position.y = -0.35;
+                quat = convertPlanarPhi2Quaternion(-0.7854);
 		pose.orientation = quat;
-		pose.position.x = 3.165;
-		pose.position.y = -4.13;
-		pose_stamped.pose = pose;
-		path_srv.request.path.poses.push_back(pose_stamped);
-		//pose 2.1
-		pose.position.y = -4.131;
-		pose_stamped.pose = pose;
-		path_srv.request.path.poses.push_back(pose_stamped);
-
-	//go to table 3
-                quat = convertPlanarPhi2Quaternion(-1.5708);
-		pose.orientation = quat;
-		pose.position.x = 3.19;
-		pose.position.y = -3.03;
-		pose_stamped.pose = pose;
-		path_srv.request.path.poses.push_back(pose_stamped);
-		//pose 3.1
-                pose.position.y = -3.031;
 		pose_stamped.pose = pose;
 		path_srv.request.path.poses.push_back(pose_stamped);
                 
-       //go to table 4
-                quat = convertPlanarPhi2Quaternion(-3.1415);
+                //table 2.1
+                pose.position.x = 0.50;
+		pose.position.y = -0.351;
+                quat = convertPlanarPhi2Quaternion(-0.7854);
 		pose.orientation = quat;
-		pose.position.x = 3.53;
-		pose.position.y = -2.95;
 		pose_stamped.pose = pose;
 		path_srv.request.path.poses.push_back(pose_stamped);
-		//pose 4.1
-		pose.position.x = 3.531;
+               
+                
+        //go to table 3:                
+                pose.position.x = -0.54;
+		pose.position.y = -0.26;
+                quat = convertPlanarPhi2Quaternion(-0.7854);
+		pose.orientation = quat;
 		pose_stamped.pose = pose;
 		path_srv.request.path.poses.push_back(pose_stamped);
-       //go to table 5
-		quat = convertPlanarPhi2Quaternion(-3.1415);
+                
+                //table 3.1
+                pose.position.x = -0.54;
+		pose.position.y = -0.261;
+                quat = convertPlanarPhi2Quaternion(-0.7854);
 		pose.orientation = quat;
-		pose.position.x = 4.07;
-		pose.position.y = -3.49;
+		pose_stamped.pose = pose;
+		path_srv.request.path.poses.push_back(pose_stamped);
+                
+               
+                
+       //go to table 4:           
+		pose.position.x = -0.51;
+		pose.position.y = -0.07;
+                quat = convertPlanarPhi2Quaternion(-1.5708);
+		pose.orientation = quat;
+		pose_stamped.pose = pose;
+		path_srv.request.path.poses.push_back(pose_stamped);
+                
+                //table 4.1
+                pose.position.x = -0.511;
+		pose.position.y = -0.07;
+                quat = convertPlanarPhi2Quaternion(-1.5708);
+		pose.orientation = quat;
+		pose_stamped.pose = pose;
+		path_srv.request.path.poses.push_back(pose_stamped);
+                
+                
+		
+       //go to table 5:               
+		pose.position.x = -0.13;
+		pose.position.y = 0.32;
+                quat = convertPlanarPhi2Quaternion(-2.3562);
+		pose.orientation = quat;
 		pose_stamped.pose = pose;
 		path_srv.request.path.poses.push_back(pose_stamped);
 		//pose 5.1
-		pose.position.y = -3.4911;
+                pose.position.x = -0.13;
+		pose.position.y = 0.321;
+                quat = convertPlanarPhi2Quaternion(-2.3562);
+		pose.orientation = quat;
 		pose_stamped.pose = pose;
 		path_srv.request.path.poses.push_back(pose_stamped);
 
