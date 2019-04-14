@@ -15,33 +15,25 @@ A typical sequence would consist of: invoking navigation (e.g. to a pre-coded zo
 Folders pre-fixed with "test" are designated for different testings.
 
 ## Environment Configuration:
-### For Catkin Workspace:
-You will need **Two other repository** from Fetch along side this repository to make it work:
+### Using Docker Provided by Fetch:
+Please refer to: https://github.com/fetchrobotics/fetch_gazebo/issues/75
 
-Fetch ROS Repository: https://github.com/fetchrobotics/fetch_ros
+*NOTE: Fetch uses catkin overlay, and have a repository named stable and active.*
 
-Fetch Gazebo Repository: https://github.com/fetchrobotics/fetch_gazebo
+### CWRU students:
+**Make sure you git pull the above mentioned repositories alongside Team Case's repository.**
 
-### Required packages:
-`ros-melodic-costmap-2d`
-`ros-melodic-moveit*`
-`ros-melodic-simple-grasping`
-`ros-melodic-robot-calibration`
-`ros-melodic-slam-karto`
-`ros-melodic-rotate-recovery`
-`ros-melodic-graft`
-`ros-melodic-navfn`
-`ros-melodic-clear-costmap-recovery` 
-`ros-melodic-joy` 
-`ros-melodic-map-server`
-`ros-melodic-sick-tim`
-`ros-melodic-teleop-twist-keyboard`
-`ros-melodic-move-base-msgs`
-`ros-melodic-openni2-launch`
-`ros-melodic-rgbd-launch`
-`ros-melodic-move-base`
-`ros-melodic-base-local-planner`
-`ros-melodic-amcl`
+Fetch ROS Repository: https://github.com/fetchrobotics-gbp/fetch_ros-release.git
+
+Fetch Gazebo Repository: https://github.com/fetchrobotics/fetch_gazebo.git
+
+Fetch Robot Controller Repository (0.6.0-0): https://github.com/fetchrobotics/robot_controllers-release.git
+
+RGBD Launch Repository: https://github.com/ros-gbp/rgbd_launch-release.git
+
+ROS Controllers Repository: https://github.com/ros-gbp/ros_controllers-release.git
+
+
 
 ## Running the Code:
 To start the challenge in Gazebo:
