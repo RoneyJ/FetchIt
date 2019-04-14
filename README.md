@@ -14,27 +14,6 @@ A typical sequence would consist of: invoking navigation (e.g. to a pre-coded zo
 
 Folders pre-fixed with "test" are designated for different testings.
 
-## Environment Configuration:
-### Using Docker Provided by Fetch:
-Please refer to: https://github.com/fetchrobotics/fetch_gazebo/issues/75
-
-*NOTE: Fetch uses catkin overlay, and have a repository named stable and active.*
-
-### CWRU students:
-**Make sure you git pull the above mentioned repositories alongside Team Case's repository.**
-
-Fetch ROS Repository: https://github.com/fetchrobotics-gbp/fetch_ros-release.git
-
-Fetch Gazebo Repository: https://github.com/fetchrobotics/fetch_gazebo.git
-
-Fetch Robot Controller Repository (0.6.0-0): https://github.com/fetchrobotics/robot_controllers-release.git
-
-RGBD Launch Repository: https://github.com/ros-gbp/rgbd_launch-release.git
-
-ROS Controllers Repository: https://github.com/ros-gbp/ros_controllers-release.git
-
-
-
 ## Running the Code:
 To start the challenge in Gazebo:
 `roslaunch fetchit_challenge main.launch`
@@ -56,3 +35,50 @@ then "glue" the kit to the pedestal with:
 Start the coordinator:
 `roslaunch coordinator_launch coordinator.launch`
 
+## Environment Configuration:
+
+### CWRU students:
+
+***Make sure you git pull the following repositories alongside Team Case's repository in your ROS_WS or Fetch_WS***
+
+Fetch ROS Repository: https://github.com/fetchrobotics-gbp/fetch_ros-release.git
+
+Fetch Gazebo Repository: https://github.com/fetchrobotics/fetch_gazebo.git
+
+Fetch Robot Controller Repository (0.6.0-0): https://github.com/fetchrobotics/robot_controllers-release.git
+
+RGBD Launch Repository: https://github.com/ros-gbp/rgbd_launch-release.git
+
+ROS Controllers Repository: https://github.com/ros-gbp/ros_controllers-release.git
+
+
+### Using Docker Provided by Fetch:
+Please refer to: https://github.com/fetchrobotics/fetch_gazebo/issues/75
+
+*NOTE: Fetch uses catkin overlay, and have a repository named stable and active.*
+
+### To make your own computer look like Fetch's enviornment: (adapted from Fetch Docker Enviornment)
+0. Brand new clean environment.
+1. Install ROS-melodic-desktop-full
+2. Install `python-catkin-tools` `python-rosinstall-generator` `python-rosinstall`
+3. Execute `. /opt/ros/melodic/setup.sh`
+4. Execute `rosinstall_generator fetchit_challenge --deps --deps-only --exclude RPP > stable.rosinstall`
+5. Execute `rosinstall_generator fetchit_challenge --upstream > active.rosinstall`
+6. Execute `mkdir -p $HOME/ros/stable $HOME/ros/active` This will help create the default active and stable development folder. Always put stable code (meaning those code who are not changing often or special package not included in the common environement) in stable folder.
+7. Execute `wstool init $HOME/ros/stable/src stable.rosinstall \
+ && wstool init $HOME/ros/active/src active.rosinstall ` This will help do a default pull from fetch's repository and other needed repositories.
+8. Goto your stable repository (ros/stable) and Execute: 
+    `catkin config --init \
+    && catkin config --install --extend /opt/ros/melodic \
+    && catkin build` 
+    This will be the first time compile.
+9. Goto your active repository (ros/active) and Execute: 
+    `catkin config --init \
+    && catkin config --extend $HOME/ros/stable/install \
+    && catkin build`
+    This will be the first time compile for your stable environement.
+10. Your development environment should be all setup.
+
+Note 1: To include your repository, add it to the active.rosinstall file.
+
+Note 2: To update everything in the repository, instead of do git pull, you can just go to your src folder and execute `rosinstall .`
