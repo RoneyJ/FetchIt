@@ -84,3 +84,5 @@ Note 1: To include your repository, add it to the active.rosinstall file.
 Note 2: To update everything in the repository, instead of do git pull, you can just go to your src folder and execute `rosinstall <your repo src folder path>  <your rosinstall file path>`
 
 Note 3: You do need to add `source ~/ros/devel/setup.bash` to your ~/.bashrc file so that it auto sources when startup.
+
+Note 4: Instead of catkin make, you do `catkin build` at where you usually do catkin make.
