@@ -21,9 +21,5 @@
   </include>
 
 
-<<<<<<< HEAD
-<include file="$(find fetch_gazebo)/launch/include/fetch.launch.xml" />
-=======
 <include file="$(find team_case_fetch_model)/fetch.launch.xml" />
->>>>>>> c24cd5efbd6ae9f31517e13e62f13b314b0e55ea
 </launch>
