@@ -55,7 +55,13 @@ void DesStatePublisher::initializeServices() {
     path_queue_query_ = nh_.advertiseService("path_queue_query_service",
             &DesStatePublisher::queryPathQueueCB, this);   
     set_end_state_ = nh_.advertiseService("path_set_end_state_service",
-            &DesStatePublisher::setEndStateCB, this);       
+            &DesStatePublisher::setEndStateCB, this);   
+    get_end_state_    = nh_.advertiseService("path_get_end_state_service",
+            &DesStatePublisher::getEndStateCB, this);   
+    
+    //bool DesStatePublisher::setCurrenPoseCB(mobot_pub_des_state::pathRequest& request, mobot_pub_des_state::pathResponse& response) {
+    set_current_pose_    = nh_.advertiseService("set_current_pose_service",
+            &DesStatePublisher::setCurrenPoseCB, this); 
 }
 
 //member helper function to set up publishers;
@@ -115,7 +121,24 @@ bool DesStatePublisher::setEndStateCB(mobot_pub_des_state::pathRequest& request,
     return true; 
 }
 
+bool DesStatePublisher::setCurrenPoseCB(mobot_pub_des_state::pathRequest& request, mobot_pub_des_state::pathResponse& response) {
 
+        ROS_INFO_STREAM("setting current pose to: "<< request.set_current_pose<<endl);
+        current_pose_ = request.set_current_pose;
+        modified_end_pose_ = current_pose_;
+
+        response.status = true;
+        return true;
+}
+
+
+
+bool DesStatePublisher::getEndStateCB(mobot_pub_des_state::pathRequest& request, mobot_pub_des_state::pathResponse& response) {
+    response.modified_end_pose = modified_end_pose_;
+    ROS_INFO_STREAM("responding with modified end pose: "<< endl<< modified_end_pose_<<endl);
+    response.status = true;
+    return true;
+}
 
 bool DesStatePublisher::queryPathQueueCB(mobot_pub_des_state::integer_queryRequest& request,mobot_pub_des_state::integer_queryResponse& response) {
     int npts;
@@ -129,6 +152,7 @@ bool DesStatePublisher::queryPathQueueCB(mobot_pub_des_state::integer_queryReque
 
 void DesStatePublisher::set_init_pose(double x, double y, double psi) {
     current_pose_ = trajBuilder_.xyPsi2PoseStamped(x, y, psi);
+    modified_end_pose_ = current_pose_;
 }
 
 //here is a state machine to advance desired-state publications
@@ -247,7 +271,11 @@ void DesStatePublisher::pub_next_state() {
                 ROS_INFO("%d points in path queue",n_path_pts);
                 start_pose_ = current_pose_;
                 end_pose_ = path_queue_.front();
+                
+                
                 trajBuilder_.build_point_and_go_traj(start_pose_, end_pose_,des_state_vec_);
+                modified_end_pose_ = end_pose_; //has been updated w/ resulting orientation from point-and-go
+                ROS_INFO_STREAM("modified_end_pose_: "<<endl<<modified_end_pose_<<endl);
                 traj_pt_i_ = 0;
                 npts_traj_ = des_state_vec_.size();
                 motion_mode_ = PURSUING_SUBGOAL; // got a new plan; change mode to pursue it
