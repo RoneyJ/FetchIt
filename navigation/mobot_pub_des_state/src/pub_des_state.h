@@ -46,6 +46,7 @@ private:
     geometry_msgs::Twist halt_twist_;
     geometry_msgs::PoseStamped start_pose_;
     geometry_msgs::PoseStamped end_pose_;
+    geometry_msgs::PoseStamped modified_end_pose_;
     geometry_msgs::PoseStamped current_pose_;
     std_msgs::Float64 float_msg_;
     double des_psi_;
@@ -71,6 +72,8 @@ private:
     ros::ServiceServer append_path_;
     ros::ServiceServer path_queue_query_;
     ros::ServiceServer set_end_state_;
+    ros::ServiceServer get_end_state_;
+    ros::ServiceServer set_current_pose_;
     
     ros::Publisher desired_state_publisher_;
     ros::Publisher des_psi_publisher_;
@@ -87,7 +90,9 @@ private:
     bool appendPathQueueCB(mobot_pub_des_state::pathRequest& request,mobot_pub_des_state::pathResponse& response);
     bool queryPathQueueCB(mobot_pub_des_state::integer_queryRequest& request,mobot_pub_des_state::integer_queryResponse& response);
     bool setEndStateCB(mobot_pub_des_state::pathRequest& request, mobot_pub_des_state::pathResponse& response);
-    
+    bool getEndStateCB(mobot_pub_des_state::pathRequest& request, mobot_pub_des_state::pathResponse& response);
+    bool setCurrenPoseCB(mobot_pub_des_state::pathRequest& request, mobot_pub_des_state::pathResponse& response);
+
 public:
     DesStatePublisher(ros::NodeHandle& nh);//constructor
     int get_motion_mode() {return motion_mode_;}
