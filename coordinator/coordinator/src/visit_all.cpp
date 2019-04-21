@@ -1,24 +1,9 @@
-//pub_des_state_path_client_amcl_correction
-//wsn, 4/20/19:
-
+//visit_all.cpp
 
 #include <ros/ros.h>
-#include <mobot_pub_des_state/path.h>
-#include <mobot_pub_des_state/integer_query.h>
 #include <mobot_pub_des_state/key_pose_move.h>
 
-#include <iostream>
-#include <string>
-#include <nav_msgs/Path.h>
-#include <geometry_msgs/Pose.h>
-#include <geometry_msgs/PoseStamped.h>
-#include <tf/transform_listener.h>
-#include <tf/LinearMath/Vector3.h>
-#include <xform_utils/xform_utils.h>
-
 using namespace std;
-
-//XformUtils xform_utils;
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "visit_all");
