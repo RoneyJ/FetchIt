@@ -38,12 +38,13 @@ geometry_msgs::Quaternion convertPlanarPhi2Quaternion(double phi) {
 }
 
 void set_hardcoded_poses() {
-  /*      int32 HOME_POSE = 0
-    int32 TOTE_TABLE = 1
-    int32 GEARBOX_TABLE = 2
-    int32 SHUNK_TABLE = 3
-    int32 BOLT_BIN = 4
-    int32 KIT_DROPOFF = 5 */
+  /*int32 HOME_POSE = 0
+    int32 TOTE_TABLE = 1 //Table 5 in the Map_goal_poses.pdf
+    int32 GEARBOX_TABLE = 2 // Table 2 in the Map_goal_poses.pdf
+    int32 SHUNK_TABLE = 3 // Table 1 in the Map_goal_poses.pdf
+    int32 BOLT_BIN = 4 //Table 4 in the Map_goal_poses.pdf
+    int32 KIT_DROPOFF = 5 // Table 3 in the Map_goal_poses.pdf
+   */
     geometry_msgs::PoseStamped home_pose,tote_table,gearbox_table,shunk_table,bolt_bin,kit_dropoff;
 
     home_pose.header.frame_id = "world";
@@ -58,6 +59,10 @@ void set_hardcoded_poses() {
     g_vec_of_poses.push_back(home_pose);
     
     tote_table = home_pose; // fill in legal values for each key pose, but still need to put in the true desired vals
+    tote_table.pose.position.x = 0.25; 
+    tote_table.pose.position.y = 0.79; 
+    tote_table.pose.position.z = 0.0; 
+    tote_table.pose.orientation = convertPlanarPhi2Quaternion(1.578); 
     g_vec_of_poses.push_back(tote_table);    
     
     gearbox_table = home_pose;
@@ -65,20 +70,28 @@ void set_hardcoded_poses() {
     bolt_bin = home_pose;
     kit_dropoff = home_pose;
 
-    gearbox_table.pose.position.x = 3.0;
-    gearbox_table.pose.position.y = 3.0;
+    gearbox_table.pose.position.x = 0.18;
+    gearbox_table.pose.position.y = -0.94;
+    gearbox_table.pose.position.z = 0.0; 
+    gearbox_table.pose.orientation = convertPlanarPhi2Quaternion(-1.578); 
     g_vec_of_poses.push_back(gearbox_table);    
     
-    shunk_table.pose.position.x = 3.0;
-    shunk_table.pose.position.y = 0.0;
+    shunk_table.pose.position.x = 0.72;
+    shunk_table.pose.position.y = 0.20;
+    shunk_table.pose.position.z = 0.0; 
+    shunk_table.pose.orientation = convertPlanarPhi2Quaternion(0); 
     g_vec_of_poses.push_back(shunk_table);
 
-    bolt_bin.pose.position.x = 0.0;
-    bolt_bin.pose.position.y = 3.0;
+    bolt_bin.pose.position.x = -0.71;
+    bolt_bin.pose.position.y = 0.66;
+    bolt_bin.pose.position.z = 0.0; 
+    bolt_bin.pose.orientation = convertPlanarPhi2Quaternion(-3.1415);
     g_vec_of_poses.push_back(bolt_bin);
 
-    kit_dropoff.pose.position.x = 0.0;
-    kit_dropoff.pose.position.y = 0.0;
+    kit_dropoff.pose.position.x = -0.88;
+    kit_dropoff.pose.position.y = -0.75;
+    kit_dropoff.pose.position.z = 0.0; 
+    kit_dropoff.pose.orientation = convertPlanarPhi2Quaternion(-1.578);
     g_vec_of_poses.push_back(kit_dropoff);
     
 }
