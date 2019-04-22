@@ -37,7 +37,6 @@ cs_add_executable(fetch_arm_test_interactive src/fetch_arm_test_interactive.cpp)
 cs_add_executable(fetch_arm_pre_pose src/fetch_arm_pre_pose.cpp)
 cs_add_executable(fetch_arm_pre_pose_interactive src/fetch_arm_pre_pose_interactive.cpp)
 
-
 cs_add_executable(fetch_head_test_action_client src/fetch_head_test_action_client.cpp)
 cs_add_executable(fetch_head_tilt_preset src/fetch_head_tilt_preset.cpp)
 
