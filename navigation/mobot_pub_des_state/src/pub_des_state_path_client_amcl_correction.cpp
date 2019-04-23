@@ -57,7 +57,8 @@ void set_hardcoded_poses() {
     
     home_pose.pose = pose;
     g_vec_of_poses.push_back(home_pose);
-    
+    home_pose.pose.position.x += 0.01;
+    g_vec_of_poses.push_back(home_pose); //extra push, so robot will face forward    
     tote_table = home_pose; // fill in legal values for each key pose, but still need to put in the true desired vals
     gearbox_table = home_pose;
     shunk_table = home_pose;
@@ -167,7 +168,7 @@ int main(int argc, char **argv) {
 
     //geometry_msgs::PoseStamped pose_stamped1, pose_stamped2, pose_stamped3, pose_stamped4;
     //geometry_msgs::PoseStamped pub_des_state_end_pose, pub_des_state_new_goal_pose;
-    geometry_msgs::PoseStamped des_key_pose_wrt_map, wiggle_pose_cmd;
+    geometry_msgs::PoseStamped des_key_pose_wrt_map, des_key_pose_wrt_map2, wiggle_pose_cmd;
 
     set_hardcoded_poses();
 
@@ -295,8 +296,8 @@ int main(int argc, char **argv) {
         //----------preserve this-----------
         // can hard-code key poses via set_hardcoded_poses(), then refer to them by index or mnemonic
         ROS_INFO("received request to move to key pose number %d",g_key_pose_code);        
-        des_key_pose_wrt_map = g_vec_of_poses[g_key_pose_code];
-
+        des_key_pose_wrt_map = g_vec_of_poses[g_key_pose_code*2];
+        des_key_pose_wrt_map2 = g_vec_of_poses[g_key_pose_code*2+1];
 
         //make adjustment before sending next point:
         tferr = true;
@@ -326,6 +327,9 @@ int main(int argc, char **argv) {
 
         //tell pub_des_state this is where we want to go:
         path_srv.request.path.poses.push_back(des_key_pose_wrt_map);
+        path_srv.request.path.poses.push_back(des_key_pose_wrt_map2);
+        
+        
         client.call(path_srv);
 
         int npts = 1;
