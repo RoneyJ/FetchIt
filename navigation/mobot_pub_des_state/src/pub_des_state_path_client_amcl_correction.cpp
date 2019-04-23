@@ -59,41 +59,69 @@ void set_hardcoded_poses() {
     g_vec_of_poses.push_back(home_pose);
     
     tote_table = home_pose; // fill in legal values for each key pose, but still need to put in the true desired vals
-    tote_table.pose.position.x = 0.25; 
-    tote_table.pose.position.y = 0.79; 
-    tote_table.pose.position.z = 0.0; 
-    tote_table.pose.orientation = convertPlanarPhi2Quaternion(1.578); 
-    g_vec_of_poses.push_back(tote_table);    
-    
     gearbox_table = home_pose;
     shunk_table = home_pose;
     bolt_bin = home_pose;
     kit_dropoff = home_pose;
-
+    
+    //tote_table key pose: 
+    tote_table.pose.position.x = 0.25; 
+    tote_table.pose.position.y = 0.79; 
+    tote_table.pose.position.z = 0.0; 
+    tote_table.pose.orientation = convertPlanarPhi2Quaternion(1.578); 
+    g_vec_of_poses.push_back(tote_table);  
+    //facing tote_table: 
+    tote_table.pose.position.y+= 0.01; 
+    tote_table.pose.orientation.z = -0.24; 
+    g_vec_of_poses.push_back(tote_table); 
+    
+    
+    //getbox_table key pose: 
     gearbox_table.pose.position.x = 0.18;
     gearbox_table.pose.position.y = -0.94;
     gearbox_table.pose.position.z = 0.0; 
     gearbox_table.pose.orientation = convertPlanarPhi2Quaternion(-1.578); 
-    g_vec_of_poses.push_back(gearbox_table);    
+    g_vec_of_poses.push_back(gearbox_table); 
+    //facing gearbox_table: 
+    gearbox_table.pose.position.y+= -0.01;
+    tote_table.pose.orientation.z = -0.24; 
+    g_vec_of_poses.push_back(gearbox_table);
     
+    
+    //shunk_table key pose: 
     shunk_table.pose.position.x = 0.72;
     shunk_table.pose.position.y = 0.20;
     shunk_table.pose.position.z = 0.0; 
     shunk_table.pose.orientation = convertPlanarPhi2Quaternion(0); 
     g_vec_of_poses.push_back(shunk_table);
-
+    //facing shunk_table: 
+    shunk_table.pose.position.x+= 0.01;
+    tote_table.pose.orientation.z = -0.26; 
+    g_vec_of_poses.push_back(shunk_table);
+    
+    
+    //bolt_bin key pose: 
     bolt_bin.pose.position.x = -0.71;
     bolt_bin.pose.position.y = 0.66;
     bolt_bin.pose.position.z = 0.0; 
     bolt_bin.pose.orientation = convertPlanarPhi2Quaternion(-3.1415);
     g_vec_of_poses.push_back(bolt_bin);
-
+    //facing bolt_bin
+    bolt_bin.pose.position.x+= -0.01;
+    tote_table.pose.orientation.z = -0.25; 
+    g_vec_of_poses.push_back(bolt_bin);
+    
+    
+    //kit_dropoff table: 
     kit_dropoff.pose.position.x = -0.88;
     kit_dropoff.pose.position.y = -0.75;
     kit_dropoff.pose.position.z = 0.0; 
     kit_dropoff.pose.orientation = convertPlanarPhi2Quaternion(-1.578);
     g_vec_of_poses.push_back(kit_dropoff);
-    
+    //facing kit_dropoff
+    kit_dropoff.pose.position.y+= 0.01;
+    tote_table.pose.orientation.z = -0.24; 
+    g_vec_of_poses.push_back(kit_dropoff);
 }
 
 bool setKeyPoseCB(mobot_pub_des_state::key_pose_moveRequest& request, mobot_pub_des_state::key_pose_moveResponse& response) {
