@@ -27,6 +27,9 @@ Start the navigation nodes:
 Start the manipulation nodes: 
 `roslaunch manipulation_launch manipulation.launch`
 
+TEST: can do interactive Cartesian moves with:
+`rosrun cartesian_motion_commander fetch_cartesian_interactive_ac`
+
 If desired, place kit on pedestal with:
 `rosrun gazebo_set_state set_kit_service`
 then "glue" the kit to the pedestal with:
