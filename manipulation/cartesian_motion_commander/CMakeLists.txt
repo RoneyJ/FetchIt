@@ -37,6 +37,7 @@ cs_add_library(cartesian_motion_commander src/cart_motion_commander.cpp)
 cs_add_executable(example_generic_cartesian_move_ac3 src/example_generic_cart_move_ac3.cpp)
 #cs_add_executable(cart_move_ac_irb5400 src/cart_move_ac_irb5400.cpp)
 cs_add_executable(example_fetch_grab_part src/example_fetch_grab_part.cpp)
+cs_add_executable(fetch_cartesian_interactive_ac src/fetch_cartesian_interactive_ac.cpp)
 
 
 #the following is required, if desire to link a node in this package with a library created in this same package
@@ -46,7 +47,7 @@ cs_add_executable(example_fetch_grab_part src/example_fetch_grab_part.cpp)
 target_link_libraries(example_generic_cartesian_move_ac3 cartesian_motion_commander)
 #target_link_libraries(cart_move_ac_irb5400 cartesian_motion_commander)
 target_link_libraries(example_fetch_grab_part cartesian_motion_commander)
-
+target_link_libraries(fetch_cartesian_interactive_ac cartesian_motion_commander)
 cs_install()
 cs_export()
     
