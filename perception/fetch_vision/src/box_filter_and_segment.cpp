@@ -560,8 +560,10 @@ int main(int argc, char** argv) {
     namedWindow("Connected Components", WINDOW_AUTOSIZE);
     //colorized regions will be displayed by blob_color();
     //display the original B/W image as well:
-    imshow("Image", bw_img); //display the binary image
-    imshow("Connected Components", dst);
+    
+    //imshow("Image", bw_img); //display the binary image
+    //imshow("Connected Components", dst);
+
     imwrite( "BucketImage.png", dst );
 
      float min_points=40.0, max_points=25.0;
@@ -700,9 +702,13 @@ int main(int argc, char** argv) {
 //#################################################################################################
     cout<<"Completed\n";
     // Show results
-    imshow("Source", dst);
+    
+    //imshow("Source", dst);
+    
     //imshow("Detected Lines (in red) - Standard Hough Line Transform", cdst);
-    imshow("Detected Lines (in red) - Probabilistic Line Transform", cdstP);
+    
+    //imshow("Detected Lines (in red) - Probabilistic Line Transform", cdstP);
+    
     imwrite( "TestImage.png", cdstP );
     pair<int, int> center_arr[test_group.size()];
     pair<int, int> center_arr2[test_group.size()];
@@ -724,7 +730,7 @@ int main(int argc, char** argv) {
     Point p(obj_x_centroid,obj_y_centroid); 
 
     circle(img, p, 5, Scalar(127,0,0), -1);
-    imshow("Image with center",img);
+    //imshow("Image with center",img);
     Mat fixed_dst(img.size(), CV_8UC3);
     float obj_x_centroid_wrt_robot = ((fixed_dst.rows/2) - obj_x_centroid)/PIXELS_PER_METER + (MIN_X+MAX_X)/2.0;
     float obj_y_centroid_wrt_robot = (obj_y_centroid- (fixed_dst.cols/2))/PIXELS_PER_METER + (MIN_Y+MAX_Y)/2.0;
@@ -759,6 +765,6 @@ int main(int argc, char** argv) {
 //	    imshow("Image with new center",img);
 //    }
     // Wait and Exit
-    waitKey();
+    //waitKey();
     return 0;
 }
