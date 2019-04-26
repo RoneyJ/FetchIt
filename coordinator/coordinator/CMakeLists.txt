@@ -12,10 +12,10 @@ find_package(catkin_simple REQUIRED)
 
 
 #uncomment the following 4 lines to use the Eigen library
-#find_package(cmake_modules REQUIRED)
-#find_package(Eigen3 REQUIRED)
-#include_directories(${EIGEN3_INCLUDE_DIR})
-#add_definitions(${EIGEN_DEFINITIONS})
+find_package(cmake_modules REQUIRED)
+find_package(Eigen3 REQUIRED)
+include_directories(${EIGEN3_INCLUDE_DIR})
+add_definitions(${EIGEN_DEFINITIONS})
 
 catkin_simple()
 
@@ -34,6 +34,7 @@ catkin_simple()
 cs_add_executable(coordinator src/coordinator.cpp)
 cs_add_executable(arm_test src/arm_test.cpp)
 cs_add_executable(visit_all src/visit_all.cpp)
+cs_add_executable(grab_tote src/grab_tote.cpp)
 
 #the following is required, if desire to link a node in this package with a library created in this same package
 # edit the arguments to reference the named node and named library within this package
