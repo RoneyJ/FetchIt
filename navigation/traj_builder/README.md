@@ -30,9 +30,4 @@ final heading.
 see example program: traj_builder_example_main.cpp for illustration of how to 
 use this library.
 
-## Example usage
-`roslaunch gazebo_ros empty_world.launch`
-`roslaunch mobot_urdf mobot.launch`
-`rosrun traj_builder traj_builder_example_main` 
-
     
