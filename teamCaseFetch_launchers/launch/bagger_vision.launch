@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!-- DO NOT AUTO FORMAT! -->
+<!-- $(find teamcasefetch_lauchers)/bags/recorded  -->
+<launch>
+
+    <node pkg="rosbag" type="record" name="record_main" output="screen" respawn="true" respawn_delay="0" 
+        
+        args="-o $(find teamcasefetch_return)/bags/recorded
+                            
+                            /tf
+                            /tf_static
+                            /joint_states
+
+                            /head_camera/depth_registered/camera_info
+                            /head_camera/depth_registered/points               
+                            /kit_location
+    "/>
+</launch>

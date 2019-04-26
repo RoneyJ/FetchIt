@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!-- DO NOT AUTO FORMAT! -->
+<!-- $(find teamcasefetch_lauchers)/bags/recorded  -->
+<launch>
+
+    <node pkg="rosbag" type="record" name="record_main" output="screen" respawn="true" respawn_delay="0" 
+        
+        args="-o $(find teamcasefetch_return)/bags/recorded
+                            
+                            /tf
+                            /tf_static
+                            /joint_states
+
+                            /base_scan 
+
+                            /cmd_vel
+                            /cmd_vel_mux/selected
+                            /base_controller/command 
+
+                            /odom
+
+                            /desPsi
+                            /desState
+
+                            /map
+                            /map_metadata
+                            /map_updates
+
+                            /particlecloud
+                            /amcl/parameter_descriptions
+                            /amcl/parameter_updates
+                            /amcl_pose
+                            /initialpose
+
+
+    "/>
+
+</launch>
