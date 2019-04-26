@@ -12,12 +12,7 @@
                             /joint_states
 
                             /head_camera/depth_registered/camera_info
-                            /head_camera/depth_registered/points
-
-                            /head_camera/rgb/camera_info
-                            /head_camera/rgb/image_raw                            
-
+                            /head_camera/depth_registered/points               
+                            /kit_location
     "/>
-    
-
 </launch>
