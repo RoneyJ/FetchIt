@@ -52,7 +52,7 @@
 #include <stdio.h> 
 
 
-static const std::string OPENCV_WINDOW = "Open-CV display window";
+//static const std::string OPENCV_WINDOW = "Open-CV display window";
 using namespace std;
 using namespace cv;
 
@@ -556,8 +556,8 @@ int main(int argc, char** argv) {
     
     //create openCV display windows
     // this is only for debugging; can go away later
-    namedWindow("Image", WINDOW_AUTOSIZE);
-    namedWindow("Connected Components", WINDOW_AUTOSIZE);
+    //namedWindow("Image", WINDOW_AUTOSIZE);
+    //namedWindow("Connected Components", WINDOW_AUTOSIZE);
     //colorized regions will be displayed by blob_color();
     //display the original B/W image as well:
     
