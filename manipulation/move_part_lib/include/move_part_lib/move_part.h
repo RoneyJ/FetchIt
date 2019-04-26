@@ -17,12 +17,18 @@
 #include <xform_utils/xform_utils.h>
 #include <gripper_interface/gripper_interface.h>
 #include <part_codes/part_codes.h>
+#include <xform_utils/xform_utils.h>
+
+using namespace std;
+XformUtils xformUtils;
 
 const double GRASP_HEIGHT = 0.055;
 const double PART_X_VAL = 0.625; //0.64; for testing only
 const double PART_Y_VAL = 0.2; //0.059; //minus-sign error w/ object-finder?
 const double APPROACH_HT = 0.15;
 const double APPROACH_CLEARANCE = 0.08;
+
+const double TOTE_GRASP_HEIGHT_WRT_TOTE_ORIGIN = 0.2; //TUNE ME!
 
 using namespace std;
 
@@ -42,6 +48,9 @@ public:
         bool recover_from_dropoff();
 
         bool preset_arm();
+        
+        Eigen::Affine3d  compute_grasp_affine(int part_code, geometry_msgs::PoseStamped part_pose);
+        Eigen::Matrix3d compute_rot_z(double angle);
         //bool preset_torso();
         //bool preset_head();
 	CartMotionCommander cart_motion_commander_; //need this to talk to arm behavior server
