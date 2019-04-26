@@ -740,9 +740,10 @@ int main(int argc, char** argv) {
     kit_pose.pose.orientation = transform.convertPlanarPsi2Quaternion(double_kit_orientation);
     for(int i = 0; i < 3; i++){
     	kit_pose_pub.publish(kit_pose);
+        ros::Duration(0.5).sleep();
     	ros::spinOnce();
     }
-
+    ros::Duration(4.0).sleep();
 
 //    cvtColor(img, img, CV_BGR2GRAY);
 	
