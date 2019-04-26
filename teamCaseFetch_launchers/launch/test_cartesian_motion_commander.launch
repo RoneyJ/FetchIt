@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+    <node pkg="fetch_arm_behavior_server" type="fetch_static_transforms" name="fetch_static_transforms" output="log" respawn="false" respawn_delay="0">
+        
+    </node>
+    
+    <node pkg="fetch_arm_behavior_server" type="fetch_cart_move_as" name="fetch_cart_move_as" output="log" respawn="false" respawn_delay="0">
+        
+    </node>
+    
+    <node pkg="cartesian_motion_commander" type="fetch_cartesian_interactive_ac" name="fetch_cartesian_interactive_ac" output="screen" respawn="false" respawn_delay="0">
+        
+    </node>
+</launch>
