@@ -732,7 +732,8 @@ int main(int argc, char** argv) {
     cout<<"Centroid of the object in robot coordinates: (" <<obj_x_centroid_wrt_robot<<","<<obj_y_centroid_wrt_robot<<")\n";
 
     XformUtils transform;
-    double double_kit_orientation = (double) kit_orientation;
+    double pi = 3.14159; 
+    double double_kit_orientation = (double) (kit_orientation * (pi/180));
     geometry_msgs::PoseStamped kit_pose;
     kit_pose.pose.position.x = obj_x_centroid_wrt_robot;
     kit_pose.pose.position.y = obj_y_centroid_wrt_robot;
