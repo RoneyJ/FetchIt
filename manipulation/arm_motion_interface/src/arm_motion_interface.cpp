@@ -47,6 +47,8 @@ cart_move_as_(*nodehandle, "cartMoveActionServer", boost::bind(&ArmMotionInterfa
     q_stow_pose4_.resize(njnts);
     q_stow_pose5_.resize(njnts);
     q_stow_pose6_.resize(njnts);
+    q_stow_pose7_.resize(njnts);
+    q_stow_pose8_.resize(njnts);
     q_stow_pose1_<< 1.4, -1, 0, 1.570, 0, 1, 0;	//recover pose
     q_stow_pose2_<<1.4, 0.6, -0.2, 1.2, 0, 1, 0; //drop-off for large pocket for gearbox top/bottom
     
@@ -55,7 +57,12 @@ cart_move_as_(*nodehandle, "cartMoveActionServer", boost::bind(&ArmMotionInterfa
     //third pocket: 1.4, 0.75, 0, 1.2, 0, 1, 0
     q_stow_pose4_<<1.4, 0.75, 0, 1.2, 0, 1, 0; //drop-off for gears
 	q_stow_pose5_<< 1.4, 0.6, -0.25, 1.2, 0, 1.3, 0; //pre-pose before dropoffs
+    q_stow_pose6_<< 1.25, 0.9, -0.3, 2.1, -0.17, -1.47, 0;//pose to stow tote on base
 	q_waiting_pose_<<0.8, -1, 0, 1.5707, 0, 1, 0; //waiting pose (out of camera view)
+    //tote grasp pose
+    q_stow_pose7_<<1.2, 0.9, -0.2, 1.9, -0.15, -1.25, -0.2;
+    //tote pre-pose
+    q_stow_pose8_<<1.2, 0.9, -0.2, 2.1, -0.05, -1.4, -0.2;
     
 
     urdf_base_frame_name_ = armMotionInterfaceInits.urdf_base_frame_name;

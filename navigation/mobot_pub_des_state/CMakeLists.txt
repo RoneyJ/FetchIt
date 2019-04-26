@@ -10,10 +10,10 @@ find_package(catkin_simple REQUIRED)
 #find_package(PCL 1.7 REQUIRED)
 
 #uncomment the following 4 lines to use the Eigen library
-#find_package(cmake_modules REQUIRED)
-#find_package(Eigen3 REQUIRED)
-#include_directories(${EIGEN3_INCLUDE_DIR})
-#add_definitions(${EIGEN_DEFINITIONS})
+find_package(cmake_modules REQUIRED)
+find_package(Eigen3 REQUIRED)
+include_directories(${EIGEN3_INCLUDE_DIR})
+add_definitions(${EIGEN_DEFINITIONS})
 find_package(Boost REQUIRED COMPONENTS system thread)
 catkin_simple()
 
@@ -37,7 +37,10 @@ cs_add_executable(pub_des_state_path_client_3x3 src/pub_des_state_path_client_3m
 #cs_add_executable(pub_des_state_path_client_10x10 src/pub_des_state_path_client_10mx10m_sqr.cpp)
 cs_add_executable(starting_pen_pub_des_state_path_client src/starting_pen_pub_des_state_path_client.cpp)
 cs_add_executable(glennan_pub_des_state_path_client src/glennan_pub_des_state_path_client.cpp)
-
+cs_add_executable(table_loop src/pub_des_state_path_client_table_loop.cpp)
+cs_add_executable(jason_client src/jason_client.cpp)
+cs_add_executable(open_loop_client src/pub_des_state_path_client_table_loop.cpp)
+cs_add_executable(pub_des_state_path_client_amcl_correction src/pub_des_state_path_client_amcl_correction.cpp)
 #the following is required, if desire to link a node in this package with a library created in this same package
 # edit the arguments to reference the named node and named library within this package
 # target_link_library(example my_lib)

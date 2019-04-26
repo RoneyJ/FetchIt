@@ -29,6 +29,9 @@ To move the arm around interactively (one joint at a time), run:
 to move the arm to a grasp pre-pose, run:
 `rosrun test_fetch_arm_ac fetch_arm_pre_pose`
 
+to move the arm to a pre-pose without hitting itself, run:
+`rosrun test_fetch_arm_ac fetch_arm_safe_start`
+
 
 
 ## Running tests/demos
