@@ -32,11 +32,10 @@ run static transforms publisher:
 
 start the cartesian-move behavior server:
 rosrun fetch_arm_behavior_server fetch_cart_move_as
-or:
-rosrun cartesian_motion_commander example_generic_cartesian_move_ac3
-which demonstrates how to build and execute multi-segment trajectories.
-Intent is that an entire plan can be pre-computed and evaluated before execution, and actions
-(e.g., gripper, painter on/off, etc) can be performed between trajectory segment executions
+
+TEST ACTION CLIENT:
+`rosrun cartesian_motion_commander fetch_cartesian_interactive_ac`
+
 
 
 

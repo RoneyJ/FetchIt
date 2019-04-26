@@ -1,11 +1,12 @@
 // action server to respond to perception requests
 // Wyatt Newman, 2/2019
-
+#include<object_finder/object_finder.h>
+/*
 #include<ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
-#include<pcl_utils/pcl_utils.h>
+#include <pcl_utils/pcl_utils.h>
 #include <pcl/filters/crop_box.h>
-#include<object_finder/objectFinderAction.h>
+#include <object_finder/objectFinderAction.h>
 #include <xform_utils/xform_utils.h>
 #include <part_codes/part_codes.h>
 
@@ -14,13 +15,20 @@
 #include "opencv2/imgcodecs.hpp"
 #include <opencv2/highgui/highgui.hpp>
 
+#include "find_tote_fncs.cpp"
+
+
+
 using namespace std;
 using namespace cv;
 
 Eigen::Affine3f g_affine_headcam_wrt_base;
+XformUtils xformUtils;
 //magic numbers for filtering pointcloud points:
 //specify the min and max values, x,y, znd z, for points to retain...
 // as expressed in the robot's torso frame (torso_lift_link)
+//orig wsn numbers:
+/*
 const float MIN_X = 0.4; //include points starting 0.4m in front of robot
 const float MAX_X = 0.8; //include points out to 0.9m in front of robot
 const float MIN_Y = -0.3; //include points starting -0.5m to left of robot
@@ -30,15 +38,33 @@ const float MAX_Z = 0.1; //consider points up to this height w/rt torso frame
 
 const float TABLE_TOP_MIN = -0.1;
 const float TABLE_TOP_MAX = 0.2; //0.05;
+*/
+
+//Chris's numbers:
+/*
+const float MIN_X = 0.25; //include points starting 0.4m in front of robot
+const float MAX_X = 0.8; //include points out to 0.9m in front of robot
+const float MIN_Y = -0.7; //include points starting -0.5m to left of robot
+const float MAX_Y = 0.7; //include points up to 0.5m to right of robot
+const float MIN_Z = -0.05; //2cm above the table top
+const float MAX_Z = 0.14; //consider points up to this height w/rt torso frame
+
+const float TABLE_TOP_MIN = -0.1;
+const float TABLE_TOP_MAX = 0.1;
+
+//choose, e.g., resolution of 5mm, so 100x200 image for 0.5m x 1.0m pointcloud
+// adjustable--> image  size
+// try 400 pix/m...works fine, i.e. 2.5mm resolution
+//const float PIXELS_PER_METER = 450.0; //200.0;
+//Chris's value:
+const float PIXELS_PER_METER = 400.0; //200.0;
+
 const float TABLE_GRASP_CLEARANCE = 0.01; //add this much to table  top height for gripper clearance
 
 const float MIN_BLOB_PIXELS = 600; //must have  at least this many pixels to  preserve as a blob; gearbox top/bottom has about 900 pts
 const float MIN_BLOB_AVG_HEIGHT = 5.0; //avg z-height must be  at least this many mm to preserve as blob
 
-//choose, e.g., resolution of 5mm, so 100x200 image for 0.5m x 1.0m pointcloud
-// adjustable--> image  size
-// try 400 pix/m...works fine, i.e. 2.5mm resolution
-const float PIXELS_PER_METER = 400.0; //200.0;
+
 
 const int Nu = (int) ((MAX_X - MIN_X) * PIXELS_PER_METER);
 const int Nv = (int) ((MAX_Y - MIN_Y) * PIXELS_PER_METER);
@@ -47,10 +73,16 @@ Mat_<uchar> g_bw_img(Nu, Nv);
 Mat_<int> g_labelImage(Nu, Nv);
 Mat dst(g_bw_img.size(), CV_8UC3);
 
+//SHOULD move these to class member data
 vector<float> g_x_centroids, g_y_centroids;
 vector<float> g_x_centroids_wrt_robot, g_y_centroids_wrt_robot;
 vector<float> g_avg_z_heights;
 vector<float> g_npts_blobs;
+vector<float> g_orientations;
+//Global Variable matrix to hold quaternions
+vector<geometry_msgs::Quaternion> g_vec_of_quat; 
+
+
 Eigen::Affine3f affine_cam_wrt_torso_;
 
 class ObjectFinder {
@@ -86,6 +118,9 @@ private:
     //will publish  pointClouds as ROS-compatible messages; create publishers; note topics for rviz viewing
 
     Eigen::Affine3f affine_cam_wrt_torso_;
+    
+    Eigen::Vector3f major_axis_,centroid_,plane_normal_;
+
 
 
 public:
@@ -124,7 +159,13 @@ public:
 
     bool find_gearbox_top(vector<float> x_centroids_wrt_robot, vector<float> y_centroids_wrt_robot,
             vector<float> avg_z_heights, vector<float> npts_blobs, float table_height, vector<geometry_msgs::PoseStamped> &object_poses);
+    bool find_totes(vector<float> x_centroids_wrt_robot, vector<float> y_centroids_wrt_robot,
+            vector<float> avg_z_heights, vector<float> npts_blobs, float table_height, vector<geometry_msgs::PoseStamped> &object_poses); 
+    
+    void find_orientation(Eigen::MatrixXf points_mat, float &orientation, geometry_msgs::Quaternion &quaternion);
+    
 };
+*/
 
 ObjectFinder::ObjectFinder() :
 object_finder_as_(nh_, "object_finder_action_service", boost::bind(&ObjectFinder::executeCB, this, _1), false), pclCam_clr_ptr_(new PointCloud<pcl::PointXYZRGB>),
@@ -328,6 +369,133 @@ Eigen::Affine3f ObjectFinder::compute_affine_cam_wrt_torso_lift_link(void) {
     return affine_cam_wrt_torso;
 }
 
+//given a binary image in bw_img, find and label connected regions  (blobs)
+// labelImage will contain integer labels with 0= background, 1 = first blob found,
+// ...up to nBlobs
+// also creates a colored image such that each blob found gets assigned  a
+// unique color, suitable for display and visual interpretation,  though this is
+// NOT needed by the robot
+void ObjectFinder::find_orientation(Eigen::MatrixXf points_mat, float &orientation, geometry_msgs::Quaternion &quaternion) {
+    //ROS_INFO("starting identification of plane from data: ");
+    int npts = points_mat.cols(); // number of points = number of columns in matrix; check the size
+    
+    // first compute the centroid of the data:
+    //Eigen::Vector3f centroid; // make this member var, centroid_
+    centroid_ = Eigen::MatrixXf::Zero(3, 1); // see http://eigen.tuxfamily.org/dox/AsciiQuickReference.txt
+    
+    //centroid = compute_centroid(points_mat);
+     for (int ipt = 0; ipt < npts; ipt++) {
+        centroid_ += points_mat.col(ipt); //add all the column vectors together
+    }
+    centroid_ /= npts; //divide by the number of points to get the centroid    
+    cout<<"centroid: "<<centroid_.transpose()<<endl;
+
+
+    // subtract this centroid from all points in points_mat:
+    Eigen::MatrixXf points_offset_mat = points_mat;
+    for (int ipt = 0; ipt < npts; ipt++) {
+        points_offset_mat.col(ipt) = points_offset_mat.col(ipt) - centroid_;
+    }
+    //compute the covariance matrix w/rt x,y,z:
+    Eigen::Matrix3f CoVar;
+    CoVar = points_offset_mat * (points_offset_mat.transpose()); //3xN matrix times Nx3 matrix is 3x3
+    //cout<<"covariance: "<<endl;
+    //cout<<CoVar<<endl;
+
+    // here is a more complex object: a solver for eigenvalues/eigenvectors;
+    // we will initialize it with our covariance matrix, which will induce computing eval/evec pairs
+    Eigen::EigenSolver<Eigen::Matrix3f> es3f(CoVar);
+
+    Eigen::VectorXf evals; //we'll extract the eigenvalues to here
+    //cout<<"size of evals: "<<es3d.eigenvalues().size()<<endl;
+    //cout<<"rows,cols = "<<es3d.eigenvalues().rows()<<", "<<es3d.eigenvalues().cols()<<endl;
+    //cout << "The eigenvalues of CoVar are:" << endl << es3d.eigenvalues().transpose() << endl;
+    //cout<<"(these should be real numbers, and one of them should be zero)"<<endl;
+    //cout << "The matrix of eigenvectors, V, is:" << endl;
+    //cout<< es3d.eigenvectors() << endl << endl;
+    //cout<< "(these should be real-valued vectors)"<<endl;
+    // in general, the eigenvalues/eigenvectors can be complex numbers
+    //however, since our matrix is self-adjoint (symmetric, positive semi-definite), we expect
+    // real-valued evals/evecs;  we'll need to strip off the real parts of the solution
+
+    evals = es3f.eigenvalues().real(); // grab just the real parts
+    //cout<<"real parts of evals: "<<evals.transpose()<<endl;
+
+    // our solution should correspond to an e-val of zero, which will be the minimum eval
+    //  (all other evals for the covariance matrix will be >0)
+    // however, the solution does not order the evals, so we'll have to find the one of interest ourselves
+
+    double min_lambda = evals[0]; //initialize the hunt for min eval
+    double max_lambda = evals[0]; // and for max eval
+    //Eigen::Vector3cf complex_vec; // here is a 3x1 vector of double-precision, complex numbers
+    //Eigen::Vector3f evec0, evec1, evec2; //, major_axis; 
+    //evec0 = es3f.eigenvectors().col(0).real();
+    //evec1 = es3f.eigenvectors().col(1).real();
+    //evec2 = es3f.eigenvectors().col(2).real();  
+    
+    
+    //((pt-centroid)*evec)*2 = evec'*points_offset_mat'*points_offset_mat*evec = 
+    // = evec'*CoVar*evec = evec'*lambda*evec = lambda
+    // min lambda is ideally zero for evec= plane_normal, since points_offset_mat*plane_normal~= 0
+    // max lambda is associated with direction of major axis
+    
+    //sort the evals:
+    
+    //complex_vec = es3f.eigenvectors().col(0); // here's the first e-vec, corresponding to first e-val
+    //cout<<"complex_vec: "<<endl;
+    //cout<<complex_vec<<endl;
+    plane_normal_ = es3f.eigenvectors().col(0).real(); //complex_vec.real(); //strip off the real part
+    major_axis_ = es3f.eigenvectors().col(0).real(); // starting assumptions
+    
+    //cout<<"real part: "<<est_plane_normal.transpose()<<endl;
+    //est_plane_normal = es3d.eigenvectors().col(0).real(); // evecs in columns
+
+    double lambda_test;
+    int i_normal = 0;
+    int i_major_axis=0;
+    //loop through "all" ("both", in this 3-D case) the rest of the solns, seeking min e-val
+    for (int ivec = 1; ivec < 3; ivec++) {
+        lambda_test = evals[ivec];
+        if (lambda_test < min_lambda) {
+            min_lambda = lambda_test;
+            i_normal = ivec; //this index is closer to index of min eval
+            plane_normal_ = es3f.eigenvectors().col(i_normal).real();
+        }
+        if (lambda_test > max_lambda) {
+            max_lambda = lambda_test;
+            i_major_axis = ivec; //this index is closer to index of min eval
+            major_axis_ = es3f.eigenvectors().col(i_major_axis).real();
+        }        
+    }
+
+	float x_component = major_axis_(0);
+	float y_component = -major_axis_(1);
+	orientation = atan2(y_component,x_component) - M_PI/2;
+
+	quaternion = xformUtils.convertPlanarPsi2Quaternion(orientation);
+    // at this point, we have the minimum eval in "min_lambda", and the plane normal
+    // (corresponding evec) in "est_plane_normal"/
+    // these correspond to the ith entry of i_normal
+    //cout<<"min eval is "<<min_lambda<<", corresponding to component "<<i_normal<<endl;
+    //cout<<"corresponding evec (est plane normal): "<<plane_normal.transpose()<<endl;
+    //cout<<"max eval is "<<max_lambda<<", corresponding to component "<<i_major_axis<<endl;
+    //cout<<"corresponding evec (est major axis): "<<major_axis_.transpose()<<endl;  
+    
+    //what is the correct sign of the normal?  If the data is with respect to the camera frame,
+    // then the camera optical axis is z axis, and thus any points reflected must be from a surface
+    // with negative z component of surface normal
+    if (plane_normal_(2)>0) plane_normal_ = -plane_normal_; // negate, if necessary
+    
+    //cout<<"correct answer is: "<<normal_vec.transpose()<<endl;
+    //cout<<"est plane distance from origin = "<<est_dist<<endl;
+    //cout<<"correct answer is: "<<dist<<endl;
+    //cout<<endl<<endl;    
+    //ROS_INFO("major_axis: %f, %f, %f",major_axis_(0),major_axis_(1),major_axis_(2));
+    //ROS_INFO("plane normal: %f, %f, %f",plane_normal(0),plane_normal(1),plane_normal(2));
+}
+
+
+
 //given a binary image in g_bw_img, find and label connected regions  (blobs)
 // g_labelImage will contain integer labels with 0= background, 1 = first blob found,
 // ...up to nBlobs
@@ -417,6 +585,32 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
         y_centroids_wrt_robot[label] = ((dst.cols / 2) - y_centroids_wrt_robot[label]) / PIXELS_PER_METER + (MIN_Y + MAX_Y) / 2.0;
         ROS_INFO("label %d has %d points, avg height %f, and centroid w/rt robot: %f, %f:", label, (int) npts_blobs[label], avg_z_heights[label], x_centroids_wrt_robot[label], y_centroids_wrt_robot[label]);
     }
+   //xxx
+        g_orientations.clear();
+        g_vec_of_quat.clear();
+        Eigen::Vector3f e_pt;
+	for(int label = 1; label < nLabels; label++){
+		int npts_blob = npts_blobs[label];
+		Eigen::MatrixXf blob(3, npts_blob);
+		int col_num = 0;
+		for (int r = 0; r < dst.rows; ++r) {
+			for (int c = 0; c < dst.cols; ++c){
+				int label_num = g_labelImage.at<int>(r,c);
+				if(label_num == label){
+					e_pt<<c,r,0.0;
+					blob.col(col_num) = e_pt;
+					col_num++;
+				}
+			}
+		}
+		float angle;
+		geometry_msgs::Quaternion quat;
+		find_orientation(blob, angle, quat);
+		//add pi/2 to factor in rotated camera frame wrt robot
+		g_orientations.push_back(angle);
+		g_vec_of_quat.push_back(quat);
+        }
+    
 
 }
 
@@ -554,6 +748,23 @@ void ObjectFinder::executeCB(const actionlib::SimpleActionServer<object_finder::
                 ROS_WARN("could not find requested object");
                 object_finder_as_.setAborted(result_);
             }
+            break;
+            
+        case part_codes::part_codes::TOTE:
+            found_object = find_totes(g_x_centroids_wrt_robot, g_y_centroids_wrt_robot, g_avg_z_heights, g_npts_blobs, table_height, object_poses); 
+            if (found_object) {
+                ROS_INFO("found tote objects");
+                result_.found_object_code = object_finder::objectFinderResult::OBJECT_FOUND;
+                result_.object_poses.clear();
+                int nposes = object_poses.size();
+                for (int ipose = 0; ipose < nposes; ipose++) {
+                    result_.object_poses.push_back(object_poses[ipose]);
+                }
+                object_finder_as_.setSucceeded(result_);
+            } else {
+                ROS_WARN("could not find requested object");
+                object_finder_as_.setAborted(result_);
+            }            
             break;
 
         default:

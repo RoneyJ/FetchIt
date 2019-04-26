@@ -28,7 +28,7 @@ const double PART_Y_VAL = 0.2; //0.059; //minus-sign error w/ object-finder?
 const double APPROACH_HT = 0.15;
 const double APPROACH_CLEARANCE = 0.08;
 
-const double TOTE_GRASP_HEIGHT_WRT_TOTE_ORIGIN = 0.2; //TUNE ME!
+const double TOTE_GRASP_HEIGHT_WRT_TOTE_ORIGIN = 0.11; //TUNE ME!
 
 using namespace std;
 
@@ -48,6 +48,7 @@ public:
         bool recover_from_dropoff();
 
         bool preset_arm();
+        bool release_grasped_part();
         
         Eigen::Affine3d  compute_grasp_affine(int part_code, geometry_msgs::PoseStamped part_pose);
         Eigen::Matrix3d compute_rot_z(double angle);

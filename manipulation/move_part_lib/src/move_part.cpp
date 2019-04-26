@@ -149,6 +149,7 @@ bool MovePart::get_part(int part_code, geometry_msgs::PoseStamped source_pose) {
     //tool_pose = xformUtils.transformEigenAffine3dToPoseStamped(tool_affine,"system_ref_frame");
 
     grasp_pose = xformUtils.transformEigenAffine3dToPoseStamped(grasp_affine, "torso_lift_link");  
+    approach_pose = grasp_pose;
     approach_pose.pose.position.z = approach_pose.pose.position.z+APPROACH_CLEARANCE; //descend to grasp pose
     
     bool traj_is_valid = false;
@@ -205,6 +206,12 @@ return true;
 }
 
 bool MovePart::place_grasped_part(int part_code, geometry_msgs::PoseStamped destination_pose){
+    gripper_interface_.releaseObject();
+return false;
+}
+
+bool MovePart::release_grasped_part(){
+    gripper_interface_.releaseObject();
 return false;
 }
 
