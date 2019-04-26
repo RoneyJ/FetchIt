@@ -1,5 +1,5 @@
 <launch> 
 <node name= "fetch_torso_lift_preset" pkg= "test_fetch_arm_ac" type= "fetch_torso_lift_preset" /> 
 <node name= "fetch_head_tilt_preset" pkg= "test_fetch_arm_ac" type= "fetch_head_tilt_preset" /> 
-<node name= "fetch_arm_pre_pose" pkg= "test_fetch_arm_ac" type= "fetch_arm_pre_pose" /> 
+<node name= "fetch_arm_safe_start" pkg= "test_fetch_arm_ac" type= "fetch_arm_safe_start" /> 
 </launch>   

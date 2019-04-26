@@ -97,12 +97,12 @@ int main(int argc, char** argv) {
     } else {
         ROS_WARN("unsuccessful plan; rtn_code = %d", rtn_val);
     }
-   */
+     */
     string xyz("x");
     double ds;
     bool valid_code;
     int cart_code;
-    while(true) {
+    while (true) {
         cout << "enter x, y or z code for desired Cartesian perturbation: " << endl;
         cin>>xyz;
         valid_code = true;
@@ -114,28 +114,29 @@ int main(int argc, char** argv) {
             valid_code = false;
         }
         if (valid_code) {
+            cout<<" using code "<<cart_code<<endl;  
             cout << "enter desired displacement value (in m):  ";
             cin>>ds;
 
-        if (cart_code == 0) tool_pose.pose.position.x += ds;
-        if (cart_code == 1) tool_pose.pose.position.y += ds;
-        if (cart_code == 2) tool_pose.pose.position.z += ds;
-        ROS_INFO("desired tool pose: ");
-        xformUtils.printPose(tool_pose);
-        //arrival_times.clear();
-        //note: bug in plan_cartesian_traj_qprev_to_des_tool_pose(); if no valid IK soln along path, action server crashes!
-        //...first call only???
-        // for single move (not multisegment), use plan_cartesian_traj_current_to_des_tool_pose
-        // and TODO: find/fix this bug
-        rtn_val = cart_motion_commander.plan_cartesian_traj_current_to_des_tool_pose(nsteps, arrival_time, tool_pose);
-        if (rtn_val == arm_motion_action::arm_interfaceResult::SUCCESS) {
-            ROS_INFO("successful plan; command execution of trajectory");
-            rtn_val = cart_motion_commander.execute_planned_traj();
-            //ros::Duration(arrival_time + 0.2).sleep();
-        } else {
-            ROS_WARN("unsuccessful plan; rtn_code = %d", rtn_val);
+            if (cart_code == 0) tool_pose.pose.position.x += ds;
+            if (cart_code == 1) tool_pose.pose.position.y += ds;
+            if (cart_code == 2) tool_pose.pose.position.z += ds;
+            ROS_INFO("desired tool pose: ");
+            xformUtils.printPose(tool_pose);
+            //arrival_times.clear();
+            //note: bug in plan_cartesian_traj_qprev_to_des_tool_pose(); if no valid IK soln along path, action server crashes!
+            //...first call only???
+            // for single move (not multisegment), use plan_cartesian_traj_current_to_des_tool_pose
+            // and TODO: find/fix this bug
+            rtn_val = cart_motion_commander.plan_cartesian_traj_current_to_des_tool_pose(nsteps, arrival_time, tool_pose);
+            if (rtn_val == arm_motion_action::arm_interfaceResult::SUCCESS) {
+                ROS_INFO("successful plan; command execution of trajectory");
+                rtn_val = cart_motion_commander.execute_planned_traj();
+                //ros::Duration(arrival_time + 0.2).sleep();
+            } else {
+                ROS_WARN("unsuccessful plan; rtn_code = %d", rtn_val);
+            }
         }
-    }
     }
     return 0;
 }

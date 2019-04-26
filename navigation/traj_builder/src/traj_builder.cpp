@@ -1,5 +1,4 @@
 #include<traj_builder/traj_builder.h>
-using namespace std;
 
 //This library contains functions to build simple navigation trajectories.
 //The main function is: build_point_and_go_traj().  This function takes
@@ -415,7 +414,7 @@ void TrajBuilder::build_braking_traj(geometry_msgs::PoseStamped start_pose,
 //NOTE:  this function will clear out the vec_of_states vector of trajectory states.
 // It does NOT append new planned states.  User beware.
 void TrajBuilder::build_point_and_go_traj(geometry_msgs::PoseStamped start_pose,
-        geometry_msgs::PoseStamped &end_pose,
+        geometry_msgs::PoseStamped end_pose,
         std::vector<nav_msgs::Odometry> &vec_of_states) {
     ROS_INFO("building point-and-go trajectory");
     nav_msgs::Odometry bridge_state;
@@ -440,7 +439,4 @@ void TrajBuilder::build_point_and_go_traj(geometry_msgs::PoseStamped start_pose,
     //start next segment where previous segment left off
     ROS_INFO("building translational trajectory");
     build_travel_traj(bridge_pose, end_pose, vec_of_states);
-    ROS_INFO_STREAM("orig end pose: "<<endl<<end_pose<<endl);
-    end_pose.pose.orientation = bridge_pose.pose.orientation; //wsn 4/20/19, MODIFY end_pose to reflect ending orientation
-    ROS_INFO_STREAM("modified end pose: "<<endl<<end_pose<<endl);
 }
