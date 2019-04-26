@@ -1,5 +1,5 @@
 #object ID codes 
-
+int32 FAKE_PART=1
 int32 GEARBOX_TOP=101
 int32 GEARBOX_BOTTOM=102
 int32 BOLT = 103

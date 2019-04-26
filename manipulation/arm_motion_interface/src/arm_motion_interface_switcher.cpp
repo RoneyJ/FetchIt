@@ -4,7 +4,7 @@ void ArmMotionInterface::executeCB(const actionlib::SimpleActionServer<arm_motio
     command_mode_ = goal->command_code;
     ROS_INFO_STREAM("received command mode " << command_mode_);
     int njnts;
-
+    int ans;
     switch (command_mode_) {
         //a simple "is-alive" test
         case arm_motion_action::arm_interfaceGoal::ARM_TEST_MODE:
@@ -35,6 +35,7 @@ void ArmMotionInterface::executeCB(const actionlib::SimpleActionServer<arm_motio
         //this cmd checks if have a valid pre-computed trajectory, and if so, invokes execution;
         case arm_motion_action::arm_interfaceGoal::EXECUTE_PLANNED_TRAJ: //assumes there is a valid planned path in optimal_path_
             ROS_INFO("responding to request EXECUTE_PLANNED_TRAJ");
+            
             execute_planned_traj(); //this fnc does setSucceeded on its own
             break;
 
