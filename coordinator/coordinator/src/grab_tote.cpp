@@ -17,6 +17,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <move_part_lib/move_part.h>                // Manipulation
 #include <mobot_pub_des_state/key_pose_move.h>      // Navigation
+#include <mobot_pub_des_state/integer_query.h>      // Navigation
 #include <object_finder_lib/object_finder.h>        // Perception
 
 using namespace std;
@@ -40,16 +41,6 @@ int main(int argc, char** argv) {
     ros::init(argc, argv, "grab_tote");
     ros::NodeHandle nh;
 
-    
-    kit_pose_.header.frame_id = "sample_frame";
-    kit_pose_.pose.position.x = 0;
-    kit_pose_.pose.position.y = 0;
-    kit_pose_.pose.position.z = 0;
-    kit_pose_.pose.orientation.x = 0;
-    kit_pose_.pose.orientation.y = 0;
-    kit_pose_.pose.orientation.z = 0;
-    kit_pose_.pose.orientation.w = 1;
-
     // Create Manipulation and Perception objects
     MovePart movePart;
     FindPart findPart;
@@ -61,6 +52,9 @@ int main(int argc, char** argv) {
         ros::Duration(1.0).sleep();
     }
     ROS_INFO("Connected client to set_key_pose_index service");
+
+    // Connect to Path Queue Service
+    ros::ServiceClient queue_client = nh.serviceClient<mobot_pub_des_state::integer_query>("path_queue_query_service");
 
     // Connect to Perception publisher
     ros::Subscriber kit_pose_sub = nh.subscribe<geometry_msgs::PoseStamped> ("kit_location", 1, kitCB);
@@ -80,6 +74,18 @@ int main(int argc, char** argv) {
     ROS_INFO("Attempting navigation to tote table");
     set_key_pose_client.call(key_pose_move_srv);
 
+    // Create Path Queue service message
+    mobot_pub_des_state::integer_query integer_query_srv;
+
+    // Wait until finished moving
+    int npts = 1;
+    while (npts > 0) {
+        ros::Duration(0.5).sleep();
+        queue_client.call(integer_query_srv);
+        npts = integer_query_srv.response.int_val;
+        ROS_INFO("waiting... %d points left in path queue", npts);
+    }
+    ROS_INFO("finished requested move");
 
     /* Perception */
     // Manual pause for testing
@@ -93,14 +99,14 @@ int main(int argc, char** argv) {
     }
 
     // Vector to contain Perceived parts
-/*    std::vector <geometry_msgs::PoseStamped> part_poses;
+    std::vector <geometry_msgs::PoseStamped> part_poses;
 
     // Set Tote part code
     int partCode = 0;
 
-    ROS_INFO("Attempting to locate tote(s) on table");
-    bool success = findPart.find_part(partCode, part_poses);
-
+    //ROS_INFO("Attempting to locate tote(s) on table");
+    //bool success = findPart.find_part(partCode, part_poses);
+/*
     int num_parts = part_poses.size();
     if (num_parts < 1) {
         ROS_WARN("DID NOT FIND ANY PARTS; QUITTING");
@@ -122,18 +128,29 @@ int main(int argc, char** argv) {
     /* Manipulation */
     // Manual pause for testing
     // TODO uncomment following lines once tote pose is found
-/*    cout<<"Enter 1 to attempt grasp: ";
+    cout<<"Enter 1 to attempt grasp: ";
     cin>>ans;
 
-    ROS_INFO("Attempting to grasp chosen part");
-    success = movePart.get_part(partCode, source_pose);
+    while(ans != 0) {
 
-    ROS_INFO("Attempting to move arm to preset");
-    success = movePart.preset_arm();
-*/
-    // TODO uncomment following lines once arm function exists
-    // ROS_INFO("Attempting to place kit");
-    // success = movePart.place_kit()? function to place kit
+        ROS_INFO("Attempting to grasp chosen part");
+        //bool success = movePart.get_part(partCode, source_pose);
+        bool success = movePart.get_part(partCode, kit_pose_);
+
+        ROS_INFO("Attempting to move arm to preset before place");
+        success = movePart.preset_arm();
+
+        // TODO uncomment following lines once arm function exists
+        // ROS_INFO("Attempting to place kit");
+        // success = movePart.place_kit()? function to place kit
+
+        ROS_INFO("Attempting to move arm to preset after place");
+        success = movePart.preset_arm();
+
+        cout<<"Enter 1 to attempt grasp, 0 to quit: ";
+        cin>>ans;
+
+    }
 
 
     /* END */
