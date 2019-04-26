@@ -15,7 +15,7 @@
 
 #include <ros/ros.h>
 #include <geometry_msgs/PoseStamped.h>
-#include <move_part_lib/move_part.h>                // Manipulation
+//#include <move_part_lib/move_part.h>                // Manipulation
 #include <mobot_pub_des_state/key_pose_move.h>      // Navigation
 #include <mobot_pub_des_state/integer_query.h>      // Navigation
 #include <object_finder_lib/object_finder.h>        // Perception
@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
     ros::NodeHandle nh;
 
     // Create Manipulation and Perception objects
-    MovePart movePart;
+    //MovePart movePart;
     FindPart findPart;
 
     // Connect to Navigation service
@@ -94,6 +94,7 @@ int main(int argc, char** argv) {
 
     while(ans != 0) {
         ros::spinOnce();
+        ROS_INFO_STREAM("kit_pose found is " << kit_pose_ << endl);
         cout << "Enter 1 to look for totes on the table, 0 to quit" << endl;
         cin >> ans;
     }
@@ -128,7 +129,7 @@ int main(int argc, char** argv) {
     /* Manipulation */
     // Manual pause for testing
     // TODO uncomment following lines once tote pose is found
-    cout<<"Enter 1 to attempt grasp: ";
+   /* cout<<"Enter 1 to attempt grasp: ";
     cin>>ans;
 
     while(ans != 0) {
@@ -150,7 +151,7 @@ int main(int argc, char** argv) {
         cout<<"Enter 1 to attempt grasp, 0 to quit: ";
         cin>>ans;
 
-    }
+    }*/
 
 
     /* END */
