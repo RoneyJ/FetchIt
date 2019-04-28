@@ -68,7 +68,7 @@ void set_hardcoded_poses() {
     
     //tote_table key pose: 
     tote_table.pose.position.x = 0.25; 
-    tote_table.pose.position.y = 0.59;// 0.64
+    tote_table.pose.position.y = 0.53;// 0.59
     tote_table.pose.position.z = 0.0; 
     tote_table.pose.orientation = convertPlanarPhi2Quaternion(1.578); 
     g_vec_of_poses.push_back(tote_table);  
@@ -106,7 +106,7 @@ void set_hardcoded_poses() {
     
     
     //bolt_bin key pose: 
-    bolt_bin.pose.position.x = -0.45;//-0.50
+    bolt_bin.pose.position.x = -0.42;//-0.45
     bolt_bin.pose.position.y = 0.66;
     bolt_bin.pose.position.z = 0.0; 
     bolt_bin.pose.orientation = convertPlanarPhi2Quaternion(-3.1415);
@@ -120,7 +120,7 @@ void set_hardcoded_poses() {
     
     //kit_dropoff table: 
     kit_dropoff.pose.position.x = -0.88;
-    kit_dropoff.pose.position.y = -0.54;//-0.59
+    kit_dropoff.pose.position.y = -0.48;//-0.54
     kit_dropoff.pose.position.z = 0.0; 
     kit_dropoff.pose.orientation = convertPlanarPhi2Quaternion(-1.578);
     g_vec_of_poses.push_back(kit_dropoff);
