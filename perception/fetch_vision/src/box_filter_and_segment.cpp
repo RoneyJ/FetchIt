@@ -730,7 +730,7 @@ int main(int argc, char** argv) {
     Point p(obj_x_centroid,obj_y_centroid); 
 
     circle(img, p, 5, Scalar(127,0,0), -1);
-    imshow("Image with center",img);
+    //imshow("Image with center",img);
     Mat fixed_dst(img.size(), CV_8UC3);
     float obj_x_centroid_wrt_robot = ((fixed_dst.rows/2) - obj_y_centroid)/PIXELS_PER_METER + (MIN_X+MAX_X)/2.0;
     float obj_y_centroid_wrt_robot = (obj_x_centroid- (fixed_dst.cols/2))/PIXELS_PER_METER + (MIN_Y+MAX_Y)/2.0;
