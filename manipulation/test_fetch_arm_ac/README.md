@@ -35,4 +35,7 @@ to move the arm to a pre-pose without hitting itself, run:
 
 
 ## Running tests/demos
+see also:
+`rosrun cartesian_motion_commander fetch_cartesian_interactive_ac`  
+to interactively command cartesian motions
     

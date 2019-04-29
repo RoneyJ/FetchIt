@@ -295,25 +295,28 @@ void ArmMotionInterface::jointStatesCb(const sensor_msgs::JointState& js_msg) {
     //joint_states_ = js_msg; // does joint-name mapping only once
     int nsize_indices = arm_joint_indices_.size();
     //ROS_INFO("nsize_indices  is %d",nsize_indices);
-    if (nsize_indices < 1) {
-        /*
-        int njnts = js_msg.position.size();
-        if (njnts != NJNTS_) {
-            ROS_WARN("mismatch in number of joints; quitting");
-            exit(1);
+    int n_jnt_states = js_msg.name.size();  //how many joints in this message?
+    if (n_jnt_states > 3) { //ignore message if it only contains finger-joint states
+        if (nsize_indices < 1) { //if first call, map joint names to indices
+            /*
+            int njnts = js_msg.position.size();
+            if (njnts != NJNTS_) {
+                ROS_WARN("mismatch in number of joints; quitting");
+                exit(1);
+            }
+             * */
+            ROS_INFO("finding joint mappings"); // for %d jnts", njnts);
+            map_arm_joint_indices(js_msg.name);
+            cout << "resulting joint index mapping: " << endl;
+            for (int i = 0; i < NJNTS_; i++) {
+                cout << arm_joint_indices_[i] << ",";
+            }
+            cout << endl;
         }
-         * */
-        ROS_INFO("finding joint mappings"); // for %d jnts", njnts);
-        map_arm_joint_indices(js_msg.name);
-        cout<<"resulting joint index mapping: "<<endl;
-        for (int i=0;i<NJNTS_;i++) {
-            cout<<arm_joint_indices_[i]<<",";
+        // get joint-angle values from message and copy to private variable
+        for (int i = 0; i < NJNTS_; i++) {
+            q_vec_arm_Xd_[i] = js_msg.position[arm_joint_indices_[i]];
         }
-        cout<<endl;
-    }
-    // get joint-angle values from message and copy to private variable
-    for (int i = 0; i < NJNTS_; i++) {
-        q_vec_arm_Xd_[i] = js_msg.position[arm_joint_indices_[i]];
     }
 }
 
