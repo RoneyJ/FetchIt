@@ -1,4 +1,4 @@
-/** grab_tote.cpp
+/** grab_tote_v2.cpp
  * twa16; 
  * 4/24/19
  * revised wsn 4/26/19
@@ -71,7 +71,7 @@ int main(int argc, char** argv) {
     std::vector <geometry_msgs::PoseStamped> part_poses;
 
     // Set Tote part code
-    int partCode; // = 0;
+    int partCode;
     
     cout << "Enter 1 to look for FAKE_PART, 2 to look for TOTE" << endl;
     cin >> ans;
