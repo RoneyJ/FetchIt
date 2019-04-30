@@ -223,17 +223,18 @@ bool ObjectFinder::find_totes(vector<float> x_centroids_wrt_robot, vector<float>
     ////imshow("Image with center",img);
     Mat fixed_dst(img.size(), CV_8UC3);
     float obj_x_centroid_wrt_robot = ((fixed_dst.rows/2) - obj_y_centroid)/PIXELS_PER_METER + (MIN_X+MAX_X)/2.0;
-    float obj_y_centroid_wrt_robot = (obj_x_centroid- (fixed_dst.cols/2))/PIXELS_PER_METER + (MIN_Y+MAX_Y)/2.0;
+    float obj_y_centroid_wrt_robot = ((fixed_dst.cols/2) - obj_x_centroid)/PIXELS_PER_METER + (MIN_Y+MAX_Y)/2.0;
     cout<<"fixed_dst rows = "<<fixed_dst.rows<<endl;
     cout<<"Centroid of the object in image coordinates: (" <<obj_x_centroid<<","<<obj_y_centroid<<")\n";
     cout<<"Centroid of the object in robot coordinates: (" <<obj_x_centroid_wrt_robot<<","<<obj_y_centroid_wrt_robot<<")\n";
 
     XformUtils transform;
     double pi = 3.14159; 
-    double double_kit_orientation = (double) (kit_orientation * (pi/180));
+    double double_kit_orientation = (double) ((kit_orientation + 105) * (pi/180));
    
     object_pose.pose.position.x = obj_x_centroid_wrt_robot;
     object_pose.pose.position.y = obj_y_centroid_wrt_robot;
+    object_pose.pose.position.z = 0.08;
     object_pose.pose.orientation = transform.convertPlanarPsi2Quaternion(double_kit_orientation);
     object_poses.push_back(object_pose);
 
