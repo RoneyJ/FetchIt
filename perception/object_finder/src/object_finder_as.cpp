@@ -355,7 +355,6 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
     //openCV function to do all the  hard work
     int nLabels = connectedComponents(g_bw_img, g_labelImage, 8); //4 vs 8 connected regions
 
-
     ROS_INFO("found %d blobs", nLabels);
     vector<float> temp_x_centroids, temp_y_centroids, temp_avg_z_heights, temp_npts_blobs;
     //g_x_centroids.resize(nLabels);
@@ -370,11 +369,19 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
         temp_avg_z_heights[label] = 0.0;
         temp_npts_blobs[label] = 0.0;
     }
+     std::vector<Vec3b> colors(nLabels);
+    colors[0] = Vec3b(0, 0, 0); //make the background black
+    //assign random color to each region label
+    for (int label = 1; label < nLabels; ++label) {
+        colors[label] = Vec3b((rand()&255), (rand()&255), (rand()&255));
+    }
 
     //compute centroids
     for (int r = 0; r < g_dst.rows; ++r) {
         for (int c = 0; c < g_dst.cols; ++c) {
             int label = g_labelImage.at<int>(r, c);
+            Vec3b &pixel = g_dst.at<Vec3b>(r, c);
+            pixel = colors[label];
             temp_y_centroids[label] += c; //robot y-direction corresponds to columns--will negate later
             temp_x_centroids[label] += r; //robot x-direction corresponds to rows--will negate later
             temp_npts_blobs[label] += 1.0;
@@ -382,6 +389,7 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
             temp_avg_z_heights[label] += zval; //check the  order of this
         }
     }
+ 
     //cout<<"checkpoint 1"<<endl;
     for (int label = 0; label < nLabels; ++label) {
         ROS_INFO("label %d has %f points", label, temp_npts_blobs[label]);
@@ -557,6 +565,7 @@ void ObjectFinder::executeCB(const actionlib::SimpleActionServer<object_finder::
 
     //find table height from this snapshot:
     double table_height = find_table_height(transformed_cloud_ptr_, TABLE_TOP_MIN, TABLE_TOP_MAX, 0.01);
+    
 
     //box-filter the points:
     //specify opposite corners of a box to box-filter the transformed points
@@ -567,15 +576,15 @@ void ObjectFinder::executeCB(const actionlib::SimpleActionServer<object_finder::
 
     //find which points in the transformed cloud are within the specified box
     //result is in "indices"
-    find_indices_box_filtered(transformed_cloud_ptr_, box_pt_min, box_pt_max, indices_);
-    pcl::copyPointCloud(*pclCam_clr_ptr_, indices_, *box_filtered_cloud_ptr_); //extract these pts into new cloud, for display
-    pcl::toROSMsg(*box_filtered_cloud_ptr_, ros_box_filtered_cloud_); //convert to ros message for publication and display
+    //find_indices_box_filtered(transformed_cloud_ptr_, box_pt_min, box_pt_max, indices_);
+    //pcl::copyPointCloud(*pclCam_clr_ptr_, indices_, *box_filtered_cloud_ptr_); //extract these pts into new cloud, for display
+    //pcl::toROSMsg(*box_filtered_cloud_ptr_, ros_box_filtered_cloud_); //convert to ros message for publication and display
     int npts_cloud = indices_.size();
 
 
 
     //convert point cloud to top-down 2D projection for OpenCV processing
-    convert_transformed_cloud_to_2D(transformed_cloud_ptr_, indices_);
+    /*convert_transformed_cloud_to_2D(transformed_cloud_ptr_, indices_);
 
     //find connected components; 
     //operates on global bw_img and puts region-labeled codes in global Mat "labelImage" 
@@ -583,7 +592,8 @@ void ObjectFinder::executeCB(const actionlib::SimpleActionServer<object_finder::
     // and area (num pixels) in g_npts_blobs[label]
     //
     blob_finder(g_x_centroids_wrt_robot, g_y_centroids_wrt_robot, g_avg_z_heights, g_npts_blobs,viable_labels_);
-
+    imwrite("Source.png", g_bw_img);
+    imwrite("color_Source.png", g_dst);*/
     result_.object_id = goal->object_id; //by default, set the "found" object_id to the "requested" object_id
     //note--finder might change this ID, if warranted
     geometry_msgs::PoseStamped fake_object_pose;
@@ -593,7 +603,7 @@ void ObjectFinder::executeCB(const actionlib::SimpleActionServer<object_finder::
             //coordinator::ManipTaskResult::FAILED_PERCEPTION:
         case part_codes::part_codes::GEARBOX_TOP:
             //specialized functions to find objects of interest:
-
+            {
             found_object = find_gearbox_top(g_x_centroids_wrt_robot, g_y_centroids_wrt_robot, g_avg_z_heights, g_npts_blobs, table_height, object_poses); //special case for gearbox_top; WRITE ME!
             if (found_object) {
                 ROS_INFO("found gearbox_top objects");
@@ -608,11 +618,16 @@ void ObjectFinder::executeCB(const actionlib::SimpleActionServer<object_finder::
                 ROS_WARN("could not find requested object");
                 object_finder_as_.setAborted(result_);
             }
+        }
             break;
             
         case part_codes::part_codes::TOTE:
+        {
+                
+                ROS_INFO("Starting find totes");
             found_object = find_totes(g_x_centroids_wrt_robot, g_y_centroids_wrt_robot, g_avg_z_heights, g_npts_blobs, table_height, object_poses); 
             if (found_object) {
+
                 ROS_INFO("found tote objects");
                 result_.found_object_code = object_finder::objectFinderResult::OBJECT_FOUND;
                 result_.object_poses.clear();
@@ -624,31 +639,9 @@ void ObjectFinder::executeCB(const actionlib::SimpleActionServer<object_finder::
             } else {
                 ROS_WARN("could not find requested object");
                 object_finder_as_.setAborted(result_);
-            }            
+            }  
+           }           
             break;
-            
-        case part_codes::part_codes::FAKE_PART:  //return a hard-coded pose
-                ROS_INFO("returning fake part pose");
-                result_.found_object_code = object_finder::objectFinderResult::OBJECT_FOUND;
-                result_.object_poses.clear();
-                    fake_object_pose.header.frame_id = "torso_lift_link";
-                     //clicked point on handle:  x: 0.643226742744, y: -0.120291396976, z: 0.225667536259
-                     //clicked point on table:    x: 0.515702664852,   y: -0.101541608572,   z: 0.0994542837143
-                    fake_object_pose.pose.position.x = 0.7; //had trouble w/  0.6...maybe arm hits head?
-                    fake_object_pose.pose.position.y = -0.12;
-                    fake_object_pose.pose.position.z = 0.1; 
-
-                    fake_object_pose.pose.orientation.x = 0;
-                    fake_object_pose.pose.orientation.y = 0;
-                    fake_object_pose.pose.orientation.z = 0;
-                    fake_object_pose.pose.orientation.w = 1;
-
-                result_.object_poses.push_back(fake_object_pose);
-
-                object_finder_as_.setSucceeded(result_);
-           
-            break;            
-            
 
         default:
             ROS_WARN("this object ID is not implemented");
