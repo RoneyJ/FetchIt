@@ -326,35 +326,8 @@ int CartMotionCommander::plan_jspace_traj_current_to_kit_dropoff3(int nsteps, do
     return rtn_val;    
 }
 
-int CartMotionCommander::plan_jspace_traj_current_to_tote_dropoff(int nsteps, double arrival_time) {
-    cart_goal_.command_code = arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_CURRENT_TO_TOTE_DROPOFF;
-    cart_goal_.nsteps = nsteps; //send 10 sub-commands
-    cart_goal_.arrival_time = arrival_time; //move over 2 sec
-    double t_wait = 7.0; //max wait this long for planning result
-    int rtn_val = send_planning_goal_get_result( t_wait);
-    return rtn_val;    
-}
-
-int CartMotionCommander::plan_jspace_traj_current_to_tote_pickup(int nsteps, double arrival_time) {
-    cart_goal_.command_code = arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_CURRENT_TO_TOTE_PICKUP;
-    cart_goal_.nsteps = nsteps; //send 10 sub-commands
-    cart_goal_.arrival_time = arrival_time; //move over 2 sec
-    double t_wait = 7.0; //max wait this long for planning result
-    int rtn_val = send_planning_goal_get_result( t_wait);
-    return rtn_val;    
-}
-
 bool CartMotionCommander::plan_jspace_traj_recover_from_dropoff(int nsteps, double arrival_time) {
     cart_goal_.command_code = arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_RECOVER_FROM_DROPOFF;
-    cart_goal_.nsteps = nsteps; //send 10 sub-commands
-    cart_goal_.arrival_time = arrival_time; //move over 2 sec
-    double t_wait = 5.0; //max wait this long for planning result
-    int rtn_val = send_planning_goal_get_result( t_wait);
-    return rtn_val;      
-}
-
-bool CartMotionCommander::plan_jspace_traj_recover_from_tote(int nsteps, double arrival_time) {
-    cart_goal_.command_code = arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_RECOVER_FROM_TOTE;
     cart_goal_.nsteps = nsteps; //send 10 sub-commands
     cart_goal_.arrival_time = arrival_time; //move over 2 sec
     double t_wait = 5.0; //max wait this long for planning result

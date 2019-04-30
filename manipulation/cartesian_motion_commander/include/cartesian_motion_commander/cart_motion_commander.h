@@ -64,10 +64,7 @@ public:
     int plan_jspace_traj_current_to_kit_dropoff1(int nsteps, double arrival_time); //traj current pose to a jspace home pose
     int plan_jspace_traj_current_to_kit_dropoff2(int nsteps, double arrival_time); //traj current pose to a jspace home pose
     int plan_jspace_traj_current_to_kit_dropoff3(int nsteps, double arrival_time); //traj current pose to a jspace home pose
-    int plan_jspace_traj_current_to_tote_dropoff(int nsteps, double arrival_time);
-    int plan_jspace_traj_current_to_tote_pickup(int nsteps, double arrival_time);
-    bool plan_jspace_traj_recover_from_dropoff(int nsteps, double arrival_time);
-    bool plan_jspace_traj_recover_from_tote(int nsteps, double arrival_time); 
+    bool plan_jspace_traj_recover_from_dropoff(int nsteps, double arrival_time); 
 
     int plan_jspace_traj_current_to_qgoal(int nsteps, double arrival_time,Eigen::VectorXd q_goal); //traj current to a specified jspace pose
     //int plan_jspace_traj_qstart_to_qend(int nsteps, double arrival_time,Eigen::VectorXd q_start,Eigen::VectorXd q_goal);   //jspace traj from specified q_start to q_end
