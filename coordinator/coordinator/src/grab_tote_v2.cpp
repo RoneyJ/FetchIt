@@ -5,9 +5,9 @@
  * revised twa16 4/29/19
  * 
  * File for FetchIt! to test:
- * - navigating the robot to the tote table,
- * - seeing a tote,
- * - and picking it up.
+ * - finding a fake part and picking it up,
+ * - OR
+ * - finding a tote and picking it up.
  */
 
 #include <ros/ros.h>
