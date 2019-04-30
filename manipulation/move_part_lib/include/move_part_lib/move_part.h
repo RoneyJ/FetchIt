@@ -47,11 +47,15 @@ public:
         bool move_to_dropoff_kit1();
         bool move_to_dropoff_kit2();
         bool move_to_dropoff_kit3();
+        bool move_to_dropoff_tote();
+        bool move_to_pickup_tote();
         
         bool recover_from_dropoff();
+        bool recover_from_tote();
 
         bool preset_arm();
         bool release_grasped_part();
+        bool grasp_part();
         
         Eigen::Affine3d  compute_grasp_affine(int part_code, geometry_msgs::PoseStamped part_pose);
         Eigen::Matrix3d compute_rot_z(double angle);
