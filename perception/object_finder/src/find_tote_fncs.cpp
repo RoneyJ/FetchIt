@@ -97,7 +97,7 @@ bool ObjectFinder::find_totes(vector<float> x_centroids_wrt_robot, vector<float>
     Canny(dst, dst1, 50, 200, 3);
     // Copy edges to the images that will display the results in BGR
     cvtColor(dst1, cdst, COLOR_GRAY2BGR);
-//    cdstP = cdst.clone();
+    cdstP = cdst.clone();
     cout<<"Cdst Size:"<<cdst.size()<<"\n Cdst clone size: "<<cdstP.size();
     // Probabilistic Line Transform
     
@@ -124,7 +124,7 @@ bool ObjectFinder::find_totes(vector<float> x_centroids_wrt_robot, vector<float>
         p2=Point(l[2], l[3]);
         float length = sqrt(pow((l[2] - l[0]),2) + pow((l[3] - l[1]),2));
         float angle = atan2(p1.y - p2.y, p1.x - p2.x);
-        line( cdst, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0,0,255), 3, LINE_AA);
+        line( cdstP, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0,0,255), 3, LINE_AA);
         float deg = convert_rad_to_deg(angle);
        
         //cout<<"Degree: "<<deg<<endl;
