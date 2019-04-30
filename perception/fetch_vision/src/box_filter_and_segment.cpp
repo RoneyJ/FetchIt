@@ -89,8 +89,8 @@ void kinectCB(const sensor_msgs::PointCloud2ConstPtr& cloud) {
 //magic numbers for filtering pointcloud points:
 //specify the min and max values, x,y, znd z, for points to retain...
 // as expressed in the robot's torso frame (torso_lift_link)
-const float MIN_X = 0.25; //include points starting 0.4m in front of robot
-const float MAX_X = 0.8; //include points out to 0.9m in front of robot
+const float MIN_X = 0.35; //include points starting 0.4m in front of robot
+const float MAX_X = 0.9; //include points out to 0.9m in front of robot
 const float MIN_Y = -0.7; //include points starting -0.5m to left of robot
 const float MAX_Y = 0.7; //include points up to 0.5m to right of robot
 const float MIN_Z = -0.05; //2cm above the table top
@@ -732,8 +732,9 @@ int main(int argc, char** argv) {
     circle(img, p, 5, Scalar(127,0,0), -1);
     //imshow("Image with center",img);
     Mat fixed_dst(img.size(), CV_8UC3);
-    float obj_x_centroid_wrt_robot = ((fixed_dst.rows/2) - obj_x_centroid)/PIXELS_PER_METER + (MIN_X+MAX_X)/2.0;
-    float obj_y_centroid_wrt_robot = (obj_y_centroid- (fixed_dst.cols/2))/PIXELS_PER_METER + (MIN_Y+MAX_Y)/2.0;
+    float obj_x_centroid_wrt_robot = ((fixed_dst.rows/2) - obj_y_centroid)/PIXELS_PER_METER + (MIN_X+MAX_X)/2.0;
+    float obj_y_centroid_wrt_robot = (obj_x_centroid- (fixed_dst.cols/2))/PIXELS_PER_METER + (MIN_Y+MAX_Y)/2.0;
+    cout<<"fixed_dst rows = "<<fixed_dst.rows<<endl;
     cout<<"Centroid of the object in image coordinates: (" <<obj_x_centroid<<","<<obj_y_centroid<<")\n";
     cout<<"Centroid of the object in robot coordinates: (" <<obj_x_centroid_wrt_robot<<","<<obj_y_centroid_wrt_robot<<")\n";
 
