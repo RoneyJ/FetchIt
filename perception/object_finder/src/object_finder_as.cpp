@@ -634,14 +634,14 @@ void ObjectFinder::executeCB(const actionlib::SimpleActionServer<object_finder::
                     fake_object_pose.header.frame_id = "torso_lift_link";
                      //clicked point on handle:  x: 0.643226742744, y: -0.120291396976, z: 0.225667536259
                      //clicked point on table:    x: 0.515702664852,   y: -0.101541608572,   z: 0.0994542837143
-                    fake_object_pose.pose.position.x = 0.7; //had trouble w/  0.6...maybe arm hits head?
-                    fake_object_pose.pose.position.y = -0.12;
-                    fake_object_pose.pose.position.z = 0.1; 
+                    fake_object_pose.pose.position.x = 0.725; //had trouble w/  0.6...maybe arm hits head?
+                    fake_object_pose.pose.position.y = 0.2;
+                    fake_object_pose.pose.position.z = 0.064; //0.064 is table height w/rt torso_lift_link, fingertips touch tote table
 
                     fake_object_pose.pose.orientation.x = 0;
                     fake_object_pose.pose.orientation.y = 0;
-                    fake_object_pose.pose.orientation.z = 0;
-                    fake_object_pose.pose.orientation.w = 1;
+                    fake_object_pose.pose.orientation.z = 0.707;
+                    fake_object_pose.pose.orientation.w = 0.707;
 
                 result_.object_poses.push_back(fake_object_pose);
 

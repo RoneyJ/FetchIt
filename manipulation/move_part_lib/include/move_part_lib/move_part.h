@@ -18,6 +18,7 @@
 #include <gripper_interface/gripper_interface.h>
 #include <part_codes/part_codes.h>
 #include <xform_utils/xform_utils.h>
+#include <math.h>
 
 using namespace std;
 XformUtils xformUtils;
@@ -28,7 +29,9 @@ const double PART_Y_VAL = 0.2; //0.059; //minus-sign error w/ object-finder?
 const double APPROACH_HT = 0.15;
 const double APPROACH_CLEARANCE = 0.08;
 
-const double TOTE_GRASP_HEIGHT_WRT_TOTE_ORIGIN = 0.11; //TUNE ME!
+const double TOTE_TABLE_HEIGHT_WRT_TORSO_LIFT_LINK = 0.065; //0.065 is simu value
+
+const double TOTE_GRASP_HEIGHT_WRT_TOTE_ORIGIN = 0.095; //0.11; //TUNE ME! choose 0.095 for simu
 
 using namespace std;
 
