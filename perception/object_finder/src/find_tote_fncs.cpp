@@ -68,7 +68,7 @@ bool ObjectFinder::find_totes(vector<float> x_centroids_wrt_robot, vector<float>
 	int num_short_2 = 0;
 
 	Eigen::Vector4f box_pt_min, box_pt_max;
-    box_pt_min << MIN_X_t, MAX_Y_t, table_height + MIN_H_ABove_Table ,0; //1cm above table top
+    box_pt_min << MIN_X_t, MIN_Y_t, table_height + MIN_H_ABove_Table ,0; //1cm above table top
     box_pt_max << MAX_X_t, MAX_Y_t, table_height+ MAX_H_ABove_Table,0;
     ROS_INFO("Finding blobs");
     find_indices_box_filtered(transformed_cloud_ptr_, box_pt_min, box_pt_max, indices_);
