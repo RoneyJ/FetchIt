@@ -209,7 +209,9 @@ bool MovePart::get_part(int part_code, geometry_msgs::PoseStamped source_pose) {
         ROS_WARN("unsuccessful plan; rtn_code = %d", rtn_val);
         return false;
     }    
+    ROS_ERROR("GRABBING PART NOW");
     gripper_interface_.graspObject();
+    ROS_ERROR("GRAB COMMAND SEND");
     ros::Duration(3.0).sleep();  //have to wait on gripper; get some feedback??
     
     //   tool_pose_.pose.position.z = source_pose.pose.position.z+APPROACH_CLEARANCE; //descend to grasp pose
