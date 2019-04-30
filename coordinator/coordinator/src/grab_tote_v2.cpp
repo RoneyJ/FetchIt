@@ -2,6 +2,8 @@
  * twa16; 
  * 4/24/19
  * revised wsn 4/26/19
+ * revised twa16 4/29/19
+ * 
  * File for FetchIt! to test:
  * - navigating the robot to the tote table,
  * - seeing a tote,
@@ -15,7 +17,9 @@
 #include <part_codes/part_codes.h>
 
 using namespace std;
-    int ans;
+
+int ans;
+
 int main(int argc, char** argv) {
     /* Node Setup */
     // Initialize this node with a standard node handle
@@ -26,10 +30,9 @@ int main(int argc, char** argv) {
     MovePart movePart;
     FindPart findPart;
 
+    ROS_WARN("This node does not do navigation...");
     // Connect to Navigation service
-    
-    ROS_WARN("this version does not do navigation...");
-    /*
+/*
     ros::ServiceClient set_key_pose_client = nh.serviceClient<mobot_pub_des_state::key_pose_move>("set_key_pose_index");
     while (!set_key_pose_client.exists()) {
         ROS_INFO("Waiting for service from set_key_pose_index ...");
@@ -38,9 +41,10 @@ int main(int argc, char** argv) {
     ROS_INFO("Connected client to set_key_pose_index service");
 */
 
+
     /* Navigation */
     // Manual pause for testing
-    /*
+/*
 
     cout << "Enter 1 to move to TOTE_TABLE" << endl;
     cin >> ans;
@@ -55,19 +59,31 @@ int main(int argc, char** argv) {
     set_key_pose_client.call(key_pose_move_srv);
 */
 
+
     /* Perception */
     // Manual pause for testing
+/* 
     cout << "Enter 1 to look for totes on the table" << endl;
-    cin >> ans;
+    cin >> ans;   
+*/
 
     // Vector to contain Perceived parts
     std::vector <geometry_msgs::PoseStamped> part_poses;
 
     // Set Tote part code
-    //int partCode = 0;
-    ROS_WARN("using FAKE_PART code for perception!");    
-    int partCode = part_codes::part_codes::FAKE_PART;
+    int partCode; // = 0;
+    
+    cout << "Enter 1 to look for FAKE_PART, 2 to look for TOTE" << endl;
+    cin >> ans;
 
+    if(ans == 1){
+        ROS_WARN("using FAKE_PART code for perception!");        
+        partCode = part_codes::part_codes::FAKE_PART;
+    }
+    else{
+        ROS_WARN("using TOTE code for perception!");        
+        partCode = part_codes::part_codes::TOTE;
+    }
 
     ROS_INFO("Attempting to locate tote(s) on table");
     bool success = findPart.find_part(partCode, part_poses);
@@ -92,7 +108,6 @@ int main(int argc, char** argv) {
 
     /* Manipulation */
     // Manual pause for testing
-    // TODO uncomment following lines once tote pose is found
     cout<<"Enter 1 to attempt grasp: ";
     cin>>ans;
     partCode = part_codes::part_codes::TOTE;
