@@ -47,7 +47,7 @@ bool GripperInterface::graspObject(std::string object) {
         //ROS_INFO("sticky-finger response: %d",srv_stick.response.success);
 	result_ = *ac_.getResult();
 	if (isGrasping()) return false;
-	goal_.command.position = part_width_map_[object];
+	goal_.command.position = 0;//part_width_map_[object];
 	goal_.command.max_effort = MAX_EFFORT_;
 	ac_.sendGoal(goal_);
 }
@@ -61,7 +61,7 @@ false: (a) Already grasping another object (b) Grasp not successful by timeout (
 bool GripperInterface::graspObject(std::string object, double timeout) {
 	result_ = *ac_.getResult();
 	if (isGrasping()) return false;
-	goal_.command.position = part_width_map_[object];
+	goal_.command.position = 0;//part_width_map_[object];
 	goal_.command.max_effort = MAX_EFFORT_;
 	ac_.sendGoal(goal_);
 	return waitForGrasp(timeout);
