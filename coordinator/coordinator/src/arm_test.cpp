@@ -11,13 +11,13 @@ int main(int argc, char** argv) {
    MovePart movePart;
 
    geometry_msgs::PoseStamped part_pose;
-   int partCode = part_codes::part_codes::GEARBOX_TOP;
+   int partCode = part_codes::part_codes::TOTE;
    geometry_msgs::PoseStamped source_pose; //for part acquisition
 
    //populate a pose to mimic picking up a part
-   part_pose.pose.position.x = 0.640851;
-   part_pose.pose.position.y = 0.058637;
-   part_pose.pose.position.z = 0.025;
+   part_pose.pose.position.x = 0.625;
+   part_pose.pose.position.y = 0.2;
+   part_pose.pose.position.z = 0.0;
    part_pose.pose.orientation.x = 0.0;
    part_pose.pose.orientation.y = 0.0;
    part_pose.pose.orientation.z = 0.0;
@@ -32,31 +32,27 @@ int main(int argc, char** argv) {
    cout<<"enter 1 to attempt grasp: ";
    cin>>ans;
    //invoke the  "get_part()" function to acquire specified part from specified  pose
-   bool success = movePart.get_part(partCode,source_pose);
+   //bool success = movePart.get_part(partCode,source_pose);
    
    //Move to drop off imaginary gearbox in bin and recover
-   success = movePart.preset_arm();
+   bool success = movePart.preset_arm();
    ros::Duration(1.0).sleep();
-   success = movePart.move_to_dropoff_kit1();
-   ros::Duration(1.0).sleep();
-   success = movePart.recover_from_dropoff();
+   success = movePart.move_to_dropoff_tote();
+
+   cout<<"enter 1 to attempt grasp: ";
+   cin>>ans;
+   success = movePart.recover_from_tote();
 
    cout<<"enter 1 to attempt grasp: ";
    cin>>ans;
 
    //Test other 2 dropoff poses
-   ros::Duration(1.0).sleep();
-   success = movePart.move_to_dropoff_kit2();
-   ros::Duration(1.0).sleep();
-   success = movePart.recover_from_dropoff();
+   success = movePart.move_to_pickup_tote();
 
    cout<<"enter 1 to attempt grasp: ";
    cin>>ans;
 
-   ros::Duration(1.0).sleep();
-   success = movePart.move_to_dropoff_kit3();
-   ros::Duration(1.0).sleep();
-   success = movePart.recover_from_dropoff();
+   success = movePart.recover_from_tote();
    
 
    ROS_INFO("done");

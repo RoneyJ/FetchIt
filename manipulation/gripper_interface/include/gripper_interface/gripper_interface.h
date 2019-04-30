@@ -30,7 +30,7 @@ private:
 		{"dummy_part", 0.01}
 	}; //more parts go here as we find out about them
 
-	const double MAX_EFFORT_ = 1.0, OPEN_POSITION_ = 0.1, OPEN_EFFORT_ = 1.0, DEFAULT_GRASP_WIDTH_ = 0.1 ;
+	const double MAX_EFFORT_ = 10.0, OPEN_POSITION_ = 0.115, OPEN_EFFORT_ = 1.0, DEFAULT_GRASP_WIDTH_ = 0.1, CLOSE_POSITION_ = 0.0 ;
 	
 	actionlib::SimpleActionClient<control_msgs::GripperCommandAction> ac_;
 	control_msgs::GripperCommandGoal goal_;

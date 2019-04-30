@@ -184,6 +184,9 @@ public:
     bool plan_jspace_traj_current_to_kit_dropoff2(); //fixed pattern motion to dropoff above kit large pocket on pedestal
     bool plan_jspace_traj_current_to_kit_dropoff3(); //fixed pattern motion to dropoff above kit large pocket on pedestal
     bool plan_jspace_traj_recover_from_dropoff(); //fixed pattern to move arm from pedestal safely to waiting pose
+    bool plan_jspace_traj_recover_from_tote();
+    bool plan_jspace_traj_current_to_tote_dropoff();
+    bool plan_jspace_traj_current_to_tote_pickup();
     
     bool plan_jspace_traj_current_to_qgoal(); //traj current to a specified jspace pose
     bool plan_jspace_traj_qstart_to_qend();   //jspace traj from specified q_start to q_end

@@ -68,8 +68,28 @@ bool MovePart::move_to_dropoff_kit3() {
     gripper_interface_.releaseObject();
 }
 
+bool MovePart::move_to_dropoff_tote() {
+    cart_motion_commander_.plan_jspace_traj_current_to_tote_dropoff(2, 2.0);  //(nsteps, arrival time) tinker with for optimization
+    cart_motion_commander_.execute_planned_traj();
+    //ros::Duration(2.0).sleep();// wait for execution
+    gripper_interface_.releaseObject();
+}
+
+bool MovePart::move_to_pickup_tote() {
+    cart_motion_commander_.plan_jspace_traj_current_to_tote_pickup(2, 2.0);  //(nsteps, arrival time) tinker with for optimization
+    cart_motion_commander_.execute_planned_traj();
+    //ros::Duration(2.0).sleep();// wait for execution
+    gripper_interface_.graspObject();
+}
+
 bool MovePart::recover_from_dropoff() {
     cart_motion_commander_.plan_jspace_traj_recover_from_dropoff(2, 2.0); //(nsteps, arrival time) tinker with for optimization
+    cart_motion_commander_.execute_planned_traj();    
+    
+}
+
+bool MovePart::recover_from_tote() {
+    cart_motion_commander_.plan_jspace_traj_recover_from_tote(2, 2.0); //(nsteps, arrival time) tinker with for optimization
     cart_motion_commander_.execute_planned_traj();    
     
 }
@@ -215,6 +235,11 @@ return false;
 
 bool MovePart::release_grasped_part(){
     gripper_interface_.releaseObject();
+return false;
+}
+
+bool MovePart::grasp_part(){
+    gripper_interface_.graspObject();
 return false;
 }
 
