@@ -4,7 +4,7 @@ void ArmMotionInterface::executeCB(const actionlib::SimpleActionServer<arm_motio
     command_mode_ = goal->command_code;
     ROS_INFO_STREAM("received command mode " << command_mode_);
     int njnts;
-
+    int ans;
     switch (command_mode_) {
         //a simple "is-alive" test
         case arm_motion_action::arm_interfaceGoal::ARM_TEST_MODE:
@@ -35,6 +35,7 @@ void ArmMotionInterface::executeCB(const actionlib::SimpleActionServer<arm_motio
         //this cmd checks if have a valid pre-computed trajectory, and if so, invokes execution;
         case arm_motion_action::arm_interfaceGoal::EXECUTE_PLANNED_TRAJ: //assumes there is a valid planned path in optimal_path_
             ROS_INFO("responding to request EXECUTE_PLANNED_TRAJ");
+            
             execute_planned_traj(); //this fnc does setSucceeded on its own
             break;
 
@@ -73,7 +74,25 @@ void ArmMotionInterface::executeCB(const actionlib::SimpleActionServer<arm_motio
             ROS_INFO("responding to request PLAN_JSPACE_TRAJ_RECOVER_FROM_DROPOFF");
             plan_jspace_traj_recover_from_dropoff(); //q_start_Xd_, q_pre_pose_Xd_);
             busy_working_on_a_request_ = false;
-            break;                     
+            break;
+
+        case arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_RECOVER_FROM_TOTE:
+            ROS_INFO("responding to request PLAN_JSPACE_TRAJ_RECOVER_FROM_TOTE");
+            plan_jspace_traj_recover_from_tote(); //q_start_Xd_, q_pre_pose_Xd_);
+            busy_working_on_a_request_ = false;
+            break; 
+
+        case arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_CURRENT_TO_TOTE_DROPOFF:
+            ROS_INFO("responding to request PLAN_JSPACE_TRAJ_CURRENT_TO_KIT_DROPOFF3");
+            plan_jspace_traj_current_to_tote_dropoff(); //q_start_Xd_, q_pre_pose_Xd_);
+            busy_working_on_a_request_ = false;
+            break;
+
+        case arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_CURRENT_TO_TOTE_PICKUP:
+            ROS_INFO("responding to request PLAN_JSPACE_TRAJ_CURRENT_TO_KIT_DROPOFF3");
+            plan_jspace_traj_current_to_tote_pickup(); //q_start_Xd_, q_pre_pose_Xd_);
+            busy_working_on_a_request_ = false;
+            break;                    
                     
         //prepares a jspace trajectory plan to move arm from current pose to specified goal pose
         case arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_CURRENT_TO_QGOAL:

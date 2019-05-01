@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-    <include file="$(find manipulation_launch)/manipulation.launch">
-        
-    </include>
-</launch>

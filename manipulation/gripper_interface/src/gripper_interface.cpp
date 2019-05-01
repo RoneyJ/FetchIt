@@ -9,6 +9,9 @@ Why I have not used this: Reached goal returns true when the gripper position is
 This is not neccessarily an indication of successful grasps due to tolerance in measured dimensions. 
 While this works in simulation, the actual hardware gripper might consider "stalled" status to be an error state. This could cause problems, need to check
 */ 
+
+//4/26/19: disabled sticky-finger client for tests on actual robot
+
 GripperInterface::GripperInterface() : ac_("gripper_controller/gripper_action", true) {
 	ROS_INFO("Connecting to gripper action server");
 	ac_.waitForServer();
@@ -19,7 +22,7 @@ GripperInterface::GripperInterface() : ac_("gripper_controller/gripper_action", 
 	goal_.command.max_effort = OPEN_EFFORT_;
 	ac_.sendGoal(goal_);
 	ROS_INFO("Connected!");
-        sticky_finger_client = nh_.serviceClient<std_srvs::SetBool>("/sticky_finger/r_gripper_finger_link");
+        //sticky_finger_client = nh_.serviceClient<std_srvs::SetBool>("/sticky_finger/r_gripper_finger_link");
         srv_stick.request.data = true;
         srv_release.request.data = false;
 }
@@ -28,7 +31,7 @@ GripperInterface::GripperInterface() : ac_("gripper_controller/gripper_action", 
 
 bool GripperInterface::graspObject() { //dummy func for testing
 	//std::string object = "dummy_part";
-        sticky_finger_client.call(srv_stick);
+        //sticky_finger_client.call(srv_stick);
         ROS_INFO("sticky-finger grasp response: %d",srv_stick.response.success);
 	std::string object("dummy_part");
 	double timeout = 0;
@@ -40,13 +43,15 @@ open loop grasp commander. doesnt check if grasp is successful or not
 */
 
 bool GripperInterface::graspObject(std::string object) {
-        sticky_finger_client.call(srv_stick);
-        ROS_INFO("sticky-finger response: %d",srv_stick.response.success);
+        //sticky_finger_client.call(srv_stick);
+        //ROS_INFO("sticky-finger response: %d",srv_stick.response.success);
 	result_ = *ac_.getResult();
-	if (isGrasping()) return false;
-	goal_.command.position = part_width_map_[object];
+	//if (isGrasping()) return false; //! TO FIX why it doesn't work
+	ROS_ERROR("SENDING COMMEND NOW");
+	goal_.command.position = 0;//part_width_map_[object];
 	goal_.command.max_effort = MAX_EFFORT_;
 	ac_.sendGoal(goal_);
+	ROS_ERROR("SEND GOAL COMPLETE");
 }
 
 /*
@@ -57,8 +62,9 @@ false: (a) Already grasping another object (b) Grasp not successful by timeout (
 
 bool GripperInterface::graspObject(std::string object, double timeout) {
 	result_ = *ac_.getResult();
-	if (isGrasping()) return false;
-	goal_.command.position = part_width_map_[object];
+	//if (isGrasping()) return false; //! TO FIX why it doesn't work
+	ROS_ERROR("OPTION2");
+	goal_.command.position = 0;//part_width_map_[object];
 	goal_.command.max_effort = MAX_EFFORT_;
 	ac_.sendGoal(goal_);
 	return waitForGrasp(timeout);
@@ -96,8 +102,8 @@ bool GripperInterface::isGrasping() {
 */
 
 bool GripperInterface::releaseObject() { 
-        sticky_finger_client.call(srv_release);
-        ROS_INFO("sticky-finger release response: %d",srv_release.response.success);
+        //sticky_finger_client.call(srv_release);
+        //ROS_INFO("sticky-finger release response: %d",srv_release.response.success);
 	goal_.command.position = OPEN_POSITION_;
 	goal_.command.max_effort = OPEN_EFFORT_;
 	ac_.sendGoal(goal_);
@@ -123,7 +129,6 @@ bool GripperInterface::releaseObject(double timeout) {
 }
 
 /* This function is probably overkill for a simple release. Not been tested.
-
 Waits for the action server to return true to "reached_goal" for a goal of opening gripper fingers to a position of "OPEN_POSITION_"
 */
 
