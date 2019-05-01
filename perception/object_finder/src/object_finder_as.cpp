@@ -48,13 +48,11 @@ void ObjectFinder::initializeSubscribers() {
 void ObjectFinder::initializePublishers() {
     ROS_INFO("Initializing Publishers");
     //will publish  pointClouds as ROS-compatible messages; create publishers; note topics for rviz viewing
-    pubCloud_ = nh_.advertise<sensor_msgs::PointCloud2> ("/headcam_pointcloud", 1, true);
-    pubDnSamp_ = nh_.advertise<sensor_msgs::PointCloud2> ("downsampled_pcd", 1, true);
-    pubBoxFilt_ = nh_.advertise<sensor_msgs::PointCloud2> ("box_filtered_pcd", 1, true);
-    pubCropFilt_ = nh_.advertise<sensor_msgs::PointCloud2> ("crop_filtered_pcd", 1, true);
-    pubPassFilt_ = nh_.advertise<sensor_msgs::PointCloud2> ("pass_filtered_pcd", 1, true);
-
-
+    pubCloud_ = nh_.advertise<sensor_msgs::PointCloud2> ("/object_finder/headcam_pointcloud", 1, true);
+    pubDnSamp_ = nh_.advertise<sensor_msgs::PointCloud2> ("/object_finder/downsampled_pcd", 1, true);
+    pubBoxFilt_ = nh_.advertise<sensor_msgs::PointCloud2> ("/object_finder/box_filtered_pcd", 1, true);
+    pubCropFilt_ = nh_.advertise<sensor_msgs::PointCloud2> ("/object_finder/crop_filtered_pcd", 1, true);
+    pubPassFilt_ = nh_.advertise<sensor_msgs::PointCloud2> ("/object_finder/pass_filtered_pcd", 1, true);
 }
 
 void ObjectFinder::headcamCB(const sensor_msgs::PointCloud2ConstPtr& cloud) {
