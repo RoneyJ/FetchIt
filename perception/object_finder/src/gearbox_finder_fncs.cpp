@@ -92,8 +92,6 @@ bool ObjectFinder::find_gearbox_tops
     //find which points in the transformed cloud are within the specified box
     //result is in "indices"
     find_indices_box_filtered(transformed_cloud_ptr_, box_pt_min, box_pt_max, indices_);
-    
-    
     pcl::copyPointCloud(*pclCam_clr_ptr_, indices_, *box_filtered_cloud_ptr_); //extract these pts into new cloud, for display
     pcl::toROSMsg(*box_filtered_cloud_ptr_, ros_box_filtered_cloud_); //convert to ros message for publication and display
     int npts_cloud = indices_.size();
@@ -101,12 +99,12 @@ bool ObjectFinder::find_gearbox_tops
    //convert point cloud to top-down 2D projection for OpenCV processing
     convert_transformed_cloud_to_2D(transformed_cloud_ptr_, indices_);
 
-
     //! Blob Finder (Segmentation)
     //find connected components; 
     //operates on global bw_img and puts region-labeled codes in global Mat "labelImage" 
     //also, expect centroids w/rt robot torso in g_x_centroids_wrt_robot,g_y_centroids_wrt_robot
     // and area (num pixels) in g_npts_blobs[label]
+
     blob_finder(x_centroids_wrt_robot, y_centroids_wrt_robot, avg_z_heights, npts_blobs, viable_labels_);
     ROS_INFO("[gearbox_finder_fnc=bottom]Totoal Found Blobs: %d.",x_centroids_wrt_robot.size());
 
@@ -159,4 +157,3 @@ bool ObjectFinder::find_gearbox_bottoms(float table_height, vector<float> &x_cen
         vector<geometry_msgs::PoseStamped> &object_poses) {
     return false;
 }
-

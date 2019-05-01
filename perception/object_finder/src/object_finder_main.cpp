@@ -51,7 +51,6 @@ int main(int argc, char** argv) {
 
         object_finder_as.ros_pass_filtered_cloud_.header.frame_id="head_camera_rgb_optical_frame";
         object_finder_as.pubPassFilt_.publish(object_finder_as.ros_pass_filtered_cloud_); //ditto for filtered point cloud   
-        
         ros::Duration(0.1).sleep();
     }
 
