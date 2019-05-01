@@ -365,14 +365,7 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
     //also compute centroids;
     nLabels = viable_labels.size(); //new number of labels, after filtering
     ROS_INFO("found %d viable labels ", nLabels);
-    /*
-    std::vector<Vec3b> colors(nLabels);
-    colors[0] = Vec3b(0, 0, 0); //make the background black
-    //assign random color to each region label
-    for (int label = 1; label < nLabels; ++label) {
-        colors[label] = Vec3b((rand()&255), (rand()&255), (rand()&255));
-    }
-     * */
+   
 
     g_orientations.clear();
     g_vec_of_quat.clear();
