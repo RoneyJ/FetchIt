@@ -25,10 +25,13 @@ pass_filtered_cloud_ptr_(new PointCloud<pcl::PointXYZRGB>) //(new pcl::PointClou
     initializePublishers();
     affine_cam_wrt_torso_ = compute_affine_cam_wrt_torso_lift_link();
     
+    //! Frame ID set here. DO NOT CHANGE! Used for RVIZ display
     //PointCloud2 ros_cloud_, downsampled_cloud_, ros_box_filtered_cloud_, ros_crop_filtered_cloud_, ros_pass_filtered_cloud_; //here are ROS-compatible messages
-    //ros_cloud_.header.frame_id = 
-    //object_finder_as.ros_crop_filtered_cloud_.header.frame_id = "torso_lift_link";
-    
+    object_finder_as.ros_cloud_.header.frame_id="head_camera_rgb_optical_frame";
+    object_finder_as.downsampled_cloud_.header.frame_id="head_camera_rgb_optical_frame";      
+    object_finder_as.ros_box_filtered_cloud_.header.frame_id="head_camera_rgb_optical_frame";
+    object_finder_as.ros_crop_filtered_cloud_.header.frame_id="head_camera_rgb_optical_frame";
+    object_finder_as.ros_pass_filtered_cloud_.header.frame_id="head_camera_rgb_optical_frame";
 
     ROS_INFO("waiting for image data");
     while (!got_headcam_image_) {
