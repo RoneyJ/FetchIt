@@ -12,6 +12,8 @@
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
+using namespace std;
+
 
 std::vector <geometry_msgs::PoseStamped> g_perceived_object_poses;
 ros::Publisher *g_pose_publisher;
@@ -72,12 +74,33 @@ int main(int argc, char** argv) {
     g_pose_publisher = &pose_publisher;
     object_finder::objectFinderGoal object_finder_goal;
     //object_finder::objectFinderResult object_finder_result;
-
+    int part_index;
+    cout<<"enter index for desired part:"<<endl<<"GEARBOX_TOP = 1"<<endl<<"GEARBOX_BOTTOM = 2"<<endl<<"BOLT = 3"<<endl<<"SMALL_GEAR = 4"<<endl<<"LARGE_GEAR = 5"<<endl<<"TOTE=6"<<endl;
+    cout<<"enter  0 for fake part (hardcoded pose: "<<endl;
+    cout<<"enter part index: ";
+    cin>>part_index;
+    switch(part_index) {
+        case 0: object_finder_goal.object_id = part_codes::part_codes::FAKE_PART;
+            break;
+        case 1: object_finder_goal.object_id = part_codes::part_codes::GEARBOX_TOP;
+        break;
+        case 2: object_finder_goal.object_id = part_codes::part_codes::GEARBOX_BOTTOM;
+        break;
+        case 3: object_finder_goal.object_id = part_codes::part_codes::BOLT;
+        break;
+        case 4: object_finder_goal.object_id = part_codes::part_codes::SMALL_GEAR;
+        break;
+        case 5: object_finder_goal.object_id = part_codes::part_codes::LARGE_GEAR;
+        break;
+        case 6: object_finder_goal.object_id = part_codes::part_codes::TOTE;
+        break;
+        default:
+            ROS_WARN("unknown part code; quitting");
+            return 1;
+    }
        
-      //  object_finder_goal.object_id = object_finder::objectFinderGoal::GEARBOX_TOP;
-        object_finder_goal.object_id = part_codes::part_codes::GEARBOX_TOP;
 
-     ROS_INFO("sending goal to find GEARBOX_TOP: ");
+     ROS_INFO("sending goal to find object: ");
         object_finder_ac.sendGoal(object_finder_goal,&objectFinderDoneCb); 
         
         bool finished_before_timeout = object_finder_ac.waitForResult(ros::Duration(10.0));

@@ -4,9 +4,8 @@ Simple examples to send a trajectory goal to the Fetch arm.
 
 ## Example usage
 start up fetch simulation, e.g. with:
-`roslaunch fetch_gazebo pickplace_playground.launch`
-better:
-`roslaunch worlds Fetch_kit.launch`
+`roslaunch fetchit_challenge main.launch` better:
+
 
 run the test arm-motion node with:
 `rosrun test_fetch_arm_ac fetch_arm_test_action_client2`
@@ -29,7 +28,16 @@ To move the arm around interactively (one joint at a time), run:
 to move the arm to a grasp pre-pose, run:
 `rosrun test_fetch_arm_ac fetch_arm_pre_pose`
 
+to move the arm to a pre-pose without hitting itself, run:
+`rosrun test_fetch_arm_ac fetch_arm_safe_start`
+
 
 
 ## Running tests/demos
+For simulation:
+`roslaunch fetchit_challenge main.launch`  
+
+see also:
+`rosrun cartesian_motion_commander fetch_cartesian_interactive_ac`  
+to interactively command cartesian motions
     

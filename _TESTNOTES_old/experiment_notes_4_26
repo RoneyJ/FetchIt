@@ -1,0 +1,48 @@
+fetch experiment notes 4/26/19:
+
+--------re-run navigation; about 10 min of visiting different tables----
+(need pub_des_state, open-loop-steering, map, amcl and Tyler's node)
+
+rosrun test_fetch_arm_ac fetch_torso_lift_preset
+
+roslaunch manipulation_launch manipulation.launch
+
+roslaunch bringup_navigation bringup_navigation.launch
+
+roslaunch teamCaseFetch_launchers test_drive.launch
+
+roslaunch teamCaseFetch_launchers bagger_nav.launch
+
+---------manual, interactive, cartesian control of arm----------
+
+
+roslaunch manipulation_launch manipulation.launch
+
+rosrun cartesian_motion_commander fetch_cartesian_interactive_ac
+
+move arm around to good pose for grabbing tote and just above table
+
+(bag joint_states and tf and tf_static)
+
+roslaunch teamCaseFetch_launchers bagger_manip.launch
+
+
+----------hard-coded tote grabbing------------
+
+
+roslaunch object_finder_launch object_finder.launch 
+
+roslaunch manipulation_launch manipulation.launch
+
+rosrun coordinator grab_tote_v2
+
+roslaunch teamCaseFetch_launchers bagger_manip.launch
+
+-----------testing fetch vision---------
+roslaunch bringup_navigation bringup_navigation.launch
+
+rosrun coordinator grab_tote
+
+rosrun fetch_vision fetch_vision
+
+

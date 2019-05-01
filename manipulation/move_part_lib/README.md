@@ -8,8 +8,8 @@ bool stow_grasped_part(int part_code);
 
 ## Example usage
 to be used in higher-level "coordinator", but for sub-system test, do blind manipulation test by:
-start up robot positioned in front of gearbox table;
+start up robot positioned in front of gearbox table;  
 
-rosrun move_part_lib example_move_part_main
+`rosrun move_part_lib example_move_part_main`  
 
     
