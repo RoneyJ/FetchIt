@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>coordinator_launch</name>
+  <name>bringup_coordinator</name>
   <version>0.0.0</version>
   <description>The coordinator_launch package</description>
   
