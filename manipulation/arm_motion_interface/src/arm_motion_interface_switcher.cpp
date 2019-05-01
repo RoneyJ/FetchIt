@@ -74,7 +74,25 @@ void ArmMotionInterface::executeCB(const actionlib::SimpleActionServer<arm_motio
             ROS_INFO("responding to request PLAN_JSPACE_TRAJ_RECOVER_FROM_DROPOFF");
             plan_jspace_traj_recover_from_dropoff(); //q_start_Xd_, q_pre_pose_Xd_);
             busy_working_on_a_request_ = false;
-            break;                     
+            break;
+
+        case arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_RECOVER_FROM_TOTE:
+            ROS_INFO("responding to request PLAN_JSPACE_TRAJ_RECOVER_FROM_TOTE");
+            plan_jspace_traj_recover_from_tote(); //q_start_Xd_, q_pre_pose_Xd_);
+            busy_working_on_a_request_ = false;
+            break; 
+
+        case arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_CURRENT_TO_TOTE_DROPOFF:
+            ROS_INFO("responding to request PLAN_JSPACE_TRAJ_CURRENT_TO_KIT_DROPOFF3");
+            plan_jspace_traj_current_to_tote_dropoff(); //q_start_Xd_, q_pre_pose_Xd_);
+            busy_working_on_a_request_ = false;
+            break;
+
+        case arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_CURRENT_TO_TOTE_PICKUP:
+            ROS_INFO("responding to request PLAN_JSPACE_TRAJ_CURRENT_TO_KIT_DROPOFF3");
+            plan_jspace_traj_current_to_tote_pickup(); //q_start_Xd_, q_pre_pose_Xd_);
+            busy_working_on_a_request_ = false;
+            break;                    
                     
         //prepares a jspace trajectory plan to move arm from current pose to specified goal pose
         case arm_motion_action::arm_interfaceGoal::PLAN_JSPACE_TRAJ_CURRENT_TO_QGOAL:

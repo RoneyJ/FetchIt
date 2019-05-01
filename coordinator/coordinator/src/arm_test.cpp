@@ -31,32 +31,18 @@ int main(int argc, char** argv) {
    int ans;
    cout<<"enter 1 to attempt grasp: ";
    cin>>ans;
-   //invoke the  "get_part()" function to acquire specified part from specified  pose
-   bool success = movePart.get_part(partCode,source_pose);
+
+   bool success = movePart.preset_arm();
    
-   //Move to drop off imaginary gearbox in bin and recover
-   success = movePart.preset_arm();
-   ros::Duration(1.0).sleep();
-   success = movePart.move_to_dropoff_kit1();
-   ros::Duration(1.0).sleep();
-   success = movePart.recover_from_dropoff();
-
    cout<<"enter 1 to attempt grasp: ";
    cin>>ans;
 
-   //Test other 2 dropoff poses
-   ros::Duration(1.0).sleep();
-   success = movePart.move_to_dropoff_kit2();
-   ros::Duration(1.0).sleep();
-   success = movePart.recover_from_dropoff();
-
+   success = movePart.move_to_dropoff_tote();
+   
    cout<<"enter 1 to attempt grasp: ";
    cin>>ans;
 
-   ros::Duration(1.0).sleep();
-   success = movePart.move_to_dropoff_kit3();
-   ros::Duration(1.0).sleep();
-   success = movePart.recover_from_dropoff();
+   success = movePart.recover_from_tote();
    
 
    ROS_INFO("done");

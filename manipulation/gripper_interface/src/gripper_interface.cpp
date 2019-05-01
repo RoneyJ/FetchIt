@@ -129,7 +129,6 @@ bool GripperInterface::releaseObject(double timeout) {
 }
 
 /* This function is probably overkill for a simple release. Not been tested.
-
 Waits for the action server to return true to "reached_goal" for a goal of opening gripper fingers to a position of "OPEN_POSITION_"
 */
 
