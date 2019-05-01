@@ -68,8 +68,28 @@ bool MovePart::move_to_dropoff_kit3() {
     gripper_interface_.releaseObject();
 }
 
+bool MovePart::move_to_dropoff_tote() {
+    cart_motion_commander_.plan_jspace_traj_current_to_tote_dropoff(2, 2.0);  //(nsteps, arrival time) tinker with for optimization
+    cart_motion_commander_.execute_planned_traj();
+    //ros::Duration(2.0).sleep();// wait for execution
+    gripper_interface_.releaseObject();
+}
+
+bool MovePart::move_to_pickup_tote() {
+    cart_motion_commander_.plan_jspace_traj_current_to_tote_pickup(2, 2.0);  //(nsteps, arrival time) tinker with for optimization
+    cart_motion_commander_.execute_planned_traj();
+    //ros::Duration(2.0).sleep();// wait for execution
+    gripper_interface_.graspObject();
+}
+
 bool MovePart::recover_from_dropoff() {
     cart_motion_commander_.plan_jspace_traj_recover_from_dropoff(2, 2.0); //(nsteps, arrival time) tinker with for optimization
+    cart_motion_commander_.execute_planned_traj();    
+    
+}
+
+bool MovePart::recover_from_tote() {
+    cart_motion_commander_.plan_jspace_traj_recover_from_tote(2, 2.0); //(nsteps, arrival time) tinker with for optimization
     cart_motion_commander_.execute_planned_traj();    
     
 }
@@ -189,9 +209,7 @@ bool MovePart::get_part(int part_code, geometry_msgs::PoseStamped source_pose) {
         ROS_WARN("unsuccessful plan; rtn_code = %d", rtn_val);
         return false;
     }    
-    ROS_ERROR("GRABBING PART NOW");
     gripper_interface_.graspObject();
-    ROS_ERROR("GRAB COMMAND SEND");
     ros::Duration(3.0).sleep();  //have to wait on gripper; get some feedback??
     
     //   tool_pose_.pose.position.z = source_pose.pose.position.z+APPROACH_CLEARANCE; //descend to grasp pose
@@ -217,6 +235,11 @@ return false;
 
 bool MovePart::release_grasped_part(){
     gripper_interface_.releaseObject();
+return false;
+}
+
+bool MovePart::grasp_part(){
+    gripper_interface_.graspObject();
 return false;
 }
 
