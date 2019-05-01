@@ -37,12 +37,14 @@ int main(int argc, char** argv) {
     ROS_INFO("going into spin");
     // from here, all the work is done in the action server, with the interesting stuff done within "executeCB()"
     while (ros::ok()) {
-        ros::spinOnce(); //normally, can simply do: ros::spin();  
+        ros::spinOnce(); //normally, can simply do: ros::spin();
         object_finder_as.pubCloud_.publish(object_finder_as.ros_cloud_); //publish original point-cloud, so it is viewable in rviz        
+
+        
+        object_finder_as.pubDnSamp_.publish(object_finder_as.downsampled_cloud_); //publish locally downsampled cloud
         object_finder_as.pubBoxFilt_.publish(object_finder_as.ros_box_filtered_cloud_); //ditto for filtered point cloud   
         object_finder_as.pubCropFilt_.publish(object_finder_as.ros_crop_filtered_cloud_); //ditto for filtered point cloud   
         object_finder_as.pubPassFilt_.publish(object_finder_as.ros_pass_filtered_cloud_); //ditto for filtered point cloud   
-
         ros::Duration(0.1).sleep();
     }
 

@@ -1,0 +1,33 @@
+Fetch to-do:
+
+1) bag data w/ robot spin in place, starting from odom = 0, robot centered in arena, facing Shunck machine
+
+2) do new arm move tests...slower, more carefully
+
+3) do K_phi lin-steering feedback tests;
+    command motion
+
+from start, move forward 1m; turn 180 (CCW); 
+   repeat: 
+      move forward 2 m; turn 180 (CW); 
+      move forward 2m; turn 180 (CCW);
+
+equiv,
+ waypoint (1,0)->(-1,0)->(1,0) repeat
+
+edits: 
+
+run nodes:
+roslaunch test_back_and_forth_w_odom_feedback.launch
+
+want to change gains in: /lin_steering/steering_algorithm.h
+const double K_PHI= 10.0; // control gains for steering
+const double K_DISP = 6.0;
+const double K_TRIP_DIST = 3.0;
+
+   
+BAG: /odom /base_scan /cmd_vel_stamped /steering_errs /base_controller/command /tf /tf_static
+
+
+
+

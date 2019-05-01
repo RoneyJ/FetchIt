@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(coordinator_launch)
+project(bringup_coordinator)
 
 find_package(catkin_simple REQUIRED)
 

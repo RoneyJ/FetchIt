@@ -7,7 +7,30 @@ float min_points=40.0, max_points=25.0;
 //static const std::string OPENCV_WINDOW = "Open-CV display window";
 using namespace std;
 using namespace cv;
+/*
+ //Chris's numbers:
+const float MIN_X = 0.25; //include points starting 0.4m in front of robot
+const float MAX_X = 0.8; //include points out to 0.9m in front of robot
+const float MIN_Y = -0.7; //include points starting -0.5m to left of robot
+const float MAX_Y = 0.7; //include points up to 0.5m to right of robot
+const float MIN_DZ = 0.02; //box filter from this height above the table top
+const float MAX_DZ = 0.2; //consider points up to this height above table top
 
+const float TABLE_TOP_MIN = -0.2;
+const float TABLE_TOP_MAX = 0.2;
+
+//choose, e.g., resolution of 5mm, so 100x200 image for 0.5m x 1.0m pointcloud
+// adjustable--> image  size
+// try 400 pix/m...works fine, i.e. 2.5mm resolution
+//const float PIXELS_PER_METER = 450.0; //200.0;
+//Chris's value:
+const float PIXELS_PER_METER = 400.0; //200.0;
+
+const float TABLE_GRASP_CLEARANCE = 0.01; //add this much to table  top height for gripper clearance
+
+const float MIN_BLOB_PIXELS = 600; //must have  at least this many pixels to  preserve as a blob; gearbox top/bottom has about 900 pts
+const float MIN_BLOB_AVG_HEIGHT = 5.0; //avg z-height must be  at least this many mm to preserve as blob
+ */
 const float MIN_X_t = 0.35; //include points starting 0.4m in front of robot
 const float MAX_X_t = 0.9; //include points out to 0.9m in front of robot
 const float MIN_Y_t = -0.7; //include points starting -0.5m to left of robot
@@ -46,9 +69,16 @@ std::vector<float> count_bigger(const std::vector<float>& elems) {
     
 }
 
-bool ObjectFinder::find_totes(vector<float> x_centroids_wrt_robot, vector<float> y_centroids_wrt_robot,
-            vector<float> avg_z_heights, vector<float> npts_blobs, float table_height, vector<geometry_msgs::PoseStamped> &object_poses) {
+bool ObjectFinder::find_totes(float table_height, vector<float> &x_centroids_wrt_robot, vector<float> &y_centroids_wrt_robot,
+            vector<float> &avg_z_heights, vector<float> &npts_blobs,  vector<geometry_msgs::PoseStamped> &object_poses) {
+    Eigen::Vector4f box_pt_min, box_pt_max;
 
+    x_centroids_wrt_robot.clear();
+    y_centroids_wrt_robot.clear();
+    avg_z_heights.clear();
+    npts_blobs.clear();
+    object_poses.clear();
+    
 	geometry_msgs::PoseStamped object_pose;
 	object_poses.clear();
 	vector<Vec4i> line_group1;
@@ -67,7 +97,6 @@ bool ObjectFinder::find_totes(vector<float> x_centroids_wrt_robot, vector<float>
 	int num_short_1 = 0;
 	int num_short_2 = 0;
 
-	Eigen::Vector4f box_pt_min, box_pt_max;
     box_pt_min << MIN_X_t, MIN_Y_t, table_height + MIN_H_ABove_Table ,0; //1cm above table top
     box_pt_max << MAX_X_t, MAX_Y_t, table_height+ MAX_H_ABove_Table,0;
     ROS_INFO("Finding blobs");
@@ -223,17 +252,18 @@ bool ObjectFinder::find_totes(vector<float> x_centroids_wrt_robot, vector<float>
     ////imshow("Image with center",img);
     Mat fixed_dst(img.size(), CV_8UC3);
     float obj_x_centroid_wrt_robot = ((fixed_dst.rows/2) - obj_y_centroid)/PIXELS_PER_METER + (MIN_X+MAX_X)/2.0;
-    float obj_y_centroid_wrt_robot = (obj_x_centroid- (fixed_dst.cols/2))/PIXELS_PER_METER + (MIN_Y+MAX_Y)/2.0;
+    float obj_y_centroid_wrt_robot = ((fixed_dst.cols/2) - obj_x_centroid)/PIXELS_PER_METER + (MIN_Y+MAX_Y)/2.0;
     cout<<"fixed_dst rows = "<<fixed_dst.rows<<endl;
     cout<<"Centroid of the object in image coordinates: (" <<obj_x_centroid<<","<<obj_y_centroid<<")\n";
     cout<<"Centroid of the object in robot coordinates: (" <<obj_x_centroid_wrt_robot<<","<<obj_y_centroid_wrt_robot<<")\n";
 
     XformUtils transform;
     double pi = 3.14159; 
-    double double_kit_orientation = (double) (kit_orientation * (pi/180));
+    double double_kit_orientation = (double) ((kit_orientation + 105) * (pi/180));
    
     object_pose.pose.position.x = obj_x_centroid_wrt_robot;
     object_pose.pose.position.y = obj_y_centroid_wrt_robot;
+    object_pose.pose.position.z = 0.08;
     object_pose.pose.orientation = transform.convertPlanarPsi2Quaternion(double_kit_orientation);
     object_poses.push_back(object_pose);
 
