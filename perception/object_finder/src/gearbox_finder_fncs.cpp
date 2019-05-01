@@ -10,11 +10,11 @@ void ObjectFinder::convert_transformed_cloud_to_2D(pcl::PointCloud<pcl::PointXYZ
 */
 
 //! Magic Numbers:
-const float MIN_X_GEARBOX = 0.25; //include points starting 0.4m in front of robot
+const float MIN_X_GEARBOX = 0.0; //include points starting 0.4m in front of robot
 const float MAX_X_GEARBOX = 0.8; //include points out to 0.9m in front of robot
-const float MIN_Y_GEARBOX = -0.7; //include points starting -0.5m to left of robot
-const float MAX_Y_GEARBOX = 0.7; //include points up to 0.5m to right of robot
-const float MIN_DZ_GEARBOX = 0.01; //box filter from this height above the table top
+const float MIN_Y_GEARBOX = -1.0; //include points starting -0.5m to left of robot
+const float MAX_Y_GEARBOX = 1.0; //include points up to 0.5m to right of robot
+const float MIN_DZ_GEARBOX = 0.02; //box filter from this height above the table top
 const float MAX_DZ_GEARBOX = 0.1; //consider points up to this height above table top
 const double TABLE_GRASP_CLEARANCE_GEARBOX = 0.01;
 
