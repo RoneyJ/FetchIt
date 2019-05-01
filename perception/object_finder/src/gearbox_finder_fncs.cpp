@@ -63,7 +63,9 @@ void splitGearboxTopBottom(vector <int> &lookup_table, int part_id){
 }
 
 //! Find Gearbox Top MAIN
-bool ObjectFinder::find_gearbox_tops(   float table_height,
+bool ObjectFinder::find_gearbox_tops
+                                    (
+                                        float table_height,
                                         vector<float> &x_centroids_wrt_robot,
                                         vector<float> &y_centroids_wrt_robot,
                                         vector<float> &avg_z_heights,
@@ -106,7 +108,7 @@ bool ObjectFinder::find_gearbox_tops(   float table_height,
     //also, expect centroids w/rt robot torso in g_x_centroids_wrt_robot,g_y_centroids_wrt_robot
     // and area (num pixels) in g_npts_blobs[label]
     blob_finder(x_centroids_wrt_robot, y_centroids_wrt_robot, avg_z_heights, npts_blobs, viable_labels_);
-    ROS_INFO("[gearbox_finder_fnc=bottom]Totoal Found Blobs: %f.",x_centroids_wrt_robot.size());
+    ROS_INFO("[gearbox_finder_fnc=bottom]Totoal Found Blobs: %d.",x_centroids_wrt_robot.size());
 
 
     //! Call seperation here to seperate gearbox bottom and gearbox top
@@ -131,7 +133,7 @@ bool ObjectFinder::find_gearbox_tops(   float table_height,
         return false; //background is object 0    
     } else
     {
-        ROS_WARN("[gearbox_finder_fnc=bottom]CURRENT VALID COMPONENT COUNT IS: %f",valid_components_count);
+        ROS_WARN("[gearbox_finder_fnc=bottom]CURRENT VALID COMPONENT COUNT IS: %d",valid_components_count);
 
     }
     

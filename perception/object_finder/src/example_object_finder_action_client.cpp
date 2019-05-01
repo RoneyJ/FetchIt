@@ -81,7 +81,7 @@ int main(int argc, char** argv) {
     cin>>part_index;
     switch(part_index) {
         case 0: object_finder_goal.object_id = part_codes::part_codes::FAKE_PART;
-            break;
+        break;
         case 1: object_finder_goal.object_id = part_codes::part_codes::GEARBOX_TOP;
         break;
         case 2: object_finder_goal.object_id = part_codes::part_codes::GEARBOX_BOTTOM;
