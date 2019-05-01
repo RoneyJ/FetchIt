@@ -83,6 +83,7 @@ Eigen::Matrix3d MovePart::compute_rot_z(double angle) {
     Rotz.col(0)=n;
     Rotz.col(1)=t;
     Rotz.col(2)=b;
+    return Rotz;
 }
 
 
@@ -104,6 +105,8 @@ Eigen::Affine3d MovePart::compute_grasp_affine(int part_code, geometry_msgs::Pos
             object_angle = xformUtils.convertPlanarQuat2Phi(part_pose.pose.orientation) + M_PI / 2; //gripper must be parallel to tote x-axis
 
             Rotz = compute_rot_z(object_angle);
+            ROS_INFO_STREAM("Rotz: "<<endl<<Rotz<<endl);
+            ROS_INFO_STREAM("R_gripper_down: "<<endl<<R_gripper_down_);
             Rot_gripper = Rotz*R_gripper_down_;
             ROS_INFO_STREAM("specifying gripper orientation:  " << endl << Rot_gripper << endl);
             grasp_pose.linear() = Rot_gripper;
@@ -186,7 +189,9 @@ bool MovePart::get_part(int part_code, geometry_msgs::PoseStamped source_pose) {
         ROS_WARN("unsuccessful plan; rtn_code = %d", rtn_val);
         return false;
     }    
+    ROS_ERROR("GRABBING PART NOW");
     gripper_interface_.graspObject();
+    ROS_ERROR("GRAB COMMAND SEND");
     ros::Duration(3.0).sleep();  //have to wait on gripper; get some feedback??
     
     //   tool_pose_.pose.position.z = source_pose.pose.position.z+APPROACH_CLEARANCE; //descend to grasp pose
