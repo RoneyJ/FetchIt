@@ -47,7 +47,7 @@ void blob_color(void) {
          }
      }
     //display the result
-    imshow( "Connected Components", dst );
+    //imshow( "Connected Components", dst );
 }
 
 
@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
     
     namedWindow( "Image", WINDOW_AUTOSIZE);
     namedWindow( "Connected Components", WINDOW_AUTOSIZE);    
-    imshow( "Image", C ); //display it
+    //imshow( "Image", C ); //display it
     waitKey(0);
 
     return 0;
