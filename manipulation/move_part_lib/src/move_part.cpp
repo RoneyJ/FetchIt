@@ -117,10 +117,18 @@ Eigen::Affine3d MovePart::compute_grasp_affine(int part_code, geometry_msgs::Pos
     Eigen::Matrix3d Rotz, Rot_gripper;
     Eigen::Vector3d O_part;
     double object_angle;
+    //int32 FAKE_PART=1
+//int32 GEARBOX_TOP=101
+//int32 GEARBOX_BOTTOM=102
+//int32 BOLT = 103
+//int32 SMALL_GEAR =104
+//int32 LARGE_GEAR = 105
+//int32 TOTE = 106
     switch (part_code) {
         case part_codes::part_codes::TOTE:
             //grab part at centroid:
-            O_part << part_pose.pose.position.x, part_pose.pose.position.y, part_pose.pose.position.z + TOTE_GRASP_HEIGHT_WRT_TOTE_ORIGIN;
+            //hard-coded grasp heigth from Fetch remote experiments
+            O_part << part_pose.pose.position.x, part_pose.pose.position.y, TOTE_GRASP_HEIGHT; //part_pose.pose.position.z + TOTE_GRASP_HEIGHT_WRT_TOTE_ORIGIN;
             //double convertPlanarQuat2Phi(geometry_msgs::Quaternion quaternion);
             object_angle = xformUtils.convertPlanarQuat2Phi(part_pose.pose.orientation) + M_PI / 2; //gripper must be parallel to tote x-axis
 
@@ -132,7 +140,80 @@ Eigen::Affine3d MovePart::compute_grasp_affine(int part_code, geometry_msgs::Pos
             grasp_pose.linear() = Rot_gripper;
             grasp_pose.translation() = O_part;
             break;
+        case part_codes::part_codes::GEARBOX_TOP:
+            //grab part at centroid:
+            //hard-coded grasp heigth from Fetch remote experiments
+            O_part << part_pose.pose.position.x, part_pose.pose.position.y, GEARBOX_GRASP_HEIGHT; //part_pose.pose.position.z + TOTE_GRASP_HEIGHT_WRT_TOTE_ORIGIN;
+            //double convertPlanarQuat2Phi(geometry_msgs::Quaternion quaternion);
+            object_angle = xformUtils.convertPlanarQuat2Phi(part_pose.pose.orientation); // align gripper w/rt major axis
 
+            Rotz = compute_rot_z(object_angle);
+            ROS_INFO_STREAM("Rotz: "<<endl<<Rotz<<endl);
+            ROS_INFO_STREAM("R_gripper_down: "<<endl<<R_gripper_down_);
+            Rot_gripper = Rotz*R_gripper_down_;
+            ROS_INFO_STREAM("specifying gripper orientation:  " << endl << Rot_gripper << endl);
+            grasp_pose.linear() = Rot_gripper;
+            grasp_pose.translation() = O_part;
+            break;
+        case part_codes::part_codes::GEARBOX_BOTTOM:
+            //grab part at centroid:
+            //hard-coded grasp heigth from Fetch remote experiments
+            O_part << part_pose.pose.position.x, part_pose.pose.position.y, GEARBOX_GRASP_HEIGHT; //part_pose.pose.position.z + TOTE_GRASP_HEIGHT_WRT_TOTE_ORIGIN;
+            //double convertPlanarQuat2Phi(geometry_msgs::Quaternion quaternion);
+            object_angle = xformUtils.convertPlanarQuat2Phi(part_pose.pose.orientation); 
+
+            Rotz = compute_rot_z(object_angle);
+            ROS_INFO_STREAM("Rotz: "<<endl<<Rotz<<endl);
+            ROS_INFO_STREAM("R_gripper_down: "<<endl<<R_gripper_down_);
+            Rot_gripper = Rotz*R_gripper_down_;
+            ROS_INFO_STREAM("specifying gripper orientation:  " << endl << Rot_gripper << endl);
+            grasp_pose.linear() = Rot_gripper;
+            grasp_pose.translation() = O_part;
+            break;
+        case part_codes::part_codes::BOLT:
+            //grab part at centroid:
+            //hard-coded grasp heigth from Fetch remote experiments
+            O_part << part_pose.pose.position.x, part_pose.pose.position.y, BOLT_GRASP_HEIGHT; //part_pose.pose.position.z + TOTE_GRASP_HEIGHT_WRT_TOTE_ORIGIN;
+            //double convertPlanarQuat2Phi(geometry_msgs::Quaternion quaternion);
+            object_angle = xformUtils.convertPlanarQuat2Phi(part_pose.pose.orientation); 
+
+            Rotz = compute_rot_z(object_angle);
+            ROS_INFO_STREAM("Rotz: "<<endl<<Rotz<<endl);
+            ROS_INFO_STREAM("R_gripper_down: "<<endl<<R_gripper_down_);
+            Rot_gripper = Rotz*R_gripper_down_;
+            ROS_INFO_STREAM("specifying gripper orientation:  " << endl << Rot_gripper << endl);
+            grasp_pose.linear() = Rot_gripper;
+            grasp_pose.translation() = O_part;
+            break;
+        case part_codes::part_codes::SMALL_GEAR:
+            //grab part at centroid:
+            //hard-coded grasp heigth from Fetch remote experiments
+            O_part << part_pose.pose.position.x, part_pose.pose.position.y, GEAR_GRASP_HEIGHT; //part_pose.pose.position.z + TOTE_GRASP_HEIGHT_WRT_TOTE_ORIGIN;
+            //double convertPlanarQuat2Phi(geometry_msgs::Quaternion quaternion);
+            object_angle = xformUtils.convertPlanarQuat2Phi(part_pose.pose.orientation); 
+            Rotz = compute_rot_z(object_angle);
+            ROS_INFO_STREAM("Rotz: "<<endl<<Rotz<<endl);
+            ROS_INFO_STREAM("R_gripper_down: "<<endl<<R_gripper_down_);
+            Rot_gripper = Rotz*R_gripper_down_;
+            ROS_INFO_STREAM("specifying gripper orientation:  " << endl << Rot_gripper << endl);
+            grasp_pose.linear() = Rot_gripper;
+            grasp_pose.translation() = O_part;
+            break;
+        case part_codes::part_codes::LARGE_GEAR:
+            //grab part at centroid:
+            //hard-coded grasp heigth from Fetch remote experiments
+            O_part << part_pose.pose.position.x, part_pose.pose.position.y, GEAR_GRASP_HEIGHT; //part_pose.pose.position.z + TOTE_GRASP_HEIGHT_WRT_TOTE_ORIGIN;
+            //double convertPlanarQuat2Phi(geometry_msgs::Quaternion quaternion);
+            object_angle = xformUtils.convertPlanarQuat2Phi(part_pose.pose.orientation); 
+
+            Rotz = compute_rot_z(object_angle);
+            ROS_INFO_STREAM("Rotz: "<<endl<<Rotz<<endl);
+            ROS_INFO_STREAM("R_gripper_down: "<<endl<<R_gripper_down_);
+            Rot_gripper = Rotz*R_gripper_down_;
+            ROS_INFO_STREAM("specifying gripper orientation:  " << endl << Rot_gripper << endl);
+            grasp_pose.linear() = Rot_gripper;
+            grasp_pose.translation() = O_part;
+            break;            
         default:
             ROS_WARN("unknown part code in compute_grasp_affine:");
 
