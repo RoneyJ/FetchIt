@@ -442,13 +442,12 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
 
     //Here actually colorize the image for debug purposes:
     //colorize the regions; optionally display them:
-    
     if(nLabels > 0) {
     	std::vector<Vec3b> colors(nLabels);
 	    colors[0] = Vec3b(0, 0, 0);//background
 	    //assign random color to each region label
 	    for(int label = 1; label < nLabels; ++label){
-	        colors[label] = Vec3b( (rand()&255), (rand()&255), (rand()&255) );
+	        colors[label] = Vec3b( (rand()&155+100), (rand()&155+100), (rand()&155+100) );
 	    }
 	    
 	    //for display image, assign colors to regions
@@ -460,10 +459,27 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
 	        }
 		}
     }
-     
+
     //! Supress following before actually running!
+    
     //cv::imshow("BW_IMG", g_bw_img);
-	//cv::imshow("Connected Parts", g_dst);
+	//cv::imshow("Connected_Parts", g_dst);
+    //ROS_ERROR("Enter wait key...");
+    //cv::waitKey(0);
+    //ROS_ERROR("Exit wait key...");
+
+    // cv_bridge::CvImagePtr cv_ptr;
+    // try {
+    //     cv_ptr = cv_bridge::toCvCopy(srcImg, sensor_msgs::image_encodings::BGR8);
+    // }
+    // catch (cv_bridge::Exception& e) {
+    //     ROS_ERROR("cv_bridge exception: %s", e.what());
+    //     return;
+    // }    
+    // cvtColor(cv_ptr_bw->image,g_dst,CV_BGR2RGB);
+    // cv_bridge::CvImage imgBridge = cv_bridge::CvImage(std_msgs::Header(), sensor_msgs::image_encodings::RGB8, img);
+    // imgBridge.toImageMsg(black_and_white_);
+    
 }
 
 
