@@ -45,7 +45,7 @@ const float GEARBOX_TOP_DOWN_PTS = 1170;
 void splitGearboxTopBottom(vector <int> &lookup_table, int part_id, vector<float> &avg_z_heights, vector<float> &npts_blobs){
     lookup_table.clear();
     if (part_id == part_codes::part_codes::GEARBOX_BOTTOM){
-        ROS_WARN("[gearbox_finder_fnc=seperation] Seperating for bottom gearbox part now...");
+        ROS_WARN("[gearbox_finder_fnc=seperation] Seperating for BOTTOM gearbox part now...");
         
         vector <float> scores; // = //TODO finalize this init
         
@@ -81,7 +81,10 @@ void splitGearboxTopBottom(vector <int> &lookup_table, int part_id, vector<float
                 }
             }  
         }
-        ROS_ERROR("BEST CONFIDENT PICK IS: %d, with error of: %f",lookup_table[0], scores[0]);    
+        for(int i = 0; i<total_blobs;i++){
+            ROS_ERROR("=======================AI RESULT-- Find **BOTTOM** Part=======================");
+            ROS_ERROR("BEST CONFIDENT PICK IS: %d, with error of: %f",lookup_table[i], scores[i]);    
+        }
     } else if (part_id ==part_codes::part_codes::GEARBOX_TOP)
     {
         ROS_WARN("[gearbox_finder_fnc=seperation] Seperating for top gearbox part now...");
@@ -118,8 +121,11 @@ void splitGearboxTopBottom(vector <int> &lookup_table, int part_id, vector<float
                 }
             }  
         }
-        ROS_ERROR("BEST CONFIDENT PICK IS: %d, with error of: %f",lookup_table[0], scores[0]);        
-    }else {
+        for (int i = 0; i<total_blobs;i++){
+            ROS_ERROR("=======================AI RESULT -- Find **TOP** Part=======================");
+            ROS_ERROR("BEST CONFIDENT PICK IS: %d, with error of: %f",lookup_table[i], scores[i]);    
+        }    
+        }else {
         ROS_ERROR("[gearbox_finder_fnc=seperation] COMPONENT ID NOT KNOWN!");
     }
 }
@@ -135,6 +141,8 @@ bool ObjectFinder::find_gearbox_tops
                                         vector<geometry_msgs::PoseStamped> &object_poses
                                     )
 {
+    ROS_ERROR("---------------LOOK FOR GEARBOZ TOP!-------------------------");
+    
     //! Variable Initialization            
     geometry_msgs::PoseStamped object_pose; //* Used to populate the final message
 
@@ -171,12 +179,12 @@ bool ObjectFinder::find_gearbox_tops
 
     //! For debug the information
     int total_blob_count = x_centroids_wrt_robot.size();
-    ROS_WARN("====================DEBUG [gearbox_finder_fnc=bottom]====================");
+    ROS_WARN("====================DEBUG [gearbox_finder_fnc=TOP]====================");
     ROS_WARN("Totoal Found Blobs: %d.",total_blob_count);
     for (int counter = 0; counter <total_blob_count; counter ++){
         ROS_WARN("label %d has %f points, avg height %f and centroid %f, %f, angle from newman: %f.", counter, npts_blobs[counter], avg_z_heights[counter],x_centroids_wrt_robot[counter], y_centroids_wrt_robot[counter],g_orientations[counter]);
     }
-    ROS_WARN("====================END DEBUG [gearbox_finder_fnc=bottom]====================");
+    ROS_WARN("====================END DEBUG [gearbox_finder_fnc=TOP]====================");
 
     //! Call seperation here to seperate gearbox bottom and gearbox top
     vector <int> valid_component_list;
@@ -188,21 +196,22 @@ bool ObjectFinder::find_gearbox_tops
 
     //! Update the object_pose for robot to grasp
     object_poses.clear();
+    ROS_ERROR("!!!!!!!LOOK FOR GEARBOZ TOP!");
 
     //* Fault Handling
     if (valid_components_count < 1){
-        ROS_ERROR("[gearbox_finder_fnc=bottom]OBJECT NOT FOUND!");
+        ROS_ERROR("[gearbox_finder_fnc=TOP]OBJECT NOT FOUND!");
         return false; //background is object 0    
     } else
     {
-        ROS_WARN("[gearbox_finder_fnc=bottom]CURRENT VALID COMPONENT COUNT IS: %d",valid_components_count);
+        ROS_WARN("[gearbox_finder_fnc=TOP]CURRENT VALID COMPONENT COUNT IS: %d",valid_components_count);
 
     }
     
     
     //* Pre Publishing
     object_pose.header.frame_id = "torso_lift_link";
-    for (int i_object = 1; i_object < valid_components_count; i_object++) {
+    for (int i_object = 0; i_object < valid_components_count; i_object++) {
         //? Position
         object_pose.pose.position.x = x_centroids_wrt_robot[valid_component_list[i_object]];
         object_pose.pose.position.y = y_centroids_wrt_robot[valid_component_list[i_object]];
@@ -219,6 +228,8 @@ bool ObjectFinder::find_gearbox_tops
 bool ObjectFinder::find_gearbox_bottoms(float table_height, vector<float> &x_centroids_wrt_robot, vector<float> &y_centroids_wrt_robot,
         vector<float> &avg_z_heights, vector<float> &npts_blobs, 
         vector<geometry_msgs::PoseStamped> &object_poses) {
+    ROS_ERROR("!!!!!!!LOOK FOR GEARBOX BOTTOM!");
+
     //! Variable Initialization            
     geometry_msgs::PoseStamped object_pose; //* Used to populate the final message
 
@@ -286,7 +297,7 @@ bool ObjectFinder::find_gearbox_bottoms(float table_height, vector<float> &x_cen
     
     //* Pre Publishing
     object_pose.header.frame_id = "torso_lift_link";
-    for (int i_object = 1; i_object < valid_components_count; i_object++) {
+    for (int i_object = 0; i_object < valid_components_count; i_object++) {
         //? Position
         object_pose.pose.position.x = x_centroids_wrt_robot[valid_component_list[i_object]];
         object_pose.pose.position.y = y_centroids_wrt_robot[valid_component_list[i_object]];
