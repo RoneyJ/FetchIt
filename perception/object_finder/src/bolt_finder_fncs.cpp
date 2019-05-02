@@ -22,6 +22,11 @@ const float MIN_DZ_BOLT = 0.01; //0.01; //box filter from this height above the 
 const float MAX_DZ_BOLT = 0.05; //consider points up to this height above table top
 const double TABLE_GRASP_CLEARANCE_BOLT= 0.01;
 
+const double MAX_EVAL_UPPER_BOUND = 12000.0;
+const double MAX_EVAL_LOWER_BOUND = 7000.0;
+const double EVAL_RATIO_UPPER_BOUND = 10.0;
+const double EVAL_RATIO_LOWER_BOUND = 5.0;
+
 
 
 bool ObjectFinder::find_bolts(float table_height, vector<float> &x_centroids_wrt_robot, vector<float> &y_centroids_wrt_robot,
@@ -61,16 +66,30 @@ bool ObjectFinder::find_bolts(float table_height, vector<float> &x_centroids_wrt
     // and area (num pixels) in g_npts_blobs[label]
 
     blob_finder(x_centroids_wrt_robot, y_centroids_wrt_robot, avg_z_heights, npts_blobs, viable_labels_);
+    //
     
     //populate object_poses
     int nblobs = (int) viable_labels_.size();
     if (nblobs<1) return false;
     
     for (int iblob=0;iblob<nblobs;iblob++) {
-        object_pose.pose.position.x = x_centroids_wrt_robot[iblob];
-        object_pose.pose.position.y = y_centroids_wrt_robot[iblob];
-        object_pose.pose.orientation = g_vec_of_quat[iblob];
-        object_poses.push_back(object_pose);
+        if (max_evals_[iblob]>MAX_EVAL_UPPER_BOUND || max_evals_[iblob]<MAX_EVAL_LOWER_BOUND) {
+            ROS_WARN("max eval = %f is out of range for blob %d",max_evals_[iblob],iblob);
+        }
+        else  {  
+               double eval_ratio =max_evals_[iblob]/mid_evals_[iblob];
+               ROS_INFO("blob %d max_eval = %f is in range; eval ratio max/mid = %f",iblob,max_evals_[iblob],eval_ratio);
+                if (eval_ratio>EVAL_RATIO_UPPER_BOUND || eval_ratio<EVAL_RATIO_LOWER_BOUND) {
+                    ROS_WARN("eval ratio is out of range for blob %d",iblob);
+                }
+                else {
+                    object_pose.pose.position.x = x_centroids_wrt_robot[iblob];
+                    object_pose.pose.position.y = y_centroids_wrt_robot[iblob];
+                    object_pose.pose.orientation = g_vec_of_quat[iblob];
+                    object_poses.push_back(object_pose);                    
+                }
+        }
+
     }
 
     return true; 
