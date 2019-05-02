@@ -34,8 +34,8 @@ int main(int argc, char** argv) {
     cout << g_affine_kinect_wrt_base.linear() << endl;
     cout << "affine offset: " << g_affine_kinect_wrt_base.translation().transpose() << endl;
      */
-    namedWindow("BW_IMG",WINDOW_AUTOSIZE);
-    namedWindow("Connected_Parts",WINDOW_AUTOSIZE);
+    //namedWindow("BW_IMG",WINDOW_AUTOSIZE);
+    //namedWindow("Connected_Parts",WINDOW_AUTOSIZE);
 
     ROS_INFO("going into spin");
     // from here, all the work is done in the action server, with the interesting stuff done within "executeCB()"

@@ -9,7 +9,7 @@ using namespace std;
 using namespace cv;
 
 const float MIN_X_t = 0.35; //include points starting 0.4m in front of robot
-const float MAX_X_t = 0.9; //include points out to 0.9m in front of robot
+const float MAX_X_t = 0.95; //include points out to 0.9m in front of robot
 const float MIN_Y_t = -0.7; //include points starting -0.5m to left of robot
 const float MAX_Y_t = 0.7; //include points up to 0.5m to right of robot
 const float MIN_DZ_t = 0.02; //box filter from this height above the table top
@@ -229,7 +229,7 @@ bool ObjectFinder::find_totes(float table_height, vector<float> &x_centroids_wrt
 
     XformUtils transform;
     double pi = 3.14159; 
-    double double_kit_orientation = (double) ((kit_orientation + 105) * (pi/180));
+    double double_kit_orientation = (double) ((kit_orientation+90) * (pi/180));
    
     object_pose.pose.position.x = obj_x_centroid_wrt_robot;
     object_pose.pose.position.y = obj_y_centroid_wrt_robot;
