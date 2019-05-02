@@ -12,7 +12,7 @@
 #include "robot_specific_fk_ik_mappings.h" //SPECIFIC TO TARGET ROBOT
 #include "robot_specific_names.h" //THIS MUST BE SPECIFIC TO TARGET ROBOT
 #include "planner_joint_weights.h" //need these for joint-space planner; 
-#include "grasp_height_magic_numbers.h" //tune these for actual table heights
+//#include "grasp_height_magic_numbers.h" //tune these for actual table heights
 
 //const double TOTE_GRASP_HEIGHT = 0.230; //handle is relatively high; elevate to about 0.280 to clear handle
 //const double GEAR_GRASP_HEIGHT = 0.140; //shunk station
