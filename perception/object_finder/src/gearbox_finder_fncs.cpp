@@ -103,8 +103,11 @@ void splitGearboxTopBottom(vector <int> &lookup_table, int part_id, vector<float
         }
         for(int i = 0; i<total_blobs;i++){
             ROS_ERROR("=======================AI RESULT-- Find **BOTTOM** Part=======================");
-            ROS_ERROR("BEST CONFIDENT PICK IS: %d, with error of: %f",lookup_table[i], scores[i]);    
+            ROS_ERROR("BEST CONFIDENT PICK IS: %d, with error of: %f, with recognized pose of %d",lookup_table[i], scores[i],poses[i]);    
         }
+
+
+
     } else if (part_id ==part_codes::part_codes::GEARBOX_TOP)
     {
         ROS_WARN("[gearbox_finder_fnc=seperation] Seperating for top gearbox part now...");
