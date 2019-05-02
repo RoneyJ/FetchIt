@@ -229,7 +229,7 @@ bool ObjectFinder::find_totes(float table_height, vector<float> &x_centroids_wrt
 
     XformUtils transform;
     double pi = 3.14159; 
-    double double_kit_orientation = (double) (kit_orientation * (pi/180));
+    double double_kit_orientation = (double) ((kit_orientation+90) * (pi/180));
    
     object_pose.pose.position.x = obj_x_centroid_wrt_robot;
     object_pose.pose.position.y = obj_y_centroid_wrt_robot;
