@@ -22,6 +22,7 @@ const double TABLE_GRASP_CLEARANCE_GEARBOX = 0.01; //determines how high away fr
 //* Penalty Value
 const float HEIGHT_PENALTY = 1.0;
 const float POINTS_PENALTY = 1.0;
+const float POSE_PENALTY = 1.01;
 //const float DITCH_THREASHOLD = 0
 //* Gearbox bottom facing up
 const float GEARBOX_BOTTOM_UP_PTS = 860;
@@ -39,6 +40,9 @@ const float GEARBOX_TOP_UP_Z = 130;
 //* Gearbox top facing down
 const float GEARBOX_TOP_DOWN_Z = 150;
 const float GEARBOX_TOP_DOWN_PTS = 1170;
+//* Gearbox bottom sideway
+const float GEARBOX_TOP_SIDE_Z = 135;
+const float GEARBOX_TOP_SIDE_PTS = 925;
 
 //! Local Tool Kit:
 
@@ -71,6 +75,7 @@ void splitGearboxTopBottom(vector <int> &lookup_table, int part_id, vector<float
             } else if (final_score == scoring_side)
             {
                 poses.push_back(2);
+                final_score = final_score*POSE_PENALTY;
             }
             scores.push_back(final_score);
 
@@ -89,6 +94,10 @@ void splitGearboxTopBottom(vector <int> &lookup_table, int part_id, vector<float
                     int temp_2 = lookup_table[j];
                     lookup_table[j] = lookup_table[j+1];
                     lookup_table[j+1] = temp_2;
+
+                    int temp_3 = poses[j];
+                    poses[j] = poses[j+1];
+                    poses[j+1] = temp_3;
                 }
             }  
         }
@@ -101,7 +110,8 @@ void splitGearboxTopBottom(vector <int> &lookup_table, int part_id, vector<float
         ROS_WARN("[gearbox_finder_fnc=seperation] Seperating for top gearbox part now...");
         
         vector <float> scores; // = //TODO finalize this init
-        
+        vector <int> poses;  //Up = 1; Down = 0; Side = 2
+
         int total_blobs = avg_z_heights.size();
         for(int counters = 0; counters < total_blobs; counters ++){
             float temp_z = avg_z_heights[counters];
@@ -112,7 +122,19 @@ void splitGearboxTopBottom(vector <int> &lookup_table, int part_id, vector<float
             ROS_WARN("Scoring_UP is: %f",scoring_up);
             scoring_down = (HEIGHT_PENALTY * abs(temp_z-GEARBOX_TOP_DOWN_Z))+(POINTS_PENALTY * abs(temp_pts-GEARBOX_TOP_DOWN_PTS));
             ROS_WARN("Scoring_DOWN is: %f",scoring_down);
-            final_score = min(scoring_up, scoring_down);
+            scoring_side = (HEIGHT_PENALTY * abs(temp_z-GEARBOX_TOP_SIDE_Z))+(POINTS_PENALTY * abs(temp_pts-GEARBOX_TOP_SIDE_PTS));
+            ROS_WARN("Scoring_SIDE is: %f",scoring_side);
+            final_score = min( min(scoring_up, scoring_down), scoring_side);
+            
+            if(final_score == scoring_down){
+                poses.push_back(0);
+            } else if(final_score == scoring_up){
+                poses.push_back(1);
+            } else if (final_score == scoring_side)
+            {
+                poses.push_back(2);
+                final_score = final_score*POSE_PENALTY;
+            }            
             
             scores.push_back(final_score);
 
@@ -129,6 +151,10 @@ void splitGearboxTopBottom(vector <int> &lookup_table, int part_id, vector<float
                     int temp_2 = lookup_table[j];
                     lookup_table[j] = lookup_table[j+1];
                     lookup_table[j+1] = temp_2;
+                    
+                    int temp_3 = poses[j];
+                    poses[j] = poses[j+1];
+                    poses[j+1] = temp_3;                    
                 }
             }  
         }
