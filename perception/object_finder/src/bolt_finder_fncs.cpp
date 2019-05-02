@@ -24,7 +24,7 @@ const double TABLE_GRASP_CLEARANCE_BOLT= 0.01;
 
 const double MAX_EVAL_UPPER_BOUND = 15000.0;
 const double MAX_EVAL_LOWER_BOUND = 7000.0;
-const double EVAL_RATIO_UPPER_BOUND = 10.0;
+const double EVAL_RATIO_UPPER_BOUND = 12.0;
 const double EVAL_RATIO_LOWER_BOUND = 5.0;
 
 
