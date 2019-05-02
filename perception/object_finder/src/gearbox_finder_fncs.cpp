@@ -48,7 +48,7 @@ void splitGearboxTopBottom(vector <int> &lookup_table, int part_id, vector<float
         ROS_WARN("[gearbox_finder_fnc=seperation] Seperating for BOTTOM gearbox part now...");
         
         vector <float> scores; // = //TODO finalize this init
-        
+        vector <float> poses;
 
 
         int total_blobs = avg_z_heights.size();

@@ -24,7 +24,7 @@ const double TABLE_GRASP_CLEARANCE_GEAR= 0.01;
 
 const double MAX_EVAL_UPPER_BOUND_GEAR = 500000.0; //TUNE ME!
 const double MAX_EVAL_LOWER_BOUND_GEAR = 5000.0;
-const double EVAL_RATIO_UPPER_BOUND_GEAR = 15.0;
+const double EVAL_RATIO_UPPER_BOUND_GEAR = 20.0;
 const double EVAL_RATIO_LOWER_BOUND_GEAR = 3.0;
 //        float min_blob_avg_ht= MIN_BLOB_AVG_HEIGHT, float min_blob_pixels=MIN_BLOB_PIXELS);
 
