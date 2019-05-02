@@ -47,8 +47,8 @@ void splitGearboxTopBottom(vector <int> &lookup_table, int part_id, vector<float
     if (part_id == part_codes::part_codes::GEARBOX_BOTTOM){
         ROS_WARN("[gearbox_finder_fnc=seperation] Seperating for BOTTOM gearbox part now...");
         
-        vector <float> scores; // = //TODO finalize this init
-        vector <float> poses;
+        vector <float> scores; 
+        vector <int> poses;  //Up = 1; Down = 0; Side = 2
 
 
         int total_blobs = avg_z_heights.size();
@@ -64,10 +64,19 @@ void splitGearboxTopBottom(vector <int> &lookup_table, int part_id, vector<float
             scoring_side = (HEIGHT_PENALTY * abs(temp_z-GEARBOX_BOTTOM_SIDE_Z))+(POINTS_PENALTY * abs(temp_pts-GEARBOX_BOTTOM_SIDE_PTS));
             ROS_WARN("Scoring_SIDE is: %f",scoring_side);
             final_score = min( min(scoring_up, scoring_down), scoring_side);
-            
+            if(final_score == scoring_down){
+                poses.push_back(0);
+            } else if(final_score == scoring_up){
+                poses.push_back(1);
+            } else if (final_score == scoring_side)
+            {
+                poses.push_back(2);
+            }
             scores.push_back(final_score);
 
             lookup_table.push_back(counters);
+
+
         }
 
         for(int i = 0; i < total_blobs; i++){
@@ -219,7 +228,7 @@ bool ObjectFinder::find_gearbox_tops
         object_pose.pose.position.y = y_centroids_wrt_robot[valid_component_list[i_object]];
         object_pose.pose.position.z = table_height + TABLE_GRASP_CLEARANCE_GEARBOX;
         //? Orientation
-        object_pose.pose.orientation = xformUtils.convertPlanarPsi2Quaternion(g_orientations[valid_component_list[i_object]]);
+        object_pose.pose.orientation = g_vec_of_quat[valid_component_list[i_object]];
         //? Push Back
         object_poses.push_back(object_pose);
     }
@@ -305,7 +314,7 @@ bool ObjectFinder::find_gearbox_bottoms(float table_height, vector<float> &x_cen
         object_pose.pose.position.y = y_centroids_wrt_robot[valid_component_list[i_object]];
         object_pose.pose.position.z = table_height + TABLE_GRASP_CLEARANCE_GEARBOX;
         //? Orientation
-        object_pose.pose.orientation = xformUtils.convertPlanarPsi2Quaternion(g_orientations[valid_component_list[i_object]]);
+        object_pose.pose.orientation = g_vec_of_quat[valid_component_list[i_object]];
         //? Push Back
         object_poses.push_back(object_pose);
     }
