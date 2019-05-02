@@ -9,5 +9,3 @@ objective is to test object finders
   coord grabber that prompts user for part ID;
      rosrun cartesian_motion_commander fetch_cartesian_interactive_ac
      prompts for bagging; include topic: triad_display_pose
-
-

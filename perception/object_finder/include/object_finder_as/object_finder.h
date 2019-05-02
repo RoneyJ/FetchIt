@@ -26,6 +26,7 @@
 #include "opencv2/imgcodecs.hpp"
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/core/utility.hpp>
+
 //#include "opencv2/highgui.hpp"
 
 #include <iostream>
@@ -173,6 +174,8 @@ public:
     void find_orientation(Eigen::MatrixXf points_mat, float &orientation, geometry_msgs::Quaternion &quaternion);
     
     sensor_msgs::PointCloud2 ros_cloud_, downsampled_cloud_, ros_box_filtered_cloud_, ros_crop_filtered_cloud_, ros_pass_filtered_cloud_; //here are ROS-compatible messages
+    sensor_msgs::Image black_and_white_, blobbed_image_;
+
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr pclCam_clr_ptr_; //(new pcl::PointCloud<pcl::PointXYZRGB>); //pointer for color version of pointcloud
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr downsampled_cloud_ptr_; //(new pcl::PointCloud<pcl::PointXYZRGB>); //ptr to hold filtered Kinect image
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr box_filtered_cloud_ptr_; //(new pcl::PointCloud<pcl::PointXYZRGB>); //ptr to hold filtered Kinect image
@@ -185,6 +188,8 @@ public:
     ros::Publisher pubBoxFilt_; // = nh.advertise<sensor_msgs::PointCloud2> ("box_filtered_pcd", 1);  
     ros::Publisher pubCropFilt_;
     ros::Publisher pubPassFilt_;
+    ros::Publisher pubBWImage_;
+    ros::Publisher pubSegmentedBlob_;
 
 
 
