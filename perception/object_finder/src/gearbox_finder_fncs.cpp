@@ -49,6 +49,8 @@ void splitGearboxTopBottom(vector <int> &lookup_table, int part_id, vector<float
         
         vector <float> scores; // = //TODO finalize this init
         
+
+
         int total_blobs = avg_z_heights.size();
         for(int counters = 0; counters < total_blobs; counters ++){
             float temp_z = avg_z_heights[counters];

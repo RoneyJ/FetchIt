@@ -29,7 +29,7 @@ const double EVAL_RATIO_LOWER_BOUND_GEAR = 3.0;
 //        float min_blob_avg_ht= MIN_BLOB_AVG_HEIGHT, float min_blob_pixels=MIN_BLOB_PIXELS);
 
 const double GEAR_MIN_BLOB_AVG_HEIGHT = 110;
-const double GEAR_MIN_BLOB_PIXELS = 400;
+const double GEAR_MIN_BLOB_PIXELS = 300;
 
 bool ObjectFinder::find_small_gears(float table_height, vector<float> &x_centroids_wrt_robot, vector<float> &y_centroids_wrt_robot,
             vector<float> &avg_z_heights, vector<float> &npts_blobs,  vector<geometry_msgs::PoseStamped> &object_poses)  {
