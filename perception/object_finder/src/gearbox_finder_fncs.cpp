@@ -14,9 +14,9 @@ const float MIN_X_GEARBOX = 0.0; //include points starting 0.4m in front of robo
 const float MAX_X_GEARBOX = 0.8; //include points out to 0.9m in front of robot
 const float MIN_Y_GEARBOX = -1.0; //include points starting -0.5m to left of robot
 const float MAX_Y_GEARBOX = 1.0; //include points up to 0.5m to right of robot
-const float MIN_DZ_GEARBOX = 0.02; //box filter from this height above the table top
+const float MIN_DZ_GEARBOX = 0.01; //box filter from this height above the table top
 const float MAX_DZ_GEARBOX = 0.1; //consider points up to this height above table top
-const double TABLE_GRASP_CLEARANCE_GEARBOX = 0.01;
+const double TABLE_GRASP_CLEARANCE_GEARBOX = 0.01; //determines how high away from the table the arm need to be
 
 
 //! Local Tool Kit:
@@ -106,7 +106,8 @@ bool ObjectFinder::find_gearbox_tops
     // and area (num pixels) in g_npts_blobs[label]
 
     blob_finder(x_centroids_wrt_robot, y_centroids_wrt_robot, avg_z_heights, npts_blobs, viable_labels_);
-    ROS_INFO("[gearbox_finder_fnc=bottom]Totoal Found Blobs: %d.",x_centroids_wrt_robot.size());
+    int total_blob_count = x_centroids_wrt_robot.size();
+    ROS_INFO("[gearbox_finder_fnc=bottom]Totoal Found Blobs: %d.",total_blob_count);
 
 
     //! Call seperation here to seperate gearbox bottom and gearbox top
