@@ -417,7 +417,6 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
 
     //Here actually colorize the image for debug purposes:
     //colorize the regions and display them:
-    /*
     if(nLabels > 0) {
     	std::vector<Vec3b> colors(nLabels);
 	    colors[0] = Vec3b(0, 0, 0);//background
@@ -435,7 +434,6 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
 	        }
 		}
     }
-     * */
     //! Supress following before actually running!
     //cv::imshow("BW_IMG", g_bw_img);
 	//cv::imshow("Connected Parts", g_dst);

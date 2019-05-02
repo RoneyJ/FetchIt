@@ -48,13 +48,13 @@ double findOrientation(int labelNum) {
 
 void splitGearboxTopBottom(vector <int> &lookup_table, int part_id){
     if (part_id == part_codes::part_codes::GEARBOX_BOTTOM){
-        ROS_INFO("[gearbox_finder_fnc=seperation] Seperating for bottom gearbox part now...");
+        ROS_WARN("[gearbox_finder_fnc=seperation] Seperating for bottom gearbox part now...");
         //TODO Implement Logic for finding component!
         lookup_table.clear();
         lookup_table.push_back(0);//! Temporary work around:
     } else if (part_id ==part_codes::part_codes::GEARBOX_TOP)
     {
-        ROS_INFO("[gearbox_finder_fnc=seperation] Seperating for top gearbox part now...");
+        ROS_WARN("[gearbox_finder_fnc=seperation] Seperating for top gearbox part now...");
         //TODO Implement Logic for finding component!
     }else
     {
@@ -106,9 +106,14 @@ bool ObjectFinder::find_gearbox_tops
     // and area (num pixels) in g_npts_blobs[label]
 
     blob_finder(x_centroids_wrt_robot, y_centroids_wrt_robot, avg_z_heights, npts_blobs, viable_labels_);
-    int total_blob_count = x_centroids_wrt_robot.size();
-    ROS_INFO("[gearbox_finder_fnc=bottom]Totoal Found Blobs: %d.",total_blob_count);
 
+    //! For debug the information
+    int total_blob_count = x_centroids_wrt_robot.size();
+    ROS_WARN("====================DEBUG[gearbox_finder_fnc=bottom]====================");
+    ROS_WARN("Totoal Found Blobs: %d.",total_blob_count);
+    for (int counter = 0; counter <total_blob_count; counter ++){
+        ROS_WARN("label %d has %f points, avg height %f and centroid %f, %f:", counter, npts_blobs[counter], avg_z_heights[counter],x_centroids_wrt_robot[counter], y_centroids_wrt_robot[counter]);
+    }
 
     //! Call seperation here to seperate gearbox bottom and gearbox top
     vector <int> valid_component_list;
