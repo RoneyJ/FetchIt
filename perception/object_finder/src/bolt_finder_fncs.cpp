@@ -78,7 +78,7 @@ bool ObjectFinder::find_bolts(float table_height, vector<float> &x_centroids_wrt
         }
         else  {  
                double eval_ratio =max_evals_[iblob]/mid_evals_[iblob];
-               ROS_INFO("blob %d max_eval = %f is in range; eval ratio max/mid = %f",max_evals_[iblob],eval_ratio);
+               ROS_INFO("blob %d max_eval = %f is in range; eval ratio max/mid = %f",iblob,max_evals_[iblob],eval_ratio);
                 if (eval_ratio>EVAL_RATIO_UPPER_BOUND || eval_ratio<EVAL_RATIO_LOWER_BOUND) {
                     ROS_WARN("eval ratio is out of range for blob %d",iblob);
                 }
