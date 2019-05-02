@@ -1,0 +1,15 @@
+5/2/19 protocol:
+objective is to test object finders
+
+*position robot in front of table (use navigator?)
+  --start w/ simple gearbox bottom case
+  --robot grabs part and drops it in fake tote (?)  or simply lifts part, then drops it on table
+  --or robot grabs part, lifts, rotates, places back on table, re-grabs; repeat
+
+  make a coord grabber that prompts user for part ID;
+   grabber sends message to object-finder
+     (choose an object to grab from list)
+   grabber attemps grab
+  *** lift/release; return arm to waiting pose
+
+*
