@@ -5,7 +5,7 @@
 #include "gearbox_finder_fncs.cpp"
 #include "tote_finder_fncs.cpp"
 #include "gear_finder_fncs.cpp"
-#include "bolt_finder_fncs.cpp"
+#include "bolt_finder_fncs.cpp" 
 
 ObjectFinder::ObjectFinder() :
 object_finder_as_(nh_, "object_finder_action_service", boost::bind(&ObjectFinder::executeCB, this, _1), false), pclCam_clr_ptr_(new PointCloud<pcl::PointXYZRGB>),
