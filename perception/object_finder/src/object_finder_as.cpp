@@ -2,9 +2,13 @@
 // Wyatt Newman, 2/2019
 #include<object_finder_as/object_finder.h>
 #include "object_finder_helper_fncs.cpp"
+//#include "wsn_gearbox_finder_fncs.cpp"
 #include "gearbox_finder_fncs.cpp"
+
 #include "tote_finder_fncs.cpp"
-#include "gear_finder_fncs.cpp"
+//#include "gear_finder_fncs.cpp"
+#include "wsn_gear_finder_fncs.cpp"
+
 #include "bolt_finder_fncs.cpp" 
 
 ObjectFinder::ObjectFinder() :
@@ -56,6 +60,9 @@ void ObjectFinder::initializePublishers() {
     pubBoxFilt_ = nh_.advertise<sensor_msgs::PointCloud2> ("/object_finder/box_filtered_pcd", 1, true);
     pubCropFilt_ = nh_.advertise<sensor_msgs::PointCloud2> ("/object_finder/crop_filtered_pcd", 1, true);
     pubPassFilt_ = nh_.advertise<sensor_msgs::PointCloud2> ("/object_finder/pass_filtered_pcd", 1, true);
+    //! Addition for publishsing imgae instead of using CV imshow
+    pubBWImage_ = nh_.advertise<sensor_msgs::Image>("/object_finder/Black_and_White",1,true);
+    pubSegmentedBlob_ =nh_.advertise<sensor_msgs::Image>("/object_finder/Blobbed_Image",1,true);
 }
 
 void ObjectFinder::headcamCB(const sensor_msgs::PointCloud2ConstPtr& cloud) {

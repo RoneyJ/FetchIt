@@ -306,7 +306,8 @@ void ObjectFinder::find_orientation(Eigen::MatrixXf points_mat, float &orientati
 void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<float> &y_centroids_wrt_robot,
         vector<float> &avg_z_heights,
         vector<float> &npts_blobs,
-        vector<int> &viable_labels) {
+        vector<int> &viable_labels,
+        float min_blob_avg_ht, float min_blob_pixels) {
 
     x_centroids_wrt_robot.clear();
     y_centroids_wrt_robot.clear();
@@ -367,8 +368,8 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
     //filter to  keep only blobs that are high enough and large enough
     for (int label = 0; label < nLabels; ++label) {
         ROS_INFO("label %d has %d points and  avg height %f:", label, (int) temp_npts_blobs[label], temp_avg_z_heights[label]);
-        if (temp_avg_z_heights[label] > MIN_BLOB_AVG_HEIGHT) { //rejects the table surface
-            if (temp_npts_blobs[label] > MIN_BLOB_PIXELS) {
+        if (temp_avg_z_heights[label] > min_blob_avg_ht) { //rejects the table surface
+            if (temp_npts_blobs[label] > min_blob_pixels) {
                 //ROS_INFO("label %d has %f points:",label,temp_npts_blobs[label]);
                 x_centroids_wrt_robot.push_back(temp_x_centroids[label]);
                 y_centroids_wrt_robot.push_back(temp_y_centroids[label]);
@@ -442,13 +443,12 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
 
     //Here actually colorize the image for debug purposes:
     //colorize the regions; optionally display them:
-    
     if(nLabels > 0) {
     	std::vector<Vec3b> colors(nLabels);
 	    colors[0] = Vec3b(0, 0, 0);//background
 	    //assign random color to each region label
 	    for(int label = 1; label < nLabels; ++label){
-	        colors[label] = Vec3b( (rand()&255), (rand()&255), (rand()&255) );
+	        colors[label] = Vec3b( (rand()&155+100), (rand()&155+100), (rand()&155+100) );
 	    }
 	    
 	    //for display image, assign colors to regions
@@ -460,10 +460,27 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
 	        }
 		}
     }
-     
+
     //! Supress following before actually running!
+    
     //cv::imshow("BW_IMG", g_bw_img);
-	//cv::imshow("Connected Parts", g_dst);
+	//cv::imshow("Connected_Parts", g_dst);
+    //ROS_ERROR("Enter wait key...");
+    //cv::waitKey(0);
+    //ROS_ERROR("Exit wait key...");
+
+    // cv_bridge::CvImagePtr cv_ptr;
+    // try {
+    //     cv_ptr = cv_bridge::toCvCopy(srcImg, sensor_msgs::image_encodings::BGR8);
+    // }
+    // catch (cv_bridge::Exception& e) {
+    //     ROS_ERROR("cv_bridge exception: %s", e.what());
+    //     return;
+    // }    
+    // cvtColor(cv_ptr_bw->image,g_dst,CV_BGR2RGB);
+    // cv_bridge::CvImage imgBridge = cv_bridge::CvImage(std_msgs::Header(), sensor_msgs::image_encodings::RGB8, img);
+    // imgBridge.toImageMsg(black_and_white_);
+    
 }
 
 
