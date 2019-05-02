@@ -199,7 +199,7 @@ void ObjectFinder::find_orientation(Eigen::MatrixXf points_mat, float &orientati
     // real-valued evals/evecs;  we'll need to strip off the real parts of the solution
 
     evals = es3f.eigenvalues().real(); // grab just the real parts
-    //cout<<"real parts of evals: "<<evals.transpose()<<endl;
+    ROS_INFO_STREAM("real parts of evals: "<<evals.transpose()<<endl); 
 
     // our solution should correspond to an e-val of zero, which will be the minimum eval
     //  (all other evals for the covariance matrix will be >0)
@@ -207,6 +207,9 @@ void ObjectFinder::find_orientation(Eigen::MatrixXf points_mat, float &orientati
 
     double min_lambda = evals[0]; //initialize the hunt for min eval
     double max_lambda = evals[0]; // and for max eval
+    int min_eval_index=0;
+    int max_eval_index=0;
+    int mid_eval_index=0;
     //Eigen::Vector3cf complex_vec; // here is a 3x1 vector of double-precision, complex numbers
     //Eigen::Vector3f evec0, evec1, evec2; //, major_axis; 
     //evec0 = es3f.eigenvectors().col(0).real();
@@ -239,14 +242,30 @@ void ObjectFinder::find_orientation(Eigen::MatrixXf points_mat, float &orientati
         if (lambda_test < min_lambda) {
             min_lambda = lambda_test;
             i_normal = ivec; //this index is closer to index of min eval
+            min_eval_index = ivec;
             plane_normal_ = es3f.eigenvectors().col(i_normal).real();
         }
         if (lambda_test > max_lambda) {
             max_lambda = lambda_test;
             i_major_axis = ivec; //this index is closer to index of min eval
             major_axis_ = es3f.eigenvectors().col(i_major_axis).real();
+            max_eval_index= ivec;
         }
     }
+    
+    max_lambda_ = max_lambda;
+    min_lambda_ = min_lambda;
+    
+    
+    mid_eval_index =0;
+    if (max_eval_index==0 ||min_eval_index==0) { //can't be 0; try 1
+        mid_eval_index = 1;
+        if (max_eval_index==1 ||min_eval_index==1) //can't be 1, must be 2
+            mid_eval_index = 2;
+    }
+    mid_lambda_ =  evals[mid_eval_index];
+    
+    ROS_INFO("max_lambda = %f; max/mid lambda ratio = %f",max_lambda,max_lambda/mid_lambda_);
 
     float x_component = major_axis_(0);
     float y_component = -major_axis_(1);
@@ -294,6 +313,10 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
     avg_z_heights.clear();
     npts_blobs.clear();
     viable_labels_.clear();
+    max_evals_.clear();
+    mid_evals_.clear();
+    min_evals_.clear();
+
     //openCV function to do all the  hard work
     int nLabels = connectedComponents(g_bw_img, g_labelImage, 8); //4 vs 8 connected regions
 
@@ -394,7 +417,9 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
         float angle;
         geometry_msgs::Quaternion quat;
         find_orientation(blob, angle, quat);  
-        
+        max_evals_.push_back(max_lambda_);
+        mid_evals_.push_back(mid_lambda_);
+        min_evals_.push_back(min_lambda_); //all zeros?
         //add pi/2 to factor in rotated camera frame wrt robot
         //angle = 0.0; //FIX ME!!
         g_orientations.push_back(angle);
@@ -416,8 +441,8 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
     //xxx
 
     //Here actually colorize the image for debug purposes:
-    //colorize the regions and display them:
-    /*
+    //colorize the regions; optionally display them:
+    
     if(nLabels > 0) {
     	std::vector<Vec3b> colors(nLabels);
 	    colors[0] = Vec3b(0, 0, 0);//background
@@ -435,7 +460,7 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
 	        }
 		}
     }
-     * */
+     
     //! Supress following before actually running!
     //cv::imshow("BW_IMG", g_bw_img);
 	//cv::imshow("Connected Parts", g_dst);

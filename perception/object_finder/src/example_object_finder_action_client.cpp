@@ -44,6 +44,7 @@ void objectFinderDoneCb(const actionlib::SimpleClientGoalState& state,
                  perceived_object_pose.pose.orientation.y,
                  perceived_object_pose.pose.orientation.z,
                  perceived_object_pose.pose.orientation.w);
+            ROS_INFO_STREAM(perceived_object_pose<<endl);
             g_perceived_object_poses.push_back(perceived_object_pose);
         }
          //g_pose_publisher->publish(g_perceived_object_pose);
@@ -122,14 +123,16 @@ int main(int argc, char** argv) {
     if (g_found_object_code == object_finder::objectFinderResult::OBJECT_FOUND)   {
         ROS_INFO("found object(s)!");
         int blob_num;
+        int n_blobs = g_perceived_object_poses.size();
         while  (true) {
-            cout<<"enter blob number: ";
+            cout<<"enter blob number, 0 through "<<n_blobs-1<<": ";
             cin>>blob_num;
             desired_triad_pose = g_perceived_object_poses[blob_num];
 
             desired_triad_pose.header.stamp = ros::Time::now();
             //publish the desired frame pose to be displayed as a triad marker:   
-            for (int i=0;i<3;i++) {
+           
+            for (int i=0;i<10;i++) {
                 pose_publisher.publish(desired_triad_pose);
                 ros::Duration(0.1).sleep();
             }

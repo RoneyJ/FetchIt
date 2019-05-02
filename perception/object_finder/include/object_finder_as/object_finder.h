@@ -201,5 +201,7 @@ public:
             vector<float> &avg_z_heights, vector<float> &npts_blobs,  vector<geometry_msgs::PoseStamped> &object_poses); 
     
     double table_height_;
+    double max_lambda_,min_lambda_,mid_lambda_;
+    vector<double> max_evals_,mid_evals_,min_evals_;
     
 };
