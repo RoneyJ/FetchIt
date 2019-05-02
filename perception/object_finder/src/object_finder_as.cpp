@@ -162,7 +162,7 @@ void ObjectFinder::executeCB(const actionlib::SimpleActionServer<object_finder::
         case part_codes::part_codes::GEARBOX_BOTTOM:
             found_object = find_gearbox_bottoms(table_height_, g_x_centroids_wrt_robot, g_y_centroids_wrt_robot, g_avg_z_heights, g_npts_blobs,  object_poses); //special case for gearbox_top; WRITE ME!
             if (found_object) {
-                ROS_INFO("found gearbox_top objects");
+                ROS_INFO("found gearbox_bottom objects");
                 result_.found_object_code = object_finder::objectFinderResult::OBJECT_FOUND;
                 result_.object_poses.clear();
                 int nposes = object_poses.size();
@@ -202,7 +202,7 @@ void ObjectFinder::executeCB(const actionlib::SimpleActionServer<object_finder::
         case part_codes::part_codes::BOLT:
             found_object = find_bolts(table_height_, g_x_centroids_wrt_robot, g_y_centroids_wrt_robot, g_avg_z_heights, g_npts_blobs,  object_poses); //special case for gearbox_top; WRITE ME!
             if (found_object) {
-                ROS_INFO("found gearbox_top objects");
+                ROS_INFO("found bolt objects");
                 result_.found_object_code = object_finder::objectFinderResult::OBJECT_FOUND;
                 result_.object_poses.clear();
                 int nposes = object_poses.size();
@@ -219,7 +219,7 @@ void ObjectFinder::executeCB(const actionlib::SimpleActionServer<object_finder::
         case part_codes::part_codes::SMALL_GEAR:
             found_object = find_small_gears(table_height_, g_x_centroids_wrt_robot, g_y_centroids_wrt_robot, g_avg_z_heights, g_npts_blobs,  object_poses); //special case for gearbox_top; WRITE ME!
             if (found_object) {
-                ROS_INFO("found gearbox_top objects");
+                ROS_INFO("found small gear objects");
                 result_.found_object_code = object_finder::objectFinderResult::OBJECT_FOUND;
                 result_.object_poses.clear();
                 int nposes = object_poses.size();
@@ -236,7 +236,7 @@ void ObjectFinder::executeCB(const actionlib::SimpleActionServer<object_finder::
         case part_codes::part_codes::LARGE_GEAR:
             found_object = find_large_gears(table_height_, g_x_centroids_wrt_robot, g_y_centroids_wrt_robot, g_avg_z_heights, g_npts_blobs, object_poses); //special case for gearbox_top; WRITE ME!
             if (found_object) {
-                ROS_INFO("found gearbox_top objects");
+                ROS_INFO("found large gear objects");
                 result_.found_object_code = object_finder::objectFinderResult::OBJECT_FOUND;
                 result_.object_poses.clear();
                 int nposes = object_poses.size();
