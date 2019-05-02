@@ -149,7 +149,7 @@ Eigen::Affine3d MovePart::compute_grasp_affine(int part_code, geometry_msgs::Pos
 //ALSO, derive desired gripper approach orientation from part orientation...NOT DONE YET!!!
 
 //OOPS! Tote frame is defined such that handle is along y-axis, so need gripper axis s.t.
-// line from thumb to forefinger is PARALLEL to x-axis
+// line from thumb to forefinger is PARALLEL to x-axis 
 bool MovePart::get_part(int part_code, geometry_msgs::PoseStamped source_pose) {
 
     //O_des_ << PART_X_VAL, PART_Y_VAL, APPROACH_HT; //0.5, 0.4, 0.2; //0.3,-0.1,0.0;

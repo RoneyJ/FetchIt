@@ -365,46 +365,41 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
     //also compute centroids;
     nLabels = viable_labels.size(); //new number of labels, after filtering
     ROS_INFO("found %d viable labels ", nLabels);
-    /*
-    std::vector<Vec3b> colors(nLabels);
-    colors[0] = Vec3b(0, 0, 0); //make the background black
-    //assign random color to each region label
-    for (int label = 1; label < nLabels; ++label) {
-        colors[label] = Vec3b((rand()&255), (rand()&255), (rand()&255));
-    }
-     * */
+   
 
     g_orientations.clear();
     g_vec_of_quat.clear();
     Eigen::Vector3f e_pt;
 
-    for (int label = 0; label < nLabels; label++) {
-        cout << "label = " << label << endl;
-        int npts_blob = npts_blobs[label];
-        cout << "npts_blob = " << npts_blob << endl;
-        /* FIX ME!!
+    for (int label_index = 0; label_index < nLabels; label_index++) {
+        int label = viable_labels[label_index];
+        //cout << "label = " << label << endl;
+        int npts_blob = npts_blobs[label_index];
+        //cout << "npts_blob = " << npts_blob << endl;
         Eigen::MatrixXf blob(3, npts_blob);
         int col_num = 0;
         for (int r = 0; r < g_dst.rows; ++r) {
                 for (int c = 0; c < g_dst.cols; ++c){
                         int label_num = g_labelImage.at<int>(r,c);
                         if(label_num == label){
-                                e_pt<<c,r,0.0;
+                                e_pt<< (float) c, (float) r,0.0;
                                 blob.col(col_num) = e_pt;
+                                //ROS_INFO_STREAM("col "<<e_pt.transpose()<<" at col "<<col_num<<endl);
                                 col_num++;
                         }
                 }
         }
-         * */
 
 
         float angle;
         geometry_msgs::Quaternion quat;
-        quat = xformUtils.convertPlanarPsi2Quaternion(angle);
-        //find_orientation(blob, angle, quat);  //FIX ME!!
+        find_orientation(blob, angle, quat);  
+        
         //add pi/2 to factor in rotated camera frame wrt robot
-        angle = 0.0; //FIX ME!!
+        //angle = 0.0; //FIX ME!!
         g_orientations.push_back(angle);
+        //quat = xformUtils.convertPlanarPsi2Quaternion(angle);
+        
         g_vec_of_quat.push_back(quat);
     }
 
@@ -420,8 +415,9 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
     }
     //xxx
 
-    //Here actually colorize the image for dubug purposes:
+    //Here actually colorize the image for debug purposes:
     //colorize the regions and display them:
+    /*
     if(nLabels > 0) {
     	std::vector<Vec3b> colors(nLabels);
 	    colors[0] = Vec3b(0, 0, 0);//background
@@ -439,6 +435,7 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
 	        }
 		}
     }
+     * */
     //! Supress following before actually running!
     //cv::imshow("BW_IMG", g_bw_img);
 	//cv::imshow("Connected Parts", g_dst);
