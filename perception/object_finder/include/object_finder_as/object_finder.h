@@ -155,10 +155,16 @@ public:
             Eigen::Vector4f box_pt_max, vector<int> &indices);
 
 
+   /* void blob_finder(vector<float> &x_centroids_wrt_robot, vector<float> &y_centroids_wrt_robot,
+        vector<float> &avg_z_heights,
+        vector<float> &npts_blobs,
+        vector<int> &viable_labels); */
+    
     void blob_finder(vector<float> &x_centroids_wrt_robot, vector<float> &y_centroids_wrt_robot,
         vector<float> &avg_z_heights,
         vector<float> &npts_blobs,
-        vector<int> &viable_labels);
+        vector<int> &viable_labels,
+        float min_blob_avg_ht= MIN_BLOB_AVG_HEIGHT, float min_blob_pixels=MIN_BLOB_PIXELS);
 
     Eigen::Affine3f compute_affine_cam_wrt_torso_lift_link(void);
     float find_table_height(pcl::PointCloud<pcl::PointXYZRGB>::Ptr input_cloud_ptr, double z_min, double z_max, double dz);

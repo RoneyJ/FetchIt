@@ -306,7 +306,8 @@ void ObjectFinder::find_orientation(Eigen::MatrixXf points_mat, float &orientati
 void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<float> &y_centroids_wrt_robot,
         vector<float> &avg_z_heights,
         vector<float> &npts_blobs,
-        vector<int> &viable_labels) {
+        vector<int> &viable_labels,
+        float min_blob_avg_ht, float min_blob_pixels) {
 
     x_centroids_wrt_robot.clear();
     y_centroids_wrt_robot.clear();
@@ -367,8 +368,8 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
     //filter to  keep only blobs that are high enough and large enough
     for (int label = 0; label < nLabels; ++label) {
         ROS_INFO("label %d has %d points and  avg height %f:", label, (int) temp_npts_blobs[label], temp_avg_z_heights[label]);
-        if (temp_avg_z_heights[label] > MIN_BLOB_AVG_HEIGHT) { //rejects the table surface
-            if (temp_npts_blobs[label] > MIN_BLOB_PIXELS) {
+        if (temp_avg_z_heights[label] > min_blob_avg_ht) { //rejects the table surface
+            if (temp_npts_blobs[label] > min_blob_pixels) {
                 //ROS_INFO("label %d has %f points:",label,temp_npts_blobs[label]);
                 x_centroids_wrt_robot.push_back(temp_x_centroids[label]);
                 y_centroids_wrt_robot.push_back(temp_y_centroids[label]);

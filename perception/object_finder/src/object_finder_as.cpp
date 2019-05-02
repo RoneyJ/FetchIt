@@ -2,9 +2,13 @@
 // Wyatt Newman, 2/2019
 #include<object_finder_as/object_finder.h>
 #include "object_finder_helper_fncs.cpp"
+//#include "wsn_gearbox_finder_fncs.cpp"
 #include "gearbox_finder_fncs.cpp"
+
 #include "tote_finder_fncs.cpp"
-#include "gear_finder_fncs.cpp"
+//#include "gear_finder_fncs.cpp"
+#include "wsn_gear_finder_fncs.cpp"
+
 #include "bolt_finder_fncs.cpp" 
 
 ObjectFinder::ObjectFinder() :
