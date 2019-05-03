@@ -26,6 +26,12 @@
 #include "opencv2/imgcodecs.hpp"
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/core/utility.hpp>
+
+//! Used for publishing the blobbed view
+#include <image_transport/image_transport.h>
+#include <sensor_msgs/image_encodings.h>
+#include <cv_bridge/cv_bridge.h>
+
 //#include "opencv2/highgui.hpp"
 
 #include <iostream>
@@ -78,7 +84,7 @@ const float PIXELS_PER_METER = 400.0; //200.0;
 
 const float TABLE_GRASP_CLEARANCE = 0.01; //add this much to table  top height for gripper clearance
 
-const float MIN_BLOB_PIXELS = 600; //must have  at least this many pixels to  preserve as a blob; gearbox top/bottom has about 900 pts
+const float MIN_BLOB_PIXELS = 120; //must have  at least this many pixels to  preserve as a blob; gearbox top/bottom has about 900 pts
 const float MIN_BLOB_AVG_HEIGHT = 5.0; //avg z-height must be  at least this many mm to preserve as blob
 
 
@@ -155,10 +161,16 @@ public:
             Eigen::Vector4f box_pt_max, vector<int> &indices);
 
 
+   /* void blob_finder(vector<float> &x_centroids_wrt_robot, vector<float> &y_centroids_wrt_robot,
+        vector<float> &avg_z_heights,
+        vector<float> &npts_blobs,
+        vector<int> &viable_labels); */
+    
     void blob_finder(vector<float> &x_centroids_wrt_robot, vector<float> &y_centroids_wrt_robot,
         vector<float> &avg_z_heights,
         vector<float> &npts_blobs,
-        vector<int> &viable_labels);
+        vector<int> &viable_labels,
+        float min_blob_avg_ht= MIN_BLOB_AVG_HEIGHT, float min_blob_pixels=MIN_BLOB_PIXELS);
 
     Eigen::Affine3f compute_affine_cam_wrt_torso_lift_link(void);
     float find_table_height(pcl::PointCloud<pcl::PointXYZRGB>::Ptr input_cloud_ptr, double z_min, double z_max, double dz);
@@ -167,6 +179,8 @@ public:
     void find_orientation(Eigen::MatrixXf points_mat, float &orientation, geometry_msgs::Quaternion &quaternion);
     
     sensor_msgs::PointCloud2 ros_cloud_, downsampled_cloud_, ros_box_filtered_cloud_, ros_crop_filtered_cloud_, ros_pass_filtered_cloud_; //here are ROS-compatible messages
+    cv_bridge::CvImage black_and_white_, blobbed_image_;
+
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr pclCam_clr_ptr_; //(new pcl::PointCloud<pcl::PointXYZRGB>); //pointer for color version of pointcloud
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr downsampled_cloud_ptr_; //(new pcl::PointCloud<pcl::PointXYZRGB>); //ptr to hold filtered Kinect image
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr box_filtered_cloud_ptr_; //(new pcl::PointCloud<pcl::PointXYZRGB>); //ptr to hold filtered Kinect image
@@ -179,6 +193,8 @@ public:
     ros::Publisher pubBoxFilt_; // = nh.advertise<sensor_msgs::PointCloud2> ("box_filtered_pcd", 1);  
     ros::Publisher pubCropFilt_;
     ros::Publisher pubPassFilt_;
+    ros::Publisher pubBWImage_;
+    ros::Publisher pubSegmentedBlob_;
 
 
 
@@ -201,5 +217,7 @@ public:
             vector<float> &avg_z_heights, vector<float> &npts_blobs,  vector<geometry_msgs::PoseStamped> &object_poses); 
     
     double table_height_;
+    double max_lambda_,min_lambda_,mid_lambda_;
+    vector<double> max_evals_,mid_evals_,min_evals_;
     
 };

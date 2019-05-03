@@ -44,6 +44,7 @@ void objectFinderDoneCb(const actionlib::SimpleClientGoalState& state,
                  perceived_object_pose.pose.orientation.y,
                  perceived_object_pose.pose.orientation.z,
                  perceived_object_pose.pose.orientation.w);
+            ROS_INFO_STREAM(perceived_object_pose<<endl);
             g_perceived_object_poses.push_back(perceived_object_pose);
         }
          //g_pose_publisher->publish(g_perceived_object_pose);
@@ -56,8 +57,19 @@ void objectFinderDoneCb(const actionlib::SimpleClientGoalState& state,
 int main(int argc, char** argv) {
     ros::init(argc, argv, "example_object_finder_action_client"); // name this node 
     ros::NodeHandle nh; //standard ros node handle    
+    ros::Publisher pose_publisher = nh.advertise<geometry_msgs::PoseStamped>("triad_display_pose", 1, true);
+    geometry_msgs::PoseStamped desired_triad_pose;
+    desired_triad_pose.pose.position.x = 0.0;
+    desired_triad_pose.pose.position.y = 0.0;
+    desired_triad_pose.pose.position.z = 0.0;
+    desired_triad_pose.pose.orientation.x = 0.0;
+    desired_triad_pose.pose.orientation.y = 0.0;
+    desired_triad_pose.pose.orientation.z = 0.0;
+    desired_triad_pose.pose.orientation.w = 1.0;
+    desired_triad_pose.header.stamp = ros::Time::now();
+    desired_triad_pose.header.frame_id = "torso_lift_link";    
     
-    
+    geometry_msgs::PoseStamped perceived_object_pose;    
     actionlib::SimpleActionClient<object_finder::objectFinderAction> object_finder_ac("object_finder_action_service", true);
     
     // attempt to connect to the server:
@@ -70,18 +82,17 @@ int main(int argc, char** argv) {
         ROS_INFO("retrying...");
     }
     ROS_INFO("connected to object_finder action server"); // if here, then we connected to the server; 
-    ros::Publisher pose_publisher = nh.advertise<geometry_msgs::PoseStamped>("triad_display_pose", 1, true); 
     g_pose_publisher = &pose_publisher;
     object_finder::objectFinderGoal object_finder_goal;
     //object_finder::objectFinderResult object_finder_result;
     int part_index;
-    cout<<"enter index for desired part:"<<endl<<"GEARBOX_TOP = 1"<<endl<<"GEARBOX_BOTTOM = 2"<<endl<<"BOLT = 3"<<endl<<"SMALL_GEAR = 4"<<endl<<"LARGE_GEAR = 5"<<endl<<"TOTE=6"<<endl;
+    cout<<"enter index for desired part:"<<endl<<"GEARBOX_BOTTOM = 1"<<endl<<"GEARBOX_TOP = 2"<<endl<<"BOLT = 3"<<endl<<"SMALL_GEAR = 4"<<endl<<"LARGE_GEAR = 5"<<endl<<"TOTE=6"<<endl;
     cout<<"enter  0 for fake part (hardcoded pose: "<<endl;
     cout<<"enter part index: ";
     cin>>part_index;
     switch(part_index) {
         case 0: object_finder_goal.object_id = part_codes::part_codes::FAKE_PART;
-            break;
+        break;
         case 1: object_finder_goal.object_id = part_codes::part_codes::GEARBOX_TOP;
         break;
         case 2: object_finder_goal.object_id = part_codes::part_codes::GEARBOX_BOTTOM;
@@ -111,8 +122,26 @@ int main(int argc, char** argv) {
         
     if (g_found_object_code == object_finder::objectFinderResult::OBJECT_FOUND)   {
         ROS_INFO("found object(s)!");
-        return 0;
+        int blob_num;
+        int n_blobs = g_perceived_object_poses.size();
+        while  (true) {
+            cout<<"enter blob number, 0 through "<<n_blobs-1<<": ";
+            cin>>blob_num;
+            desired_triad_pose = g_perceived_object_poses[blob_num];
+
+            desired_triad_pose.header.stamp = ros::Time::now();
+            //publish the desired frame pose to be displayed as a triad marker:   
+           
+            for (int i=0;i<10;i++) {
+                pose_publisher.publish(desired_triad_pose);
+                ros::Duration(0.1).sleep();
+            }
+        
+        }
     }    
+        
+
+        
     else {
         ROS_WARN("object not found!:");
         return 1;

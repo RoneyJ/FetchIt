@@ -14,6 +14,12 @@ include_directories(${PCL_INCLUDE_DIRS})
 #uncomment the following 4 lines to use the Eigen library
 find_package(cmake_modules REQUIRED)
 find_package(Eigen3 REQUIRED)
+#use for display image
+find_package(cv_bridge)
+find_package(image_transport)
+find_package(message_generation)
+find_package(sensor_msgs)
+find_package(std_msgs)
 include_directories(${EIGEN3_INCLUDE_DIR})
 add_definitions(${EIGEN_DEFINITIONS})
 
@@ -33,10 +39,11 @@ cs_add_library(object_finder_as src/object_finder_as.cpp)
 # may add more of these lines for more nodes from the same package
 cs_add_executable(object_finder_main src/object_finder_main.cpp)
 cs_add_executable(example_object_finder_action_client src/example_object_finder_action_client.cpp)
-#cs_add_executable(example_tote_finder_action_client src/example_tote_finder_action_client.cpp)
+cs_add_executable(example_tote_finder_action_client src/example_tote_finder_action_client.cpp)
 #the following is required, if desire to link a node in this package with a library created in this same package
 # edit the arguments to reference the named node and named library within this package
-target_link_libraries(object_finder_main object_finder_as)
+
+target_link_libraries(object_finder_main object_finder_as ${OpenCV_LIBS})
 
 cs_install()
 cs_export()

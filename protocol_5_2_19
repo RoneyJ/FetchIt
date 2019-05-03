@@ -1,0 +1,11 @@
+5/2/19 protocol:
+objective is to test object finders
+
+*position robot in front of table (use navigator?)
+  --start w/ simple gearbox bottom case
+  --robot grabs part and drops it in fake tote (?)  or simply lifts part, then drops it on table
+  --or robot grabs part, lifts, rotates, places back on table, re-grabs; repeat
+
+  coord grabber that prompts user for part ID;
+     rosrun cartesian_motion_commander fetch_cartesian_interactive_ac
+     prompts for bagging; include topic: triad_display_pose

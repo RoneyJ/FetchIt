@@ -199,7 +199,7 @@ void ObjectFinder::find_orientation(Eigen::MatrixXf points_mat, float &orientati
     // real-valued evals/evecs;  we'll need to strip off the real parts of the solution
 
     evals = es3f.eigenvalues().real(); // grab just the real parts
-    //cout<<"real parts of evals: "<<evals.transpose()<<endl;
+    ROS_INFO_STREAM("real parts of evals: "<<evals.transpose()<<endl); 
 
     // our solution should correspond to an e-val of zero, which will be the minimum eval
     //  (all other evals for the covariance matrix will be >0)
@@ -207,6 +207,9 @@ void ObjectFinder::find_orientation(Eigen::MatrixXf points_mat, float &orientati
 
     double min_lambda = evals[0]; //initialize the hunt for min eval
     double max_lambda = evals[0]; // and for max eval
+    int min_eval_index=0;
+    int max_eval_index=0;
+    int mid_eval_index=0;
     //Eigen::Vector3cf complex_vec; // here is a 3x1 vector of double-precision, complex numbers
     //Eigen::Vector3f evec0, evec1, evec2; //, major_axis; 
     //evec0 = es3f.eigenvectors().col(0).real();
@@ -239,14 +242,30 @@ void ObjectFinder::find_orientation(Eigen::MatrixXf points_mat, float &orientati
         if (lambda_test < min_lambda) {
             min_lambda = lambda_test;
             i_normal = ivec; //this index is closer to index of min eval
+            min_eval_index = ivec;
             plane_normal_ = es3f.eigenvectors().col(i_normal).real();
         }
         if (lambda_test > max_lambda) {
             max_lambda = lambda_test;
             i_major_axis = ivec; //this index is closer to index of min eval
             major_axis_ = es3f.eigenvectors().col(i_major_axis).real();
+            max_eval_index= ivec;
         }
     }
+    
+    max_lambda_ = max_lambda;
+    min_lambda_ = min_lambda;
+    
+    
+    mid_eval_index =0;
+    if (max_eval_index==0 ||min_eval_index==0) { //can't be 0; try 1
+        mid_eval_index = 1;
+        if (max_eval_index==1 ||min_eval_index==1) //can't be 1, must be 2
+            mid_eval_index = 2;
+    }
+    mid_lambda_ =  evals[mid_eval_index];
+    
+    ROS_INFO("max_lambda = %f; max/mid lambda ratio = %f",max_lambda,max_lambda/mid_lambda_);
 
     float x_component = major_axis_(0);
     float y_component = -major_axis_(1);
@@ -287,13 +306,18 @@ void ObjectFinder::find_orientation(Eigen::MatrixXf points_mat, float &orientati
 void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<float> &y_centroids_wrt_robot,
         vector<float> &avg_z_heights,
         vector<float> &npts_blobs,
-        vector<int> &viable_labels) {
+        vector<int> &viable_labels,
+        float min_blob_avg_ht, float min_blob_pixels) {
 
     x_centroids_wrt_robot.clear();
     y_centroids_wrt_robot.clear();
     avg_z_heights.clear();
     npts_blobs.clear();
     viable_labels_.clear();
+    max_evals_.clear();
+    mid_evals_.clear();
+    min_evals_.clear();
+
     //openCV function to do all the  hard work
     int nLabels = connectedComponents(g_bw_img, g_labelImage, 8); //4 vs 8 connected regions
 
@@ -344,8 +368,8 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
     //filter to  keep only blobs that are high enough and large enough
     for (int label = 0; label < nLabels; ++label) {
         ROS_INFO("label %d has %d points and  avg height %f:", label, (int) temp_npts_blobs[label], temp_avg_z_heights[label]);
-        if (temp_avg_z_heights[label] > MIN_BLOB_AVG_HEIGHT) { //rejects the table surface
-            if (temp_npts_blobs[label] > MIN_BLOB_PIXELS) {
+        if (temp_avg_z_heights[label] > min_blob_avg_ht) { //rejects the table surface
+            if (temp_npts_blobs[label] > min_blob_pixels) {
                 //ROS_INFO("label %d has %f points:",label,temp_npts_blobs[label]);
                 x_centroids_wrt_robot.push_back(temp_x_centroids[label]);
                 y_centroids_wrt_robot.push_back(temp_y_centroids[label]);
@@ -365,46 +389,43 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
     //also compute centroids;
     nLabels = viable_labels.size(); //new number of labels, after filtering
     ROS_INFO("found %d viable labels ", nLabels);
-    /*
-    std::vector<Vec3b> colors(nLabels);
-    colors[0] = Vec3b(0, 0, 0); //make the background black
-    //assign random color to each region label
-    for (int label = 1; label < nLabels; ++label) {
-        colors[label] = Vec3b((rand()&255), (rand()&255), (rand()&255));
-    }
-     * */
+   
 
     g_orientations.clear();
     g_vec_of_quat.clear();
     Eigen::Vector3f e_pt;
 
-    for (int label = 0; label < nLabels; label++) {
-        cout << "label = " << label << endl;
-        int npts_blob = npts_blobs[label];
-        cout << "npts_blob = " << npts_blob << endl;
-        /* FIX ME!!
+    for (int label_index = 0; label_index < nLabels; label_index++) {
+        int label = viable_labels[label_index];
+        //cout << "label = " << label << endl;
+        int npts_blob = npts_blobs[label_index];
+        //cout << "npts_blob = " << npts_blob << endl;
         Eigen::MatrixXf blob(3, npts_blob);
         int col_num = 0;
         for (int r = 0; r < g_dst.rows; ++r) {
                 for (int c = 0; c < g_dst.cols; ++c){
                         int label_num = g_labelImage.at<int>(r,c);
                         if(label_num == label){
-                                e_pt<<c,r,0.0;
+                                e_pt<< (float) c, (float) r,0.0;
                                 blob.col(col_num) = e_pt;
+                                //ROS_INFO_STREAM("col "<<e_pt.transpose()<<" at col "<<col_num<<endl);
                                 col_num++;
                         }
                 }
         }
-         * */
 
 
         float angle;
         geometry_msgs::Quaternion quat;
-        quat = xformUtils.convertPlanarPsi2Quaternion(angle);
-        //find_orientation(blob, angle, quat);  //FIX ME!!
+        find_orientation(blob, angle, quat);  
+        max_evals_.push_back(max_lambda_);
+        mid_evals_.push_back(mid_lambda_);
+        min_evals_.push_back(min_lambda_); //all zeros?
         //add pi/2 to factor in rotated camera frame wrt robot
-        angle = 0.0; //FIX ME!!
+        //angle = 0.0; //FIX ME!!
         g_orientations.push_back(angle);
+        //quat = xformUtils.convertPlanarPsi2Quaternion(angle);
+        
         g_vec_of_quat.push_back(quat);
     }
 
@@ -420,8 +441,35 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
     }
     //xxx
 
+    //!Here actually colorize the image for debug purposes:
+    //colorize the regions; optionally display them:
+    if(nLabels > 0) {
+    	std::vector<Vec3b> colors(nLabels);
+	    colors[0] = Vec3b(0, 0, 0);//background
+	    //assign random color to each region label
+	    for(int label = 1; label < nLabels; ++label){
+	        colors[label] = Vec3b( (rand()&155+100), (rand()&155+100), (rand()&155+100) );
+	    }
+	    
+	    //for display image, assign colors to regions
+	    for(int r = 0; r < g_dst.rows; ++r){
+	        for(int c = 0; c < g_dst.cols; ++c){
+	            int label = g_labelImage.at<int>(r, c);
+	            Vec3b &pixel = g_dst.at<Vec3b>(r, c);
+	            pixel = colors[label];
+	        }
+		}
+    }
 
-
+    //! Display the image!
+    //* Blob Image Show
+    blobbed_image_.header = ros_cloud_.header;
+    blobbed_image_.encoding = sensor_msgs::image_encodings::TYPE_8UC3;
+    blobbed_image_.image = g_dst;
+    //* 2D BW Image Show
+    black_and_white_.header = ros_cloud_.header;
+    black_and_white_.encoding = sensor_msgs::image_encodings::MONO8;
+    black_and_white_.image = g_bw_img;
 }
 
 
@@ -464,5 +512,10 @@ void ObjectFinder::convert_transformed_cloud_to_2D(pcl::PointCloud<pcl::PointXYZ
         }
 
     }
+    
+        //* 2D BW Image Show
+    black_and_white_.header = ros_cloud_.header;
+    black_and_white_.encoding = sensor_msgs::image_encodings::MONO8;
+    black_and_white_.image = g_bw_img;
 }
 

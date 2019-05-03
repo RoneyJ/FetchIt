@@ -21,4 +21,12 @@ roscd pcd_images;  rosrun pcl_utils display_pcd_file
 `rosrun object_finder object_finder_as`
 `rosrun object_finder example_object_finder_action_client`
 
+##update 5/1/19:
+start a  bag file (rosbag play ...) and start up rviz.
+Display items:  various pointcloud2 topics, e.g. /object_finder/box_filtered_pcd,  and Marker w/ topic triad_display  
+
+`rosrun example_rviz_marker triad_display`  
+`rosrun object_finder object_finder_as`  
+`rosrun object_finder example_object_finder_action_client`  
+
 
