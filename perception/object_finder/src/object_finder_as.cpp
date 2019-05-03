@@ -5,7 +5,7 @@
 //#include "wsn_gearbox_finder_fncs.cpp"
 #include "gearbox_finder_fncs.cpp"
 
-#include "tote_finder_fncs.cpp"
+#include "wsn_tote_finder_fncs.cpp" 
 //#include "gear_finder_fncs.cpp"
 #include "wsn_gear_finder_fncs.cpp"
 

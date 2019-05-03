@@ -512,5 +512,10 @@ void ObjectFinder::convert_transformed_cloud_to_2D(pcl::PointCloud<pcl::PointXYZ
         }
 
     }
+    
+        //* 2D BW Image Show
+    black_and_white_.header = ros_cloud_.header;
+    black_and_white_.encoding = sensor_msgs::image_encodings::MONO8;
+    black_and_white_.image = g_bw_img;
 }
 
