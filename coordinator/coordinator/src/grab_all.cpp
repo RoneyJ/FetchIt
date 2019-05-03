@@ -163,7 +163,7 @@ int main(int argc, char** argv) {
     // Manual pause for testing
     cout<<"Enter 1 to attempt grasp: ";
     cin>>ans;
-    partCode = part_codes::part_codes::TOTE;
+    //partCode = part_codes::part_codes::TOTE;
     ROS_INFO("Attempting to grasp chosen part");
     success = movePart.get_part(partCode, source_pose);
     
