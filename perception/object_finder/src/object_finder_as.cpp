@@ -2,10 +2,14 @@
 // Wyatt Newman, 2/2019
 #include<object_finder_as/object_finder.h>
 #include "object_finder_helper_fncs.cpp"
+//#include "wsn_gearbox_finder_fncs.cpp"
 #include "gearbox_finder_fncs.cpp"
-#include "tote_finder_fncs.cpp"
-#include "gear_finder_fncs.cpp"
-#include "bolt_finder_fncs.cpp"
+
+#include "wsn_tote_finder_fncs.cpp" 
+//#include "gear_finder_fncs.cpp"
+#include "wsn_gear_finder_fncs.cpp"
+
+#include "bolt_finder_fncs.cpp" 
 
 ObjectFinder::ObjectFinder() :
 object_finder_as_(nh_, "object_finder_action_service", boost::bind(&ObjectFinder::executeCB, this, _1), false), pclCam_clr_ptr_(new PointCloud<pcl::PointXYZRGB>),
@@ -56,6 +60,10 @@ void ObjectFinder::initializePublishers() {
     pubBoxFilt_ = nh_.advertise<sensor_msgs::PointCloud2> ("/object_finder/box_filtered_pcd", 1, true);
     pubCropFilt_ = nh_.advertise<sensor_msgs::PointCloud2> ("/object_finder/crop_filtered_pcd", 1, true);
     pubPassFilt_ = nh_.advertise<sensor_msgs::PointCloud2> ("/object_finder/pass_filtered_pcd", 1, true);
+    
+    //! Addition for publishsing imgae instead of using CV imshow
+    pubBWImage_ = nh_.advertise<sensor_msgs::Image>("/object_finder/Black_and_White",1,true);
+    pubSegmentedBlob_ =nh_.advertise<sensor_msgs::Image>("/object_finder/Blobbed_Image",1,true);
 }
 
 void ObjectFinder::headcamCB(const sensor_msgs::PointCloud2ConstPtr& cloud) {
@@ -162,7 +170,7 @@ void ObjectFinder::executeCB(const actionlib::SimpleActionServer<object_finder::
         case part_codes::part_codes::GEARBOX_BOTTOM:
             found_object = find_gearbox_bottoms(table_height_, g_x_centroids_wrt_robot, g_y_centroids_wrt_robot, g_avg_z_heights, g_npts_blobs,  object_poses); //special case for gearbox_top; WRITE ME!
             if (found_object) {
-                ROS_INFO("found gearbox_top objects");
+                ROS_INFO("found gearbox_bottom objects");
                 result_.found_object_code = object_finder::objectFinderResult::OBJECT_FOUND;
                 result_.object_poses.clear();
                 int nposes = object_poses.size();
@@ -202,7 +210,7 @@ void ObjectFinder::executeCB(const actionlib::SimpleActionServer<object_finder::
         case part_codes::part_codes::BOLT:
             found_object = find_bolts(table_height_, g_x_centroids_wrt_robot, g_y_centroids_wrt_robot, g_avg_z_heights, g_npts_blobs,  object_poses); //special case for gearbox_top; WRITE ME!
             if (found_object) {
-                ROS_INFO("found gearbox_top objects");
+                ROS_INFO("found bolt objects");
                 result_.found_object_code = object_finder::objectFinderResult::OBJECT_FOUND;
                 result_.object_poses.clear();
                 int nposes = object_poses.size();
@@ -219,7 +227,7 @@ void ObjectFinder::executeCB(const actionlib::SimpleActionServer<object_finder::
         case part_codes::part_codes::SMALL_GEAR:
             found_object = find_small_gears(table_height_, g_x_centroids_wrt_robot, g_y_centroids_wrt_robot, g_avg_z_heights, g_npts_blobs,  object_poses); //special case for gearbox_top; WRITE ME!
             if (found_object) {
-                ROS_INFO("found gearbox_top objects");
+                ROS_INFO("found small gear objects");
                 result_.found_object_code = object_finder::objectFinderResult::OBJECT_FOUND;
                 result_.object_poses.clear();
                 int nposes = object_poses.size();
@@ -236,7 +244,7 @@ void ObjectFinder::executeCB(const actionlib::SimpleActionServer<object_finder::
         case part_codes::part_codes::LARGE_GEAR:
             found_object = find_large_gears(table_height_, g_x_centroids_wrt_robot, g_y_centroids_wrt_robot, g_avg_z_heights, g_npts_blobs, object_poses); //special case for gearbox_top; WRITE ME!
             if (found_object) {
-                ROS_INFO("found gearbox_top objects");
+                ROS_INFO("found large gear objects");
                 result_.found_object_code = object_finder::objectFinderResult::OBJECT_FOUND;
                 result_.object_poses.clear();
                 int nposes = object_poses.size();

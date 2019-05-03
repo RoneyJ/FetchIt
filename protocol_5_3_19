@@ -1,0 +1,19 @@
+protocol for May 3:
+
+*start up robot; pre-position arm, torso, head
+*do nav init (wiggle)
+*try coordinator...
+
+  *go to gearbox table
+   grab a part
+   (put in tote?)
+
+  *go to shunk table
+   grab a large gear
+   (put in tote?)
+
+  *go to bolt table
+   grab a bolt
+   (put in tote?)
+
+
