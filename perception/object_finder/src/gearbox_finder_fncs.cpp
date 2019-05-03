@@ -20,8 +20,8 @@ const double TABLE_GRASP_CLEARANCE_GEARBOX = 0.01; //determines how high away fr
 
 //! Magic Number for seperating gearbox:
 //* Penalty Value
-const float HEIGHT_PENALTY = 1.05;
-const float POINTS_PENALTY = 1.2;
+const float HEIGHT_PENALTY = 1.2;
+const float POINTS_PENALTY = 1.5;
 const float POSE_PENALTY = 1.1;
 //const float DITCH_THREASHOLD = 0
 //* Gearbox bottom facing up
@@ -36,13 +36,13 @@ const float GEARBOX_BOTTOM_SIDE_PTS = 925;
 
 //* Gearbox top facing up
 const float GEARBOX_TOP_UP_PTS = 860;
-const float GEARBOX_TOP_UP_Z = 130;
+const float GEARBOX_TOP_UP_Z = 120;
 //* Gearbox top facing down
 const float GEARBOX_TOP_DOWN_Z = 150;
 const float GEARBOX_TOP_DOWN_PTS = 1170;
-//* Gearbox bottom sideway
-const float GEARBOX_TOP_SIDE_Z = 135;
-const float GEARBOX_TOP_SIDE_PTS = 925;
+//* Gearbox top sideway
+const float GEARBOX_TOP_SIDE_Z = 125;
+const float GEARBOX_TOP_SIDE_PTS = 340;
 
 //! Local Tool Kit:
 
