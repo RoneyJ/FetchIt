@@ -441,7 +441,7 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
     }
     //xxx
 
-    //Here actually colorize the image for debug purposes:
+    //!Here actually colorize the image for debug purposes:
     //colorize the regions; optionally display them:
     if(nLabels > 0) {
     	std::vector<Vec3b> colors(nLabels);
@@ -461,26 +461,15 @@ void ObjectFinder::blob_finder(vector<float> &x_centroids_wrt_robot, vector<floa
 		}
     }
 
-    //! Supress following before actually running!
-    
-    //cv::imshow("BW_IMG", g_bw_img);
-	//cv::imshow("Connected_Parts", g_dst);
-    //ROS_ERROR("Enter wait key...");
-    //cv::waitKey(0);
-    //ROS_ERROR("Exit wait key...");
-
-    // cv_bridge::CvImagePtr cv_ptr;
-    // try {
-    //     cv_ptr = cv_bridge::toCvCopy(srcImg, sensor_msgs::image_encodings::BGR8);
-    // }
-    // catch (cv_bridge::Exception& e) {
-    //     ROS_ERROR("cv_bridge exception: %s", e.what());
-    //     return;
-    // }    
-    // cvtColor(cv_ptr_bw->image,g_dst,CV_BGR2RGB);
-    // cv_bridge::CvImage imgBridge = cv_bridge::CvImage(std_msgs::Header(), sensor_msgs::image_encodings::RGB8, img);
-    // imgBridge.toImageMsg(black_and_white_);
-    
+    //! Display the image!
+    //* Blob Image Show
+    blobbed_image_.header = ros_cloud_.header;
+    blobbed_image_.encoding = sensor_msgs::image_encodings::TYPE_8UC3;
+    blobbed_image_.image = g_dst;
+    //* 2D BW Image Show
+    black_and_white_.header = ros_cloud_.header;
+    black_and_white_.encoding = sensor_msgs::image_encodings::MONO8;
+    black_and_white_.image = g_bw_img;
 }
 
 
