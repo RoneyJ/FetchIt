@@ -168,6 +168,7 @@ int main(int argc, char** argv) {
 
     ROS_INFO("Attempting to grasp chosen part");
     success = movePart.get_part(partCode, source_pose);
+  
     if(!success){
         ROS_ERROR("Failed to get part");
         return 0;
@@ -185,6 +186,9 @@ int main(int argc, char** argv) {
     }
     ros::Duration(3.0).sleep();
 
+    cout<<"enter 1 to attempt stowing grasped  part in kit: ";
+    cin>>ans;
+  
     // Place the part in the kit
     switch(partCode){
         case part_codes::part_codes::GEARBOX_TOP:
@@ -219,8 +223,9 @@ int main(int argc, char** argv) {
             
             break;
         default:
-            ROS_WARN("Unrecognized part");
-            break;
+            ROS_WARN("no dropoff case for this part! ");
+            movePart.release_grasped_part(); //drop the part back on the table
+            return 0;
     }
 
     if(!success){
@@ -229,8 +234,9 @@ int main(int argc, char** argv) {
     }
 
     ros::Duration(3.0).sleep();
-    ROS_INFO("Attempting to move arm to preset");
-    success = movePart.preset_arm();
+
+    ROS_INFO("Attempting to recover from dropoff");
+    success = movePart.recover_from_dropoff();
 
 
 
