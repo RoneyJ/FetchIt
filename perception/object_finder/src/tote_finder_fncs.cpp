@@ -104,7 +104,10 @@ bool ObjectFinder::find_totes(float table_height, vector<float> &x_centroids_wrt
     // Draw the lines
     ROS_INFO("Started drawing lines");
     
-   
+    if(linesP.size() <= 0){
+    	ROS_WARN("no lines detected, ending");
+    	return false;
+    }
    
     p1=Point(linesP[0][0], linesP[0][1]);
     p2=Point(linesP[0][2], linesP[0][3]);
@@ -146,28 +149,28 @@ bool ObjectFinder::find_totes(float table_height, vector<float> &x_centroids_wrt
     test_group1 = count_bigger(angle_group1);
     test_group2 = count_bigger(angle_group2);
 
-    //cout<<"Group 1 degrees"<<endl;
+    cout<<"Group 1 degrees"<<endl;
     for(size_t i = 0; i < test_group1.size(); i++){
         sum_group1 += test_group1[i];
-       // cout<<"deg = "<<test_group1[i]<<endl;
+        cout<<"deg = "<<test_group1[i]<<endl;
     }
-    //cout<<"group 2 degrees"<<endl;
+    cout<<"group 2 degrees"<<endl;
     for(size_t i = 0; i < test_group2.size(); i++){
         sum_group2 += test_group2[i];
-        //cout<<"deg = "<<test_group2[i]<<endl;
+        cout<<"deg = "<<test_group2[i]<<endl;
     }
 
-   // cout<<"group 1 lengths"<<endl;
+   cout<<"group 1 lengths"<<endl;
 
     for(int i = 0; i < length_group1.size(); i++){
         cout<<length_group1[i]<<endl;
-        if(length_group1[i] <= 60 && length_group1[i] >= 40)
+        if(length_group1[i] >= 85)//length_group1[i] <= 60 && length_group1[i] >= 40)
                 num_short_1++;
     }
-    //cout<<"group 2 lengths"<<endl;
+    cout<<"group 2 lengths"<<endl;
     for(int i = 0; i < length_group2.size(); i++){ 
         cout<<length_group2[i]<<endl;
-        if(length_group2[i] <= 60 && length_group2[i] >= 40)
+        if(length_group2[i] >= 85)//length_group2[i] <= 60 && length_group2[i] >= 40)
                 num_short_2++;
     }
 
@@ -182,13 +185,13 @@ bool ObjectFinder::find_totes(float table_height, vector<float> &x_centroids_wrt
     //changed how to choose test group properly**
     //PARSE THROUGH GROUPS, FIND ONE WITH LESS LENGTHS BETWEEN 45-60(? FINE TUNE), CHOOSE AS TEST
     
-    if(num_short_1 <= num_short_2){
-        kit_orientation = sum_group1 / float(test_group1.size());
-        test_group = line_group1;
+    if(num_short_1 < num_short_2+1){
+        kit_orientation = sum_group2 / float(test_group2.size());
+        test_group = line_group2;
     }
     else{
-        kit_orientation = sum_group2/ float(test_group2.size());
-        test_group = line_group2;
+        kit_orientation = sum_group1/ float(test_group1.size());
+        test_group = line_group1;
     }
 
     cout << "Orientation of kit is: " << kit_orientation << endl;

@@ -5,7 +5,7 @@
 //#include "wsn_gearbox_finder_fncs.cpp"
 #include "gearbox_finder_fncs.cpp"
 
-#include "wsn_tote_finder_fncs.cpp" 
+#include "tote_finder_fncs.cpp" 
 //#include "gear_finder_fncs.cpp"
 #include "wsn_gear_finder_fncs.cpp"
 
@@ -201,6 +201,7 @@ void ObjectFinder::executeCB(const actionlib::SimpleActionServer<object_finder::
                 }
                 object_finder_as_.setSucceeded(result_);
             } else {
+                result_.found_object_code = object_finder::objectFinderResult::OBJECT_CODE_NOT_RECOGNIZED;
                 ROS_WARN("could not find requested object");
                 object_finder_as_.setAborted(result_);
             }
