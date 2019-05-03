@@ -141,20 +141,19 @@ bool ObjectFinder::find_large_gears(float table_height, vector<float> &x_centroi
 }
 else return false;
 
-        vector<Vec3b> 
-        
+        vector<pair<int, Vec3b>> blob_pixels;
+
         for (int r = 0; r < g_dst.rows; ++r) {
                 for (int c = 0; c < g_dst.cols; ++c) {
                     int label = g_labelImage.at<int>(r, c);
-                    Vec3b &pixel = g_dst.at<Vec3b>(r, c);
-                    pixel = colors[label];
-                    temp_y_centroids[label] += c; //robot y-direction corresponds to columns--will negate later
-                    temp_x_centroids[label] += r; //robot x-direction corresponds to rows--will negate later
-                    temp_npts_blobs[label] += 1.0;
-                    double zval = (float) g_bw_img(r, c);
-                    temp_avg_z_heights[label] += zval; //check the  order of this
+                    if (temp_avg_z_heights[label] > min_blob_avg_ht) { //rejects the table surface
+                         if (temp_npts_blobs[label] > min_blob_pixels) {
+                             Vec3b &pixel = g_dst.at<Vec3b>(r, c);
+                             blob_pixels.push_back(make_pair(label, pixel));
+                         }
+                     }
                 }
-            }
+        }
 
 }
 
