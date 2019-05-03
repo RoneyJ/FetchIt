@@ -34,9 +34,6 @@ int main(int argc, char** argv) {
     cout << g_affine_kinect_wrt_base.linear() << endl;
     cout << "affine offset: " << g_affine_kinect_wrt_base.translation().transpose() << endl;
      */
-    //namedWindow("BW_IMG",WINDOW_AUTOSIZE);
-    //namedWindow("Connected_Parts",WINDOW_AUTOSIZE);
-
     ROS_INFO("going into spin");
     // from here, all the work is done in the action server, with the interesting stuff done within "executeCB()"
     while (ros::ok()) {
@@ -49,11 +46,10 @@ int main(int argc, char** argv) {
         object_finder_as.pubCropFilt_.publish(object_finder_as.ros_crop_filtered_cloud_); //ditto for filtered point cloud   
         object_finder_as.pubPassFilt_.publish(object_finder_as.ros_pass_filtered_cloud_); //ditto for filtered point cloud   
 
-       /* 
         //! Publishes the debug image topic
-        object_finder_as.pubBWImage_.publish(object_finder_as.black_and_white_);
-        object_finder_as.pubSegmentedBlob_.publish(object_finder_as.blobbed_image_);
-        */
+        object_finder_as.pubBWImage_.publish(object_finder_as.black_and_white_.toImageMsg());
+        object_finder_as.pubSegmentedBlob_.publish(object_finder_as.blobbed_image_.toImageMsg());
+        
         ros::Duration(0.1).sleep();
     }
 

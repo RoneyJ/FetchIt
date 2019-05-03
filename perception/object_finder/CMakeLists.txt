@@ -14,6 +14,12 @@ include_directories(${PCL_INCLUDE_DIRS})
 #uncomment the following 4 lines to use the Eigen library
 find_package(cmake_modules REQUIRED)
 find_package(Eigen3 REQUIRED)
+#use for display image
+find_package(cv_bridge)
+find_package(image_transport)
+find_package(message_generation)
+find_package(sensor_msgs)
+find_package(std_msgs)
 include_directories(${EIGEN3_INCLUDE_DIR})
 add_definitions(${EIGEN_DEFINITIONS})
 
