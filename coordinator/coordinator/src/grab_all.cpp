@@ -167,9 +167,32 @@ int main(int argc, char** argv) {
     ROS_INFO("Attempting to grasp chosen part");
     success = movePart.get_part(partCode, source_pose);
     
-    movePart.release_grasped_part(); //drop the tote back on the table
-    ros::Duration(3.0).sleep();
-
+    cout<<"enter 1 to attempt stowing grasped  part in kit: ";
+    cin>>ans;
+    switch(partCode) {
+        case part_codes::part_codes::GEARBOX_TOP:
+        case part_codes::part_codes::GEARBOX_BOTTOM:
+            success = movePart.move_to_dropoff_kit1();
+            success = movePart.recover_from_dropoff();
+            break;        
+            
+        case  part_codes::part_codes::BOLT:   
+            success = movePart.move_to_dropoff_kit2();
+            success = movePart.recover_from_dropoff();
+            break;         
+            
+        case  part_codes::part_codes::SMALL_GEAR:
+        case  part_codes::part_codes::LARGE_GEAR:
+            success = movePart.move_to_dropoff_kit3();
+            success = movePart.recover_from_dropoff();
+            break;        
+        default:
+            ROS_WARN("no dropoff case for this part! ");
+            movePart.release_grasped_part(); //drop the tote back on the table
+            ros::Duration(3.0).sleep();            
+    }
+    
+    
     ROS_INFO("Attempting to move arm to preset");
     success = movePart.preset_arm();
 
