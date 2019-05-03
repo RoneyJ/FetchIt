@@ -175,16 +175,16 @@ int main(int argc, char** argv) {
     }
     ros::Duration(4.0).sleep();
 
-    //movePart.release_grasped_part(); //drop the part back on the table
-    //ros::Duration(3.0).sleep();
-
-    // ROS_INFO("Attempting to move arm to preset");
-    // success = movePart.preset_arm();
-    // if(!success){
-    //     ROS_ERROR("Failed to move to preset");
-    //     return 0;
-    // }
+    // movePart.release_grasped_part(); //drop the part back on the table
     // ros::Duration(3.0).sleep();
+
+    ROS_INFO("Attempting to move arm to preset");
+    success = movePart.preset_arm();
+    if(!success){
+        ROS_ERROR("Failed to move to preset");
+        return 0;
+    }
+    ros::Duration(3.0).sleep();
 
     cout<<"enter 1 to attempt stowing grasped  part in kit: ";
     cin>>ans;
