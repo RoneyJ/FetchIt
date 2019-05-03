@@ -34,7 +34,6 @@ int main(int argc, char** argv) {
     cout << g_affine_kinect_wrt_base.linear() << endl;
     cout << "affine offset: " << g_affine_kinect_wrt_base.translation().transpose() << endl;
      */
-
     ROS_INFO("going into spin");
     // from here, all the work is done in the action server, with the interesting stuff done within "executeCB()"
     while (ros::ok()) {

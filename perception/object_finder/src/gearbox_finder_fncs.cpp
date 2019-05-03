@@ -21,7 +21,7 @@ const double TABLE_GRASP_CLEARANCE_GEARBOX = 0.01; //determines how high away fr
 //! Magic Number for seperating gearbox:
 //* Penalty Value
 const float HEIGHT_PENALTY = 1.05;
-const float POINTS_PENALTY = 1.10;
+const float POINTS_PENALTY = 1.2;
 const float POSE_PENALTY = 1.1;
 //const float DITCH_THREASHOLD = 0
 //* Gearbox bottom facing up
@@ -50,7 +50,6 @@ void splitGearboxTopBottom(vector <int> &lookup_table, int part_id, vector<float
     lookup_table.clear();
     if (part_id == part_codes::part_codes::GEARBOX_BOTTOM){
         ROS_WARN("[gearbox_finder_fnc=seperation] Seperating for BOTTOM gearbox part now...");
-
        //! Vectors for temporarily storing scores and corresponding poses 
         vector <float> scores; 
         vector <int> poses;  //Up = 1; Down = 0; Side = 2
@@ -71,6 +70,7 @@ void splitGearboxTopBottom(vector <int> &lookup_table, int part_id, vector<float
             scoring_side = (HEIGHT_PENALTY * abs((temp_z-GEARBOX_BOTTOM_SIDE_Z))/GEARBOX_BOTTOM_SIDE_Z)+(POINTS_PENALTY * abs((temp_pts-GEARBOX_BOTTOM_SIDE_PTS)/GEARBOX_BOTTOM_SIDE_PTS));
             ROS_WARN("Scoring_SIDE is: %f",scoring_side);
             final_score = min( min(scoring_up, scoring_down), scoring_side);
+
             //! Determine what pose the object is, and remember the poses
             if(final_score == scoring_down){
                 poses.push_back(0);
@@ -83,6 +83,8 @@ void splitGearboxTopBottom(vector <int> &lookup_table, int part_id, vector<float
             }
             scores.push_back(final_score);
             lookup_table.push_back(counters);
+
+
         }
         //! SORTING!!!!
         for(int i = 0; i < total_blobs; i++){
@@ -102,6 +104,7 @@ void splitGearboxTopBottom(vector <int> &lookup_table, int part_id, vector<float
                 }
             }  
         }
+
         //! Printout for debug!
         for(int i = 0; i<total_blobs;i++){
             ROS_WARN("==================Scoring RESULT-- Find **BOTTOM** Part==================");
@@ -117,6 +120,7 @@ void splitGearboxTopBottom(vector <int> &lookup_table, int part_id, vector<float
         vector <int> poses;  //Up = 1; Down = 0; Side = 2
 
         //! Loop through all posible blobs
+
         int total_blobs = avg_z_heights.size();
         for(int counters = 0; counters < total_blobs; counters ++){
             float temp_z = avg_z_heights[counters];
@@ -169,6 +173,7 @@ void splitGearboxTopBottom(vector <int> &lookup_table, int part_id, vector<float
             ROS_WARN("[%d]-CONFIDENT PICK IS: %d, with error of: %f, with recognized pose of %d",i,lookup_table[i], scores[i],poses[i]);    
         }   
     }else {
+
         ROS_ERROR("[gearbox_finder_fnc=seperation] COMPONENT ID NOT KNOWN!");
     }
 }
