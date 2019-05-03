@@ -32,14 +32,18 @@ const float max_small_gear_pts = 250.0;
 const float min_large_gear_pts = 285.0;
 const float max_large_gear_pts = 900.0;
 
-
+bool sortbysec(const pair<int,int> &a, 
+              const pair<int,int> &b) 
+{ 
+    return (a.second < b.second); 
+} 
 bool ObjectFinder::find_small_gears(float table_height, vector<float> &x_centroids_wrt_robot, vector<float> &y_centroids_wrt_robot,
             vector<float> &avg_z_heights, vector<float> &npts_blobs,  vector<geometry_msgs::PoseStamped> &object_poses) {
-	geometry_msgs::PoseStamped object_pose;
-	object_poses.clear();
-	Eigen::Vector4f box_pt_min, box_pt_max;
-	vector<float> countours_area;
-	vector<float> countours_orientation;
+    geometry_msgs::PoseStamped object_pose;
+    object_poses.clear();
+    Eigen::Vector4f box_pt_min, box_pt_max;
+    vector<float> countours_area;
+    vector<float> countours_orientation;
     box_pt_min << MIN_X_g, MIN_Y_g, table_height + MIN_DZ_GEAR ,0; //1cm above table top
     box_pt_max << MAX_X_g, MAX_Y_g, table_height+ MAX_DZ_GEAR,0;
     ROS_INFO("Finding blobs");
@@ -61,11 +65,11 @@ bool ObjectFinder::find_small_gears(float table_height, vector<float> &x_centroi
     imwrite("gearimage.png",g_dst);
 
 
-	XformUtils transform;
+    XformUtils transform;
     int nlabels = viable_labels_.size();
     if ( nlabels>0)
     {
-    	
+        
     for (int label = 0; label < nlabels; ++label) {
         ROS_INFO("label %d has %d points and  avg height %f:", label, (int) npts_blobs[label], avg_z_heights[label]);
        // if (avg_z_heights[label] <= 91) 
@@ -73,17 +77,17 @@ bool ObjectFinder::find_small_gears(float table_height, vector<float> &x_centroi
             if (npts_blobs[label] >=  min_small_gear_pts && npts_blobs[label] <=  max_small_gear_pts ) {
                 cout<<"inside thje blolb.....\n";
 
-            	object_pose.pose.position.x = x_centroids_wrt_robot[label];
-			    object_pose.pose.position.y = y_centroids_wrt_robot[label];
-			    object_pose.pose.position.z = 0.005;
-			    object_pose.pose.orientation = g_vec_of_quat[label];
-			    object_poses.push_back(object_pose);
+                object_pose.pose.position.x = x_centroids_wrt_robot[label];
+                object_pose.pose.position.y = y_centroids_wrt_robot[label];
+                object_pose.pose.position.z = 0.005;
+                object_pose.pose.orientation = g_vec_of_quat[label];
+                object_poses.push_back(object_pose);
 
-            	return true;
+                return true;
             }
             else continue;
         
-    	
+        
     }
 }
 else return false;
@@ -92,9 +96,10 @@ else return false;
 //placeholder for new code:
 bool ObjectFinder::find_large_gears(float table_height, vector<float> &x_centroids_wrt_robot, vector<float> &y_centroids_wrt_robot,
             vector<float> &avg_z_heights, vector<float> &npts_blobs,  vector<geometry_msgs::PoseStamped> &object_poses) {
-	geometry_msgs::PoseStamped object_pose;
-	object_poses.clear();
-	Eigen::Vector4f box_pt_min, box_pt_max;
+    geometry_msgs::PoseStamped object_pose;
+    object_poses.clear();
+    Eigen::Vector4f box_pt_min, box_pt_max;
+
     box_pt_min << MIN_X_g, MIN_Y_g, table_height + MIN_DZ_GEAR ,0; //1cm above table top
     box_pt_max << MAX_X_g, MAX_Y_g, table_height+ MAX_DZ_GEAR,0;
     ROS_INFO("Finding blobs");
@@ -109,51 +114,119 @@ bool ObjectFinder::find_large_gears(float table_height, vector<float> &x_centroi
     convert_transformed_cloud_to_2D(transformed_cloud_ptr_, indices_);
 
     blob_finder(x_centroids_wrt_robot, y_centroids_wrt_robot, avg_z_heights, npts_blobs,viable_labels_);
-
-
-
-
-
     int nlabels = viable_labels_.size();
-    imwrite("gearimage.png",g_dst);
-
+    float gear_ori ;
     if ( nlabels>0)
     {
-    	
-    	for (int label = 0; label < nlabels; ++label) {
+        
+        for (int label = 0; label < nlabels; ++label) {
         ROS_INFO("label %d has %d points and  avg height %f:", label, (int) npts_blobs[label], avg_z_heights[label]);
         //if (avg_z_heights[label] > 92) 
         { 
             if (npts_blobs[label] >=  min_large_gear_pts && npts_blobs[label] <=  max_large_gear_pts ) {
 
-            	object_pose.pose.position.x = x_centroids_wrt_robot[label];
-			    object_pose.pose.position.y = y_centroids_wrt_robot[label];
-			    object_pose.pose.position.z = 0.005;
-			    object_pose.pose.orientation = g_vec_of_quat[label];
-			    object_poses.push_back(object_pose);
+                object_pose.pose.position.x = x_centroids_wrt_robot[label];
+                object_pose.pose.position.y = y_centroids_wrt_robot[label];
+                object_pose.pose.position.z = 0.005;
+                object_pose.pose.orientation = g_vec_of_quat[label];
+                gear_ori =  g_orientations[label];
+                object_poses.push_back(object_pose);
 
-            	return true;
+                //return true;
             }
-            else continue;
+            //else continue;
         }
-    	
+        
     }
 }
-else return false;
+//else return false;
+      double pi = 3.14159; 
+    
+    imwrite("gearimage.png",g_dst);
+    Mat  img = imread("gearimage.png");
 
-        vector<pair<int, Vec3b>> blob_pixels;
+    cv::Mat src = cv::imread("gearimage.png", CV_LOAD_IMAGE_UNCHANGED);
+    cv::Mat dst;
 
-        for (int r = 0; r < g_dst.rows; ++r) {
-                for (int c = 0; c < g_dst.cols; ++c) {
-                    int label = g_labelImage.at<int>(r, c);
-                    if (temp_avg_z_heights[label] > min_blob_avg_ht) { //rejects the table surface
-                         if (temp_npts_blobs[label] > min_blob_pixels) {
-                             Vec3b &pixel = g_dst.at<Vec3b>(r, c);
-                             blob_pixels.push_back(make_pair(label, pixel));
-                         }
-                     }
-                }
+    cv::Point2f pc(src.cols/2., src.rows/2.);
+
+    cv::Mat r = cv::getRotationMatrix2D(pc, (double) (gear_ori * (180/pi)), 1.0);
+
+    cv::warpAffine(src, dst, r, src.size()); // what size I should use?
+
+    cv::imwrite("rotated_im.png", dst);
+
+    vector<pair<int, int>> blob_pixels_x;
+    vector<pair<int,int>> blob_pixels_y;
+
+    vector<float>  temp_x_centroids, temp_y_centroids,temp_avg_z_heights, temp_npts_blobs;
+    temp_avg_z_heights.resize(10);
+    temp_npts_blobs.resize(10);
+    temp_y_centroids.resize(10);
+    temp_x_centroids.resize(10);
+
+      for (int label = 0; label < 10; ++label) {
+        temp_y_centroids[label] = 0.0;
+        temp_x_centroids[label] = 0.0;
+        temp_avg_z_heights[label] = 0.0;
+        temp_npts_blobs[label] = 0.0;
+    }
+
+    for (int r = 0; r < dst.rows; ++r) {
+        for (int c = 0; c < dst.cols; ++c) {
+            int label = g_labelImage.at<int>(r, c);
+             temp_y_centroids[label] += c; //robot y-direction corresponds to columns--will negate later
+            temp_x_centroids[label] += r; 
+            temp_npts_blobs[label] += 1.0;
+            double zval = (float) g_bw_img(r, c);
+            temp_avg_z_heights[label] += zval; //check the  order of this
         }
+    }
+
+    for (int label = 0; label < 10; ++label) {
+        if(temp_npts_blobs[label] == 0) continue;
+         temp_y_centroids[label] /= temp_npts_blobs[label];
+        temp_x_centroids[label] /= temp_npts_blobs[label];
+        temp_avg_z_heights[label] /= temp_npts_blobs[label];
+        //ROS_INFO("label %d has centroid %f, %f:",label,temp_x_centroids[label],temp_y_centroids[label]);
+    }
+    int old_label;
+
+   for (int r = 0; r < dst.rows; ++r) {
+            for (int c = 0; c < dst.cols; ++c) {
+                int label = g_labelImage.at<int>(r, c);
+                if (temp_avg_z_heights[label] > 70) { //rejects the table surface
+                    if (temp_npts_blobs[label] >=  min_large_gear_pts && temp_npts_blobs[label] <=  max_large_gear_pts )  {
+                         old_label = label;
+                         blob_pixels_x.push_back(make_pair(label,r));
+                         blob_pixels_y.push_back(make_pair(label,c));
+                        // cout << temp_npts_blobs[label]<<","<<temp_avg_z_heights[label] <<endl;
+                     }
+                 }
+            }
+    }
+
+
+   
+     /*sort(blob_pixels.begin(), blob_pixels.end());
+     int min_x = blob_pixels[0].first;
+     int max_x =  blob_pixels[blob_pixels.size()-1].first;
+
+     sort(blob_pixels.begin(), blob_pixels.end(), sortbysec);
+
+     int min_y = blob_pixels[0].second;
+     int max_y =  blob_pixels[blob_pixels.size()-1].second;
+      
+      float mid_x = float(min_x+max_x)/float(2.0);
+      float mid_y = float(min_y+max_y)/float(2.0);
+
+      cout<<"Mid point is: ("<<mid_x<<","<<mid_y<<")\n";
+*/
+
+
+ 
+    
+        
 
 }
 
