@@ -1,6 +1,7 @@
 /** grab_all.cpp
  * twa16 5/1/19
  * Edited twa16 5/3 to place parts instead of releasing them
+ * Edited twa16 5/4 to have manual pauses in between arm motions
  */
 
 #include <ros/ros.h>
@@ -167,8 +168,12 @@ int main(int argc, char** argv) {
     /* Manipulation */
     // Manual pause for testing
     // sleep statements are for testing purposes
-    cout<<"Enter 1 to attempt grasp: ";
+    cout<<"Enter 1 to attempt grasp, 0 to quit: ";
     cin>>ans;
+
+    if(ans == 0){
+        return 0;
+    }
 
     ROS_INFO("Attempting to grasp chosen part");
     success = movePart.get_part(partCode, source_pose);
@@ -181,8 +186,12 @@ int main(int argc, char** argv) {
     //movePart.release_grasped_part(); //drop the part back on the table
     //ros::Duration(3.0).sleep();
 
-    cout<<"Enter 1 to attempt moving arm to preset: ";
+    cout<<"Enter 1 to attempt moving arm to preset, 0 to quit: ";
     cin>>ans;
+
+    if(ans == 0){
+        return 0;
+    }
 
     ROS_INFO("Attempting to move arm to preset");
     success = movePart.preset_arm();
@@ -191,8 +200,12 @@ int main(int argc, char** argv) {
         return 0;
     }
 
-    cout<<"enter 1 to attempt stowing grasped part in kit: ";
+    cout<<"enter 1 to attempt stowing grasped part in kit, 0 to quit: ";
     cin>>ans;
+
+    if(ans == 0){
+        return 0;
+    }
   
     // Place the part in the kit
     switch(partCode){
@@ -221,8 +234,12 @@ int main(int argc, char** argv) {
                 return 0;
             }
 
-            cout<<"Enter 1 to dropoff kit: ";
+            cout<<"Enter 1 to dropoff kit, 0 to quit: ";
             cin>>ans;
+
+            if(ans == 0){
+                return 0;
+            }
 
             ROS_INFO("Attempting to dropoff kit");
             success = movePart.move_to_dropoff_tote();
@@ -240,15 +257,23 @@ int main(int argc, char** argv) {
     }
 
     if(partCode != part_codes::part_codes::TOTE){
-        cout<<"Enter 1 to attempt recovery from dropoff: ";
+        cout<<"Enter 1 to attempt recovery from dropoff, 0 to quit: ";
         cin>>ans;
+
+        if(ans == 0){
+            return 0;
+        }
 
         ROS_INFO("Attempting to recover from dropoff");
         success = movePart.recover_from_dropoff();
     }
     else{
-        cout<<"Enter 1 to move arm to preset: ";
+        cout<<"Enter 1 to move arm to preset, 0 to quit: ";
         cin>>ans;
+
+        if(ans == 0){
+            return 0;
+        }
 
         ROS_INFO("Attempting to move arm to preset");
         success = movePart.preset_arm();
