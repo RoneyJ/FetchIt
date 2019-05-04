@@ -43,8 +43,10 @@ void MovePart::headDoneCb(const actionlib::SimpleClientGoalState& state,
 
 bool MovePart::preset_arm() {
     cart_motion_commander_.plan_jspace_traj_current_to_waiting_pose(2, 2.0); 
-    cart_motion_commander_.execute_planned_traj();
+    int result = cart_motion_commander_.execute_planned_traj();
+    ROS_ERROR("Return code is: %d", result);
     ros::Duration(2.0).sleep();// wait for execution
+    return true; //! A dirty fix!
 }
 
 bool MovePart::move_to_dropoff_kit1() {
