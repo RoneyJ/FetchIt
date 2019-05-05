@@ -32,7 +32,7 @@ const float max_small_gear_pts = 250.0;
 const float min_large_gear_pts = 500.0;
 const float max_large_gear_pts = 900.0;
 const float MIN_Height_LARGE_GEAR = 18;
-const float MIN_Height_SMALL_GEAR = 15;
+const float MIN_Height_SMALL_GEAR = 130;
 
 
 bool sortbysec(const pair<int,int> &a, 

@@ -14,7 +14,7 @@
 //#include <xform_utils/xform_utils.h>
 //using namespace std;
 
-const double MAX_WAIT_TIME=10.0; //avoid deadlock--wait for max time for server response
+const double MAX_WAIT_TIME=20.0; //avoid deadlock--wait for max time for server response
 
 
 //define a class to encapsulate some of the tedium of populating and sending goals,
@@ -56,7 +56,7 @@ public:
     
     geometry_msgs::PoseStamped get_tool_pose_stamped(void); // { return tool_pose_stamped_;};    
     int execute_planned_traj(void);  
-    int execute_traj_nseg(int iseg);
+    int execute_traj_nseg(int iseg=0);
     int execute_traj_nseg(int iseg,double desired_move_time);
 
     

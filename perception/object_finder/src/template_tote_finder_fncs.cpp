@@ -8,6 +8,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <ros/package.h>
 //#include<object_finder_as/object_finder.h>
 float min_points=40.0, max_points=25.0;
 
@@ -200,7 +201,8 @@ bool ObjectFinder::find_totes(float table_height, vector<float> &x_centroids_wrt
     kit_orientation = 90 - (sum_group1 / float(test_group1.size()));
     cout<<"average orientation of kit = "<<kit_orientation<<endl;
     
-    Mat src = cv::imread("new_template.jpg", CV_LOAD_IMAGE_UNCHANGED);
+    std::string image_path = ros::package::getPath("object_finder")+"/template/new_template.jpg";
+    Mat src = cv::imread(image_path, CV_LOAD_IMAGE_UNCHANGED);
     Mat dest,dest1,dest2,dest3;
 
     Point2f pc(src.cols/2., src.rows/2.);

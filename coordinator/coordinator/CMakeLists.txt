@@ -40,7 +40,8 @@ cs_add_executable(grab_tote_v2 src/grab_tote_v2.cpp)
 cs_add_executable(grab_all src/grab_all.cpp)
 cs_add_executable(grab_gearbox src/grab_gearbox.cpp)
 cs_add_executable(grab_object_interactive src/grab_object_interactive.cpp)
-
+cs_add_executable(blind_lame_grab_all src/blind_lame_grab_all.cpp)
+cs_add_executable(lame_grab_and_stow src/lame_grab_and_stow.cpp)
 #the following is required, if desire to link a node in this package with a library created in this same package
 # edit the arguments to reference the named node and named library within this package
 # target_link_libraries(example my_lib)

@@ -49,6 +49,7 @@ private:
     int NJNTS_; // this will get discovered by size of input arg for joint name vector
     std::vector<Eigen::VectorXd> des_path;
     trajectory_msgs::JointTrajectory des_trajectory_, des_trajectory_segment_; // holder for planned trajectory
+    trajectory_msgs::JointTrajectory assembled_traj_;
     std::vector<trajectory_msgs::JointTrajectory> multi_traj_vec_; //holder for multiple traj segments
     
     Eigen::VectorXd q_lower_limits_,q_upper_limits_,qdot_max_vec_,q_home_pose_,q_waiting_pose_; 
