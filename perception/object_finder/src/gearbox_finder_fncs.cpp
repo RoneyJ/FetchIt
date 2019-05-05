@@ -35,7 +35,7 @@ const float GEARBOX_BOTTOM_SIDE_Z = 135;
 const float GEARBOX_BOTTOM_SIDE_PTS = 925;
 
 //* Gearbox top facing up
-const float GEARBOX_TOP_UP_PTS = 1050;
+const float GEARBOX_TOP_UP_PTS = 1000;
 const float GEARBOX_TOP_UP_Z = 92;
 
 //* Gearbox top facing down
