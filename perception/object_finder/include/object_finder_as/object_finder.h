@@ -84,7 +84,7 @@ const float PIXELS_PER_METER = 400.0; //200.0;
 
 const float TABLE_GRASP_CLEARANCE = 0.01; //add this much to table  top height for gripper clearance
 
-const float MIN_BLOB_PIXELS = 120; //must have  at least this many pixels to  preserve as a blob; gearbox top/bottom has about 900 pts
+const float MIN_BLOB_PIXELS = 110; //must have  at least this many pixels to  preserve as a blob; gearbox top/bottom has about 900 pts
 const float MIN_BLOB_AVG_HEIGHT = 5.0; //avg z-height must be  at least this many mm to preserve as blob
 
 
