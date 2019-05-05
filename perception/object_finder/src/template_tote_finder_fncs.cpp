@@ -74,6 +74,8 @@ bool ObjectFinder::find_totes(float table_height, vector<float> &x_centroids_wrt
 	int num_short_1 = 0;
 	int num_short_2 = 0;
 
+    while(linesP.size() <= 0){
+
 	Eigen::Vector4f box_pt_min, box_pt_max;
     box_pt_min << MIN_X_t, MIN_Y_t, table_height + MIN_H_ABove_Table ,0; //1cm above table top
     box_pt_max << MAX_X_t, MAX_Y_t, table_height+ MAX_H_ABove_Table,0;
@@ -107,11 +109,14 @@ bool ObjectFinder::find_totes(float table_height, vector<float> &x_centroids_wrt
     cdstP = cdst.clone();
     // Probabilistic Line Transform
     
-    while(linesP.size() <= 0){
+    //while(linesP.size() <= 0){
         HoughLinesP(dst, linesP, 1, CV_PI/180, 20, min_points, max_points ); // runs the actual detection
         // Draw the lines
         ROS_INFO("drawing lines..");
-    }
+        if(linesP.size() <= 0){
+            continue;
+        }
+    //}
     ROS_INFO("lines drawn");
    
     p1=Point(linesP[0][0], linesP[0][1]);
@@ -346,4 +351,5 @@ bool ObjectFinder::find_totes(float table_height, vector<float> &x_centroids_wrt
         ROS_WARN("No object found...:<");
         return false;
     }
+}
 } 
