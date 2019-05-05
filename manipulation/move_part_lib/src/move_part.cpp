@@ -204,6 +204,7 @@ Eigen::Affine3d MovePart::compute_grasp_affine(int part_code, geometry_msgs::Pos
     Eigen::Affine3d grasp_pose;
     Eigen::Matrix3d Rotz, Rot_gripper;
     Eigen::Vector3d O_part;
+    Eigen::Vector3d gear_n_axis;
     double object_angle;
     //int32 FAKE_PART=1
 //int32 GEARBOX_TOP=101
@@ -291,6 +292,8 @@ Eigen::Affine3d MovePart::compute_grasp_affine(int part_code, geometry_msgs::Pos
             //grab part at centroid:
             //hard-coded grasp heigth from Fetch remote experiments
             O_part << part_pose.pose.position.x, part_pose.pose.position.y, GEAR_GRASP_HEIGHT; //part_pose.pose.position.z + TOTE_GRASP_HEIGHT_WRT_TOTE_ORIGIN;
+            
+
             //double convertPlanarQuat2Phi(geometry_msgs::Quaternion quaternion);
             object_angle = xformUtils.convertPlanarQuat2Phi(part_pose.pose.orientation); 
 
@@ -298,6 +301,8 @@ Eigen::Affine3d MovePart::compute_grasp_affine(int part_code, geometry_msgs::Pos
             ROS_INFO_STREAM("Rotz: "<<endl<<Rotz<<endl);
             ROS_INFO_STREAM("R_gripper_down: "<<endl<<R_gripper_down_);
             Rot_gripper = Rotz*R_gripper_down_;
+            gear_n_axis = Rot_gripper.col(0);
+            O_part = O_part - gear_n_axis*DIST_GEAR_TEETH_FROM_CENTROID;
             ROS_INFO_STREAM("specifying gripper orientation:  " << endl << Rot_gripper << endl);
             grasp_pose.linear() = Rot_gripper;
             grasp_pose.translation() = O_part;

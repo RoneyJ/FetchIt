@@ -38,7 +38,7 @@ const double TOTE_GRASP_HEIGHT = 0.190; //handle is relatively high; elevate to 
 const double GEAR_GRASP_HEIGHT = 0.120; //shunk station
 const double GEARBOX_GRASP_HEIGHT = 0.135; // must approach close to table to grab gearbox part lying flat; also works on edge??
 const double BOLT_GRASP_HEIGHT = 0.121; 
-
+const double DIST_GEAR_TEETH_FROM_CENTROID = 0.05; //displace along -x_axis to reach gear teeth
 using namespace std;
 
 class MovePart 
