@@ -70,10 +70,10 @@ int main(int argc, char** argv) {
     cout << "C = " << endl << " " << C << endl << endl;
     blob_color(); //find connected components and print and display them
     
-    namedWindow( "Image", WINDOW_AUTOSIZE);
-    namedWindow( "Connected Components", WINDOW_AUTOSIZE);    
+    //namedWindow( "Image", WINDOW_AUTOSIZE);
+    //namedWindow( "Connected Components", WINDOW_AUTOSIZE);    
     //imshow( "Image", C ); //display it
-    waitKey(0);
+    //waitKey(0);
 
     return 0;
 }
