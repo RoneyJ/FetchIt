@@ -199,8 +199,8 @@ bool ObjectFinder::find_totes(float table_height, vector<float> &x_centroids_wrt
 
     // Show results
     ////imshow("Source", dst);
-    imshow("Detected Lines (in red) - Standard Hough Line Transform", cdst);
-    imshow("Detected Lines (in red) - Probabilistic Line Transform", cdstP);
+    //imshow("Detected Lines (in red) - Standard Hough Line Transform", cdst);
+    //imshow("Detected Lines (in red) - Probabilistic Line Transform", cdstP);
    imwrite( "TestImage.png", cdstP );
     pair<int, int> center_arr[test_group.size()];
     pair<int, int> center_arr2[test_group.size()];
@@ -241,7 +241,7 @@ bool ObjectFinder::find_totes(float table_height, vector<float> &x_centroids_wrt
     object_poses.push_back(object_pose);
 
 
-    waitKey();            
+    //waitKey();            
 
     return true;
    }

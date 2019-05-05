@@ -7,7 +7,7 @@
 
 #include "template_tote_finder_fncs.cpp" 
 //#include "gear_finder_fncs.cpp"
-#include "wsn_gear_finder_fncs.cpp"
+#include "gear_finder_fncs.cpp"
 
 #include "bolt_finder_fncs.cpp" 
 

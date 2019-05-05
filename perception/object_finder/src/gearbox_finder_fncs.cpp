@@ -10,18 +10,18 @@ void ObjectFinder::convert_transformed_cloud_to_2D(pcl::PointCloud<pcl::PointXYZ
 */
 
 //! Magic Numbers:
-const float MIN_X_GEARBOX = -0.0; //include points starting 0.4m in front of robot
-const float MAX_X_GEARBOX = 1.5; //include points out to 0.9m in front of robot
+const float MIN_X_GEARBOX = 0.0; //include points starting 0.4m in front of robot
+const float MAX_X_GEARBOX = 2.0; //include points out to 0.9m in front of robot
 const float MIN_Y_GEARBOX = -1.5; //include points starting -0.5m to left of robot
 const float MAX_Y_GEARBOX = 1.5; //include points up to 0.5m to right of robot
-const float MIN_DZ_GEARBOX = 0.01; //box filter from this height above the table top
+const float MIN_DZ_GEARBOX = 0.005; //box filter from this height above the table top
 const float MAX_DZ_GEARBOX = 0.1; //consider points up to this height above table top
 const double TABLE_GRASP_CLEARANCE_GEARBOX = 0.01; //determines how high away from the table the arm need to be
 
 //! Magic Number for seperating gearbox:
 //* Penalty Value
-const float HEIGHT_PENALTY = 1.15;
-const float POINTS_PENALTY = 1.2;
+const float HEIGHT_PENALTY = 1.1;
+const float POINTS_PENALTY = 1.15;
 const float POSE_PENALTY = 1.05;
 //const float DITCH_THREASHOLD = 0
 //* Gearbox bottom facing up
@@ -35,14 +35,16 @@ const float GEARBOX_BOTTOM_SIDE_Z = 135;
 const float GEARBOX_BOTTOM_SIDE_PTS = 925;
 
 //* Gearbox top facing up
-const float GEARBOX_TOP_UP_PTS = 860;
-const float GEARBOX_TOP_UP_Z = 130;
+const float GEARBOX_TOP_UP_PTS = 1000;
+const float GEARBOX_TOP_UP_Z = 92;
+
 //* Gearbox top facing down
-const float GEARBOX_TOP_DOWN_Z = 150;
-const float GEARBOX_TOP_DOWN_PTS = 1170;
-//* Gearbox bottom sideway
-const float GEARBOX_TOP_SIDE_Z = 125;
-const float GEARBOX_TOP_SIDE_PTS = 340;
+const float GEARBOX_TOP_DOWN_Z = 106;
+const float GEARBOX_TOP_DOWN_PTS = 1000;
+
+//* Gearbox top sideway (Tuned 2019-05-04)
+const float GEARBOX_TOP_SIDE_Z = 120;
+const float GEARBOX_TOP_SIDE_PTS = 500;
 
 //! Local Tool Kit:
 
@@ -64,11 +66,11 @@ void splitGearboxTopBottom(vector <int> &lookup_table, int part_id, vector<float
             //! Compare the poses with three possible poses, produce a final score and tell us what pose it is
             // We are using a nominal result, to make it dimensionless.
             scoring_up = (HEIGHT_PENALTY * abs((temp_z-GEARBOX_BOTTOM_UP_Z)/GEARBOX_BOTTOM_UP_Z))+(POINTS_PENALTY * abs((temp_pts-GEARBOX_BOTTOM_UP_PTS)/GEARBOX_BOTTOM_UP_PTS));
-            ROS_WARN("Scoring_UP is: %f",scoring_up);
+            ROS_WARN("Blob %d::Scoring_UP is: %f",counters,scoring_up);
             scoring_down = (HEIGHT_PENALTY * abs((temp_z-GEARBOX_BOTTOM_DOWN_Z)/GEARBOX_BOTTOM_DOWN_Z))+(POINTS_PENALTY * abs((temp_pts-GEARBOX_BOTTOM_DOWN_PTS)/GEARBOX_BOTTOM_DOWN_PTS));
-            ROS_WARN("Scoring_DOWN is: %f",scoring_down);
+            ROS_WARN("Blob %d::Scoring_DOWN is: %f",counters,scoring_down);
             scoring_side = (HEIGHT_PENALTY * abs((temp_z-GEARBOX_BOTTOM_SIDE_Z))/GEARBOX_BOTTOM_SIDE_Z)+(POINTS_PENALTY * abs((temp_pts-GEARBOX_BOTTOM_SIDE_PTS)/GEARBOX_BOTTOM_SIDE_PTS));
-            ROS_WARN("Scoring_SIDE is: %f",scoring_side);
+            ROS_WARN("Blob %d::Scoring_SIDE is: %f",counters,scoring_side);
             final_score = min( min(scoring_up, scoring_down), scoring_side);
 
             //! Determine what pose the object is, and remember the poses
@@ -130,11 +132,11 @@ void splitGearboxTopBottom(vector <int> &lookup_table, int part_id, vector<float
             //! Compare the poses with three possible poses, produce a final score and tell us what pose it is
             // We are using a nominal result, to make it dimensionless.
             scoring_up = (HEIGHT_PENALTY * abs((temp_z-GEARBOX_TOP_UP_Z)/GEARBOX_TOP_UP_Z))+(POINTS_PENALTY * abs((temp_pts-GEARBOX_TOP_UP_PTS)/GEARBOX_TOP_UP_PTS));
-            ROS_WARN("Scoring_UP is: %f",scoring_up);
+            ROS_WARN("Blob %d:: Scoring_UP is: %f",counters,scoring_up);
             scoring_down = (HEIGHT_PENALTY * abs((temp_z-GEARBOX_TOP_DOWN_Z)/GEARBOX_TOP_DOWN_Z))+(POINTS_PENALTY * abs((temp_pts-GEARBOX_TOP_DOWN_PTS)/GEARBOX_TOP_DOWN_PTS));
-            ROS_WARN("Scoring_DOWN is: %f",scoring_down);
+            ROS_WARN("Blob %d::Scoring_DOWN is: %f",counters,scoring_down);
             scoring_side = (HEIGHT_PENALTY * abs((temp_z-GEARBOX_TOP_SIDE_Z))/GEARBOX_TOP_SIDE_Z)+(POINTS_PENALTY * abs((temp_pts-GEARBOX_TOP_SIDE_PTS)/GEARBOX_TOP_SIDE_PTS));
-            ROS_WARN("Scoring_SIDE is: %f",scoring_side);
+            ROS_WARN("Blob %d::Scoring_SIDE is: %f",counters,scoring_side);
             final_score = min( min(scoring_up, scoring_down), scoring_side);
             //! Determine what pose the object is, and remember the poses
             if(final_score == scoring_down){
