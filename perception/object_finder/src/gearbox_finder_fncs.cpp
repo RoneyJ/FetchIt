@@ -20,9 +20,9 @@ const double TABLE_GRASP_CLEARANCE_GEARBOX = 0.01; //determines how high away fr
 
 //! Magic Number for seperating gearbox:
 //* Penalty Value
-const float HEIGHT_PENALTY = 1.2;
+const float HEIGHT_PENALTY = 1.25;
 const float POINTS_PENALTY = 1.5;
-const float POSE_PENALTY = 1.1;
+const float POSE_PENALTY = 1.05;
 //const float DITCH_THREASHOLD = 0
 //* Gearbox bottom facing up
 const float GEARBOX_BOTTOM_UP_PTS = 860;

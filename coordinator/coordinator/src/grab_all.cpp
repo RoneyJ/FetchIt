@@ -1,6 +1,7 @@
 /** grab_all.cpp
  * twa16 5/1/19
- * 
+ * Edited twa16 5/3 to place parts instead of releasing them
+ * Edited twa16 5/4 to have manual pauses in between arm motions
  */
 
 #include <ros/ros.h>
@@ -50,7 +51,7 @@ int main(int argc, char** argv) {
         int32 BOLT_BIN = 4 //Table 4 in the Map_goal_poses.pdf
         int32 KIT_DROPOFF = 5 // Table 3 in the Map_goal_poses.pdf
     */
-    cout << "Choose a movement operation: 0 for HOME \n1 for moving to Tote table and grabbing a tote\n2 for moving to Gearbox table and grabbing a gearbox\n3 for moving to the Shunk table and machining a part\n4 for moving to the Bolt table and grabbing a bolt from the bin\n5 for dropping off the kit" << endl;
+    cout << "Choose a movement operation: 0 for HOME \n1 for moving to Tote table and grabbing a tote\n2 for moving to Gearbox table and grabbing a gearbox\n3 for moving to the Shunk table and machining a part\n4 for moving to the Bolt table and grabbing a bolt from the bin\n5 for dropping off the kit\n6 to stay in place" << endl;
     cin >> ans;
 
 
@@ -79,25 +80,29 @@ int main(int argc, char** argv) {
         case 5:
             key_pose_move_srv.request.key_pose_code = mobot_pub_des_state::key_pose_move::Request::KIT_DROPOFF;
             break;
+        case 6:
+            ROS_INFO("Staying in place");
+            break;
         default:
             ROS_WARN("Unrecognized navigation operation");
             break;
     }
 
-    ROS_INFO("Attempting navigation...");
-    set_key_pose_client.call(key_pose_move_srv);
+    if(0 <= ans && ans <= 5){
+        ROS_INFO("Attempting navigation...");
+        set_key_pose_client.call(key_pose_move_srv);
 
-    // Wait for movement to finish
-    mobot_pub_des_state::integer_query integer_query_srv;
-    int npts = 1;
-    while (npts > 0) {
-        ros::Duration(0.5).sleep();
-        queue_client.call(integer_query_srv);
-        npts = integer_query_srv.response.int_val;
-        ROS_INFO("Waiting, %d points left in path queue", npts);
+        // Wait for movement to finish
+        mobot_pub_des_state::integer_query integer_query_srv;
+        int npts = 1;
+        while (npts > 0) {
+            ros::Duration(0.5).sleep();
+            queue_client.call(integer_query_srv);
+            npts = integer_query_srv.response.int_val;
+            ROS_INFO("Waiting, %d points left in path queue", npts);
+        }
+        ROS_INFO("Finished requested move");
     }
-    ROS_INFO("Finished requested move");
-
 
 
     /* Perception */
@@ -159,23 +164,120 @@ int main(int argc, char** argv) {
     findPart.display_triad(source_pose);
 
 
+
     /* Manipulation */
     // Manual pause for testing
-    cout<<"Enter 1 to attempt grasp: ";
+    // sleep statements are for testing purposes
+    cout<<"Enter 1 to attempt grasp, 0 to quit: ";
     cin>>ans;
-    partCode = part_codes::part_codes::TOTE;
+
+    if(ans == 0){
+        return 0;
+    }
+
     ROS_INFO("Attempting to grasp chosen part");
     success = movePart.get_part(partCode, source_pose);
-    
-    movePart.release_grasped_part(); //drop the tote back on the table
-    ros::Duration(3.0).sleep();
+  
+    if(!success){
+        ROS_ERROR("Failed to get part");
+        return 0;
+    }
+
+    //movePart.release_grasped_part(); //drop the part back on the table
+    //ros::Duration(3.0).sleep();
+
+    cout<<"Enter 1 to attempt moving arm to preset, 0 to quit: ";
+    cin>>ans;
+
+    if(ans == 0){
+        return 0;
+    }
 
     ROS_INFO("Attempting to move arm to preset");
     success = movePart.preset_arm();
+    if(!success){
+        ROS_ERROR("Failed to move to preset");
+        return 0;
+    }
 
-    // TODO uncomment following lines once arm function exists
-    //ROS_INFO("Attempting to place kit");
-    //success = movePart.place_kit()? function to place kit
+    cout<<"enter 1 to attempt stowing grasped part in kit, 0 to quit: ";
+    cin>>ans;
+
+    if(ans == 0){
+        return 0;
+    }
+  
+    // Place the part in the kit
+    switch(partCode){
+        case part_codes::part_codes::GEARBOX_TOP:
+        case part_codes::part_codes::GEARBOX_BOTTOM:
+            ROS_INFO("Attempting to place gearbox part in kit zone 1");
+            success = movePart.move_to_dropoff_kit1();
+
+            break;
+        case part_codes::part_codes::BOLT:
+            ROS_INFO("Attempting to place bolt part in kit zone 2");
+            success = movePart.move_to_dropoff_kit2();
+            
+            break;
+        case part_codes::part_codes::LARGE_GEAR:
+        case part_codes::part_codes::SMALL_GEAR:
+            ROS_INFO("Attempting to place gear part in kit zone 3");
+            success = movePart.move_to_dropoff_kit3();
+            
+            break;
+        case part_codes::part_codes::TOTE:
+            ROS_INFO("Attempting to pickup kit");
+            success = movePart.move_to_pickup_tote();
+            if(!success){
+                ROS_ERROR("Failed to pickup tote part");
+                return 0;
+            }
+
+            cout<<"Enter 1 to dropoff kit, 0 to quit: ";
+            cin>>ans;
+
+            if(ans == 0){
+                return 0;
+            }
+
+            ROS_INFO("Attempting to dropoff kit");
+            success = movePart.move_to_dropoff_tote();
+            
+            break;
+        default:
+            ROS_WARN("no dropoff case for this part! ");
+            movePart.release_grasped_part(); //drop the part back on the table
+            return 0;
+    }
+
+    if(!success){
+        ROS_ERROR("Failed to place part");
+        return 0;
+    }
+
+    if(partCode != part_codes::part_codes::TOTE){
+        cout<<"Enter 1 to attempt recovery from dropoff, 0 to quit: ";
+        cin>>ans;
+
+        if(ans == 0){
+            return 0;
+        }
+
+        ROS_INFO("Attempting to recover from dropoff");
+        success = movePart.recover_from_dropoff();
+    }
+    else{
+        cout<<"Enter 1 to move arm to preset, 0 to quit: ";
+        cin>>ans;
+
+        if(ans == 0){
+            return 0;
+        }
+
+        ROS_INFO("Attempting to move arm to preset");
+        success = movePart.preset_arm();
+    }
 
 
     /* END */
