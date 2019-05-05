@@ -90,7 +90,7 @@ void kinectCB(const sensor_msgs::PointCloud2ConstPtr& cloud) {
 //specify the min and max values, x,y, znd z, for points to retain...
 // as expressed in the robot's torso frame (torso_lift_link)
 const float MIN_X = 0.35; //include points starting 0.4m in front of robot
-const float MAX_X = 0.9; //include points out to 0.9m in front of robot
+const float MAX_X = 1.1; //include points out to 0.9m in front of robot
 const float MIN_Y = -0.7; //include points starting -0.5m to left of robot
 const float MAX_Y = 0.7; //include points up to 0.5m to right of robot
 const float MIN_Z = -0.05; //2cm above the table top
