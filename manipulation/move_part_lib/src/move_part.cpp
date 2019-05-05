@@ -1,5 +1,7 @@
 #include <move_part_lib/move_part.h>
 
+int rtn_val;
+
 MovePart::MovePart() :
 robot_arm_motion_action_client_("/arm_controller/follow_joint_trajectory",true),
 torso_action_client_("/torso_controller/follow_joint_trajectory", true),
@@ -42,58 +44,142 @@ void MovePart::headDoneCb(const actionlib::SimpleClientGoalState& state,
 }
 
 bool MovePart::preset_arm() {
-    cart_motion_commander_.plan_jspace_traj_current_to_waiting_pose(2, 2.0); 
-    int result = cart_motion_commander_.execute_planned_traj();
-    ROS_ERROR("Return code is: %d", result);
-    ros::Duration(2.0).sleep();// wait for execution
-    return true; //! A dirty fix!
+    rtn_val = cart_motion_commander_.plan_jspace_traj_current_to_waiting_pose(2, 3.0); 
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+        ROS_ERROR("plan request was not successful!");
+        return false;
+    } //cart_result_.return_code != arm_motion_action::arm_interfaceResult::SUCCESS
+    rtn_val = cart_motion_commander_.execute_traj_nseg();    
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+        ROS_ERROR("execute_traj_nseg() reported not successful!");
+        return false;
+    }     
+    return true; 
 }
 
 bool MovePart::move_to_dropoff_kit1() {
-    cart_motion_commander_.plan_jspace_traj_current_to_kit_dropoff1(2, 2.0);  //(nsteps, arrival time) tinker with for optimization
-    cart_motion_commander_.execute_planned_traj();
-    //ros::Duration(2.0).sleep();// wait for execution
+    rtn_val = cart_motion_commander_.plan_jspace_traj_current_to_kit_dropoff1(2, 2.0);  //(nsteps, arrival time) tinker with for optimization
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+        ROS_ERROR("plan request was not successful!");
+        return false;
+    } //cart_result_.return_code != arm_motion_action::arm_interfaceResult::SUCCESS
+    //rtn_val = cart_motion_commander_.execute_planned_traj();    ///execute_traj_nseg()
+    rtn_val = cart_motion_commander_.execute_traj_nseg();    ///execute_traj_nseg(); muti-traj execution
+
+    
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+        ROS_ERROR("execute_traj_nseg() reported not successful!");
+        gripper_interface_.releaseObject();
+        return false;
+    }   
     gripper_interface_.releaseObject();
+    ROS_INFO("wait for gripper to open");
+    ros::Duration(2.0).sleep();
+    return true;
 }
 
 bool MovePart::move_to_dropoff_kit2() {
-    cart_motion_commander_.plan_jspace_traj_current_to_kit_dropoff2(2, 2.0);  //(nsteps, arrival time) tinker with for optimization
-    cart_motion_commander_.execute_planned_traj();
-    //ros::Duration(2.0).sleep();// wait for execution
+    rtn_val = cart_motion_commander_.plan_jspace_traj_current_to_kit_dropoff2(2, 4.0);  //(nsteps, arrival time) tinker with for optimization
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+        ROS_ERROR("plan request was not successful!");
+        return false;
+    } //cart_result_.return_code != arm_motion_action::arm_interfaceResult::SUCCESS
+    rtn_val = cart_motion_commander_.execute_traj_nseg();    
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+        ROS_ERROR("execute_traj_nseg() reported not successful!");
+        gripper_interface_.releaseObject();
+        return false;
+    }   
     gripper_interface_.releaseObject();
+        ROS_INFO("wait for gripper to open");
+    ros::Duration(2.0).sleep();
+    return true;
 }
 
 bool MovePart::move_to_dropoff_kit3() {
-    cart_motion_commander_.plan_jspace_traj_current_to_kit_dropoff3(2, 2.0);  //(nsteps, arrival time) tinker with for optimization
-    cart_motion_commander_.execute_planned_traj();
-    //ros::Duration(2.0).sleep();// wait for execution
+    rtn_val = cart_motion_commander_.plan_jspace_traj_current_to_kit_dropoff3(2, 4.0);  //(nsteps, arrival time) tinker with for optimization
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+        ROS_ERROR("plan request was not successful!");
+        return false;
+    } //cart_result_.return_code != arm_motion_action::arm_interfaceResult::SUCCESS
+    rtn_val = cart_motion_commander_.execute_traj_nseg();    
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+        ROS_ERROR("execute_traj_nseg() reported not successful!");
+        gripper_interface_.releaseObject();
+        return false;
+    }   
     gripper_interface_.releaseObject();
+        ROS_INFO("wait for gripper to open");
+    ros::Duration(2.0).sleep();
+    return true;
 }
 
 bool MovePart::move_to_dropoff_tote() {
-    cart_motion_commander_.plan_jspace_traj_current_to_tote_dropoff(2, 2.0);  //(nsteps, arrival time) tinker with for optimization
-    cart_motion_commander_.execute_planned_traj();
-    //ros::Duration(2.0).sleep();// wait for execution
+    rtn_val = cart_motion_commander_.plan_jspace_traj_current_to_tote_dropoff(2, 4.0);  //(nsteps, arrival time) tinker with for optimization
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+        ROS_ERROR("plan request was not successful!");
+        return false;
+    }
+    rtn_val = cart_motion_commander_.execute_traj_nseg();    
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+        ROS_ERROR("execute_traj_nseg() reported not successful!");
+        gripper_interface_.releaseObject();
+        return false;
+    }   
     gripper_interface_.releaseObject();
+        ROS_INFO("wait for gripper to open");
+    ros::Duration(2.0).sleep();
+    return true;
 }
 
 bool MovePart::move_to_pickup_tote() {
-    cart_motion_commander_.plan_jspace_traj_current_to_tote_pickup(2, 2.0);  //(nsteps, arrival time) tinker with for optimization
-    cart_motion_commander_.execute_planned_traj();
-    //ros::Duration(2.0).sleep();// wait for execution
+    rtn_val = cart_motion_commander_.plan_jspace_traj_current_to_tote_pickup(2, 4.0);  //(nsteps, arrival time) tinker with for optimization
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+        ROS_ERROR("plan request was not successful!");
+        return false;
+    }    
+    rtn_val = cart_motion_commander_.execute_traj_nseg();    
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+        ROS_ERROR("execute_traj_nseg() reported not successful!");
+        gripper_interface_.releaseObject();
+        return false;
+    }   
     gripper_interface_.graspObject();
+     return true;   
 }
 
 bool MovePart::recover_from_dropoff() {
-    cart_motion_commander_.plan_jspace_traj_recover_from_dropoff(2, 2.0); //(nsteps, arrival time) tinker with for optimization
-    cart_motion_commander_.execute_planned_traj();    
+    rtn_val = cart_motion_commander_.plan_jspace_traj_recover_from_dropoff(2, 2.0); //(nsteps, arrival time) tinker with for optimization
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+        ROS_ERROR("plan request was not successful!");
+        return false;
+    } //cart_result_.return_code != arm_motion_action::arm_interfaceResult::SUCCESS
+    //rtn_val = cart_motion_commander_.execute_planned_traj();    
+    rtn_val = cart_motion_commander_.execute_traj_nseg();    ///execute_traj_nseg(); muti-traj execution
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+        ROS_ERROR("execute_traj_nseg() reported not successful!");
+        gripper_interface_.releaseObject();
+        return false;
+    }   
+    gripper_interface_.releaseObject();
+    return true;  
     
 }
 
+//when is this executed?  What should the gripper do?
 bool MovePart::recover_from_tote() {
-    cart_motion_commander_.plan_jspace_traj_recover_from_tote(2, 2.0); //(nsteps, arrival time) tinker with for optimization
-    cart_motion_commander_.execute_planned_traj();    
-    
+    rtn_val = cart_motion_commander_.plan_jspace_traj_recover_from_tote(2, 4.0); //(nsteps, arrival time) tinker with for optimization
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+        ROS_ERROR("plan request was not successful!");
+        return false;
+    }    
+    rtn_val = cart_motion_commander_.execute_traj_nseg();    
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+        ROS_ERROR("execute_traj_nseg() reported not successful!");
+        //gripper_interface_.releaseObject();
+        return false;
+    }   
+    return true;
 }
 
 Eigen::Matrix3d MovePart::compute_rot_z(double angle) {
@@ -132,7 +218,7 @@ Eigen::Affine3d MovePart::compute_grasp_affine(int part_code, geometry_msgs::Pos
             //hard-coded grasp heigth from Fetch remote experiments
             O_part << part_pose.pose.position.x, part_pose.pose.position.y, TOTE_GRASP_HEIGHT; //part_pose.pose.position.z + TOTE_GRASP_HEIGHT_WRT_TOTE_ORIGIN;
             //double convertPlanarQuat2Phi(geometry_msgs::Quaternion quaternion);
-            object_angle = xformUtils.convertPlanarQuat2Phi(part_pose.pose.orientation) + M_PI / 2; //gripper must be parallel to tote x-axis
+            object_angle = xformUtils.convertPlanarQuat2Phi(part_pose.pose.orientation);// + M_PI / 2; //gripper must be parallel to tote x-axis
 
             Rotz = compute_rot_z(object_angle);
             ROS_INFO_STREAM("Rotz: "<<endl<<Rotz<<endl);

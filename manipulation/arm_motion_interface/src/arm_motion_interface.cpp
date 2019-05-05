@@ -450,11 +450,12 @@ void ArmMotionInterface::execute_planned_traj(void) {
     //stuff_trajectory(optimal_path_, des_trajectory_);
     des_trajectory_.header.stamp = ros::Time::now();
     ROS_INFO("sending trajectory");
-    ROS_INFO("computed arrival time is %f", computed_arrival_time_);
+    //ROS_INFO("computed arrival time is %f", computed_arrival_time_);
 
     //the following is for a publish/subscribe ROS-I interface, not action server interface to robot
     if (!use_trajectory_action_server_) { // use publisher, not action client
-        traj_publisher_.publish(des_trajectory_);
+        //traj_publisher_.publish(des_trajectory_);  //multi_traj_vec_
+        traj_publisher_.publish(assembled_traj_); 
         ros::Duration(computed_arrival_time_).sleep(); // no feedback from subscriber, so simply wait for move time
         cart_result_.return_code = arm_motion_action::arm_interfaceResult::SUCCESS;
         cart_move_as_.setSucceeded(cart_result_);
@@ -462,10 +463,12 @@ void ArmMotionInterface::execute_planned_traj(void) {
         traj_is_valid_ = false; // reset--require new path before next move
     } else {
         //use action-server interface instead
+        ROS_INFO("sending trajectory to action server: ");
+        ROS_INFO_STREAM(assembled_traj_<<endl);
         js_goal_.trajectory = des_trajectory_;
         //computed_arrival_time_ = des_trajectory_.points.back().time_from_start.toSec();
         ROS_INFO("sending action request");
-        ROS_INFO("computed arrival time is %f", computed_arrival_time_);
+        //ROS_INFO("computed arrival time is %f", computed_arrival_time_);
         busy_working_on_a_request_ = true;
         arm_motion_doneCb_flag_ = false;
         //arm_action_client.sendGoal(goal, &armDoneCb);
@@ -486,17 +489,20 @@ void ArmMotionInterface::execute_planned_traj(void) {
 void ArmMotionInterface::execute_traj_nseg() {
     trajectory_msgs::JointTrajectoryPoint trajectory_point_last;
     int nsegs_tot = multi_traj_vec_.size();
-    int nseg = cart_goal_.nseg;
+    //int nseg = cart_goal_.nseg;
+    /*
     if (nseg > nsegs_tot) {
         ROS_WARN("requested traj segment beyond end of vector");
         cart_result_.return_code = arm_motion_action::arm_interfaceResult::PATH_NOT_VALID;
         ROS_WARN("attempted to execute invalid path!");
         cart_move_as_.setAborted(cart_result_); // tell the client we have given up on this goal; send the result message as well
     }
-    des_trajectory_ = multi_traj_vec_[nseg];
-    des_trajectory_.header.stamp = ros::Time::now();
+     * */
+    for (int iseg=0;iseg<nsegs_tot;iseg++) {
+       des_trajectory_ = multi_traj_vec_[iseg];
+        des_trajectory_.header.stamp = ros::Time::now();
 
-    computed_arrival_time_ = des_trajectory_.points.back().time_from_start.toSec();
+        computed_arrival_time_ = des_trajectory_.points.back().time_from_start.toSec();
     
     if (!use_trajectory_action_server_) { // use publisher, not action client
         traj_publisher_.publish(des_trajectory_);
@@ -507,7 +513,9 @@ void ArmMotionInterface::execute_traj_nseg() {
         traj_is_valid_ = false; // reset--require new path before next move
     } else {
         //use action-server interface instead
+        //ROS_INFO_STREAM("multitraj segment: "<<endl<<des_trajectory_<endl);
         js_goal_.trajectory = des_trajectory_;
+        ROS_INFO_STREAM("traj segment "<<iseg<<endl<<des_trajectory_<<endl);
         //computed_arrival_time_ = des_trajectory_.points.back().time_from_start.toSec();
         ROS_INFO("sending action request");
         ROS_INFO("computed arrival time is %f", computed_arrival_time_);
@@ -524,9 +532,11 @@ void ArmMotionInterface::execute_traj_nseg() {
         }
         cart_result_.return_code = arm_motion_action::arm_interfaceResult::SUCCESS;
          traj_is_valid_ = false;
-        ROS_INFO("completed nseg execution");       
-        cart_move_as_.setSucceeded(cart_result_);        
+        ROS_INFO("completed nseg execution for segment %d",iseg);    
     }
+    }
+        cart_move_as_.setSucceeded(cart_result_);        
+
 }
 
 //this fnc assumes user has provided nsteps and arrival time in goal message
@@ -559,10 +569,14 @@ bool ArmMotionInterface::plan_jspace_traj_current_to_kit_dropoff1() {
         multi_traj_vec_.clear(); //whenever plan a single traj, make this default sif (traj_is_valid_) multi_traj_vec_.push_back(des_trajectory_);tart of multi-seg trajectory
         multi_traj_vec_.push_back(des_trajectory_);
     }       
-    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose1_, q_stow_pose5_, nsteps, 2.0*arrival_time, des_trajectory_);
+    //traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose1_, q_stow_pose5_, nsteps, 2.0*arrival_time, des_trajectory_);
+    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose1_, q_stow_pose5_, nsteps, arrival_time, des_trajectory_);
+    
     if (traj_is_valid_) multi_traj_vec_.push_back(des_trajectory_);
 
-	traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose5_, q_stow_pose2_, nsteps, 3.0*arrival_time, des_trajectory_);
+	//traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose5_, q_stow_pose2_, nsteps, 3.0*arrival_time, des_trajectory_);
+    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose5_, q_stow_pose2_, nsteps, arrival_time, des_trajectory_);
+        
     if (traj_is_valid_) multi_traj_vec_.push_back(des_trajectory_);    
 
 
@@ -583,7 +597,7 @@ bool ArmMotionInterface::plan_jspace_traj_current_to_kit_dropoff2() {
         multi_traj_vec_.push_back(des_trajectory_);
     }   
     
-    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose1_, q_stow_pose3_, nsteps, 2.0*arrival_time, des_trajectory_);
+    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose1_, q_stow_pose3_, nsteps, arrival_time, des_trajectory_);
     if (traj_is_valid_) multi_traj_vec_.push_back(des_trajectory_);    
 
 
@@ -604,7 +618,7 @@ bool ArmMotionInterface::plan_jspace_traj_current_to_kit_dropoff3() {
         multi_traj_vec_.push_back(des_trajectory_);
     }   
     
-    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose1_, q_stow_pose4_, nsteps, 2.0*arrival_time, des_trajectory_);
+    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose1_, q_stow_pose4_, nsteps, arrival_time, des_trajectory_);
     if (traj_is_valid_) multi_traj_vec_.push_back(des_trajectory_);    
 
 
@@ -619,12 +633,18 @@ bool ArmMotionInterface::plan_jspace_traj_recover_from_dropoff() {
     //invoke general joint-space planner fnc; specify q_start = q_current and q_goal in home pose;
     //set trajectory arg to member var des_trajectory_
     //set member var traj_is_valid_ to result of plan
-    
+    for (int i=0;i<3;i++) {
+      ros::spinOnce();
+      ros::Duration(0.1).sleep();
+    }
+    ROS_INFO_STREAM("q_vec_arm_Xd_:"<<endl<<q_vec_arm_Xd_<<endl);
+    ROS_INFO_STREAM("q_stow_pose1_"<<endl<<q_stow_pose1_<<endl);
     traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_vec_arm_Xd_, q_stow_pose1_, nsteps, arrival_time, des_trajectory_);
      if (traj_is_valid_) {
         multi_traj_vec_.clear(); //whenever plan a single traj, make this default start of multi-seg trajectory
         multi_traj_vec_.push_back(des_trajectory_);
     }   
+    ROS_INFO_STREAM("first step des_trajectory_"<<endl<<des_trajectory_<<endl);
     
 	//additional intermediate pose may be necessary
     /*traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose5_, q_stow_pose1_, nsteps, 2.0*arrival_time, des_trajectory_);
@@ -633,7 +653,7 @@ bool ArmMotionInterface::plan_jspace_traj_recover_from_dropoff() {
         multi_traj_vec_.push_back(des_trajectory_);
     }*/
 
-	traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose1_, q_waiting_pose_, nsteps, 3.0*arrival_time, des_trajectory_);
+	traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose1_, q_waiting_pose_, nsteps, arrival_time, des_trajectory_);
     if (traj_is_valid_) multi_traj_vec_.push_back(des_trajectory_);   
 
 
@@ -655,13 +675,13 @@ bool ArmMotionInterface::plan_jspace_traj_recover_from_tote() {
         multi_traj_vec_.push_back(des_trajectory_);
     }   
     
-    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose8_, q_stow_pose1_, nsteps, 2.0*arrival_time, des_trajectory_);
+    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose8_, q_stow_pose1_, nsteps, arrival_time, des_trajectory_);
     if (traj_is_valid_) {
-        multi_traj_vec_.clear(); //whenever plan a single traj, make this default start of multi-seg trajectory
+        //multi_traj_vec_.clear(); //whenever plan a single traj, make this default start of multi-seg trajectory
         multi_traj_vec_.push_back(des_trajectory_);
     }
 
-    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose1_, q_waiting_pose_, nsteps, 3.0*arrival_time, des_trajectory_);
+    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose1_, q_waiting_pose_, nsteps, arrival_time, des_trajectory_);
     if (traj_is_valid_) multi_traj_vec_.push_back(des_trajectory_);   
 
 
@@ -683,12 +703,12 @@ bool ArmMotionInterface::plan_jspace_traj_current_to_tote_dropoff() {
         multi_traj_vec_.push_back(des_trajectory_);
     }   
     
-    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose1_, q_stow_pose8_, nsteps, 2.0*arrival_time, des_trajectory_);
+    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose1_, q_stow_pose8_, nsteps, arrival_time, des_trajectory_);
     if (traj_is_valid_) {
         multi_traj_vec_.push_back(des_trajectory_);
     }
 
-    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose8_, q_stow_pose7_, nsteps, 3.0*arrival_time, des_trajectory_);
+    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose8_, q_stow_pose7_, nsteps, arrival_time, des_trajectory_);
     if (traj_is_valid_) {
         multi_traj_vec_.push_back(des_trajectory_);
     }   
@@ -710,12 +730,12 @@ bool ArmMotionInterface::plan_jspace_traj_current_to_tote_pickup() {
         multi_traj_vec_.push_back(des_trajectory_);
     }   
     
-    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose1_, q_stow_pose8_, nsteps, 2.0*arrival_time, des_trajectory_);
+    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose1_, q_stow_pose8_, nsteps, arrival_time, des_trajectory_);
     if (traj_is_valid_) {
         multi_traj_vec_.push_back(des_trajectory_);
     }
 
-    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose8_, q_stow_pose7_, nsteps, 3.0*arrival_time, des_trajectory_);
+    traj_is_valid_ = pCartTrajPlanner_->plan_jspace_traj_qstart_to_qend(q_stow_pose8_, q_stow_pose7_, nsteps, arrival_time, des_trajectory_);
     if (traj_is_valid_) {
         multi_traj_vec_.push_back(des_trajectory_);
     }      

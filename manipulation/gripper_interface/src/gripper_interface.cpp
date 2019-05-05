@@ -32,7 +32,7 @@ GripperInterface::GripperInterface() : ac_("gripper_controller/gripper_action", 
 bool GripperInterface::graspObject() { //dummy func for testing
 	//std::string object = "dummy_part";
         //sticky_finger_client.call(srv_stick);
-        ROS_INFO("sticky-finger grasp response: %d",srv_stick.response.success);
+        //ROS_INFO("sticky-finger grasp response: %d",srv_stick.response.success);
 	std::string object("dummy_part");
 	double timeout = 0;
 	return graspObject(object); 
@@ -45,13 +45,13 @@ open loop grasp commander. doesnt check if grasp is successful or not
 bool GripperInterface::graspObject(std::string object) {
         //sticky_finger_client.call(srv_stick);
         //ROS_INFO("sticky-finger response: %d",srv_stick.response.success);
-	result_ = *ac_.getResult();
+	//result_ = *ac_.getResult();
 	//if (isGrasping()) return false; //! TO FIX why it doesn't work
-	ROS_ERROR("SENDING COMMEND NOW");
+	ROS_WARN("SENDING  GRIPPER COMMAND NOW");
 	goal_.command.position = 0;//part_width_map_[object];
 	goal_.command.max_effort = MAX_EFFORT_;
 	ac_.sendGoal(goal_);
-	ROS_ERROR("SEND GOAL COMPLETE");
+	ROS_WARN("sent command to grasp object");
 }
 
 /*
