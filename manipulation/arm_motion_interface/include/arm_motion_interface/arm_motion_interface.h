@@ -54,7 +54,7 @@ private:
     
     Eigen::VectorXd q_lower_limits_,q_upper_limits_,qdot_max_vec_,q_home_pose_,q_waiting_pose_; 
     //some hard-coded values for stereotyped motions
-    Eigen::VectorXd q_stow_pose1_,q_stow_pose2_,q_stow_pose3_,q_stow_pose4_,q_stow_pose5_,q_stow_pose6_,q_stow_pose7_,q_stow_pose8_;    
+    Eigen::VectorXd q_stow_pose1_,q_stow_pose2_,q_stow_pose3_,q_stow_pose4_,q_stow_pose5_,q_stow_pose6_,q_stow_pose7_,q_stow_pose8_,q_stow_pose9_;    
 
     ros::Publisher traj_publisher_; //<trajectory_msgs::JointTrajectory>;// = nh.advertise<trajectory_msgs::JointTrajectory>;//("joint_path_command", 1);   
     ros::Subscriber joint_states_subscriber_; 

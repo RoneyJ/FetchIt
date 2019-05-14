@@ -134,7 +134,7 @@ bool MovePart::move_to_dropoff_tote() {
 
 bool MovePart::grab_tote_from_pedestal_and_place_on_table() {
     gripper_interface_.releaseObject();
-        ROS_INFO("wait for gripper to open");
+    ROS_INFO("wait for gripper to open");
     ros::Duration(2.0).sleep();
     
     rtn_val = cart_motion_commander_.plan_jspace_traj_current_to_tote_dropoff(2, 4.0);  //(nsteps, arrival time) tinker with for optimization
@@ -144,12 +144,12 @@ bool MovePart::grab_tote_from_pedestal_and_place_on_table() {
     }
     rtn_val = cart_motion_commander_.execute_traj_nseg();    
 
-    ROS_INFO("grasping tote hanndle on pedestal");
-        gripper_interface_.graspObject();
+    ROS_INFO("grasping tote handle on pedestal");
+    gripper_interface_.graspObject();
     ros::Duration(2.0).sleep();
     
     ROS_INFO("lifting tote");
-    rtn_val = cart_motion_commander_.plan_jspace_traj_recover_from_dropoff(2, 2.0); //(nsteps, arrival time) tinker with for optimization
+    rtn_val = cart_motion_commander_.plan_jspace_traj_recover_from_tote(2, 2.0); //(nsteps, arrival time) tinker with for optimization
     if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
         ROS_ERROR("plan request was not successful!");
         return false;
@@ -163,27 +163,29 @@ bool MovePart::grab_tote_from_pedestal_and_place_on_table() {
     }   
 
     ROS_INFO("try setting on table");
-    /* FIX ME!  need plan from pre-pose to drop tote on table;
-     * 
+    // FIX ME!  need plan from pre-pose to drop tote on table;
+     
     rtn_val = cart_motion_commander_.plan_jspace_traj_current_to_tote_pickup(2, 4.0);  //(nsteps, arrival time) tinker with for optimization
     if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
         ROS_ERROR("plan request was not successful!");
         return false;
     }       
-   
     rtn_val = cart_motion_commander_.execute_traj_nseg();   
-    
     if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
         ROS_ERROR("execute_traj_nseg() reported not successful!");
         gripper_interface_.releaseObject();
         return false;
-    }       
-    */
+    } 
+
+    ROS_INFO("greleasing grasped tote");
+    gripper_interface_.releaseObject();
+    ros::Duration(2.0).sleep();      
+    
     return true;
 }
 
 bool MovePart::move_to_pickup_tote() {
-    rtn_val = cart_motion_commander_.plan_jspace_traj_current_to_tote_pickup(2, 4.0);  //(nsteps, arrival time) tinker with for optimization
+    rtn_val = cart_motion_commander_.plan_jspace_traj_current_to_tote_dropoff(2, 4.0);  //(nsteps, arrival time) tinker with for optimization
     if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
         ROS_ERROR("plan request was not successful!");
         return false;
@@ -419,7 +421,6 @@ bool MovePart::get_part(int part_code, geometry_msgs::PoseStamped source_pose) {
         ROS_WARN("unsuccessful plan; rtn_code = %d", rtn_val);
         return false;
     }
-    
 
     //tool_pose_.pose.position.z = GRASP_HEIGHT; //descend to grasp pose
     ROS_INFO("requesting plan descend to grasp pose:");
