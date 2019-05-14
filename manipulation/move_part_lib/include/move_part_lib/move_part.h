@@ -29,15 +29,17 @@ const double PART_Y_VAL = 0.2; //0.059; //minus-sign error w/ object-finder?
 const double APPROACH_HT = 0.15;
 const double APPROACH_CLEARANCE = 0.08;
 
-const double TOTE_TABLE_HEIGHT_WRT_TORSO_LIFT_LINK = 0.065; //0.065 is simu value
+const double TOTE_TABLE_HEIGHT_WRT_TORSO_LIFT_LINK = 0.095; //0.065 is simu value
 
 const double TOTE_GRASP_HEIGHT_WRT_TOTE_ORIGIN = 0.095; //0.11; //TUNE ME! choose 0.095 for simu
 
 //the following values are from remote Fetch experiments:
+//5/14: tote table and gearbox table same height 0.091 per tf_echo torso_lift_link generic_gripper_frame
+//gear table is also same height
 const double TOTE_GRASP_HEIGHT = 0.190; //handle is relatively high; elevate to about 0.280 to clear handle
-const double GEAR_GRASP_HEIGHT = 0.120; //shunk station
-const double GEARBOX_GRASP_HEIGHT = 0.135; // must approach close to table to grab gearbox part lying flat; also works on edge??
-const double BOLT_GRASP_HEIGHT = 0.121; 
+const double GEAR_GRASP_HEIGHT = 0.095; //120; //shunk station
+const double GEARBOX_GRASP_HEIGHT = 0.095; //0.135; // must approach close to table to grab gearbox part lying flat; also works on edge??
+const double BOLT_GRASP_HEIGHT = 0.1; 
 const double DIST_GEAR_TEETH_FROM_CENTROID = 0.05; //displace along -x_axis to reach gear teeth
 using namespace std;
 
