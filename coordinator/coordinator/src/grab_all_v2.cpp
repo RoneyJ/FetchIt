@@ -273,7 +273,7 @@ int main(int argc, char** argv) {
         }
 
         ROS_INFO("Attempting to recover from dropoff");
-        success = movePart.recover_from_tote();
+        success = movePart.recover_from_dropoff();
     }
     else{
         cout<<"Enter 1 to move arm to preset, 0 to quit: ";
@@ -284,7 +284,7 @@ int main(int argc, char** argv) {
         }
 
         ROS_INFO("Attempting to move arm to preset");
-        success = movePart.recover_from_dropoff();
+        success = movePart.recover_from_tote();
     }
 
 
