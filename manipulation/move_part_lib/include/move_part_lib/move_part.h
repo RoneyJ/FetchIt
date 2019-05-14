@@ -63,6 +63,8 @@ public:
         bool release_grasped_part();
         bool grasp_part();
         
+        bool grab_tote_from_pedestal_and_place_on_table();
+        
         Eigen::Affine3d  compute_grasp_affine(int part_code, geometry_msgs::PoseStamped part_pose);
         Eigen::Matrix3d compute_rot_z(double angle);
         //bool preset_torso();
