@@ -132,6 +132,56 @@ bool MovePart::move_to_dropoff_tote() {
     return true;
 }
 
+bool MovePart::grab_tote_from_pedestal_and_place_on_table() {
+    gripper_interface_.releaseObject();
+        ROS_INFO("wait for gripper to open");
+    ros::Duration(2.0).sleep();
+    
+    rtn_val = cart_motion_commander_.plan_jspace_traj_current_to_tote_dropoff(2, 4.0);  //(nsteps, arrival time) tinker with for optimization
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+        ROS_ERROR("plan request was not successful!");
+        return false;
+    }
+    rtn_val = cart_motion_commander_.execute_traj_nseg();    
+
+    ROS_INFO("grasping tote hanndle on pedestal");
+        gripper_interface_.graspObject();
+    ros::Duration(2.0).sleep();
+    
+    ROS_INFO("lifting tote");
+    rtn_val = cart_motion_commander_.plan_jspace_traj_recover_from_dropoff(2, 2.0); //(nsteps, arrival time) tinker with for optimization
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+        ROS_ERROR("plan request was not successful!");
+        return false;
+    } //cart_result_.return_code != arm_motion_action::arm_interfaceResult::SUCCESS
+    //rtn_val = cart_motion_commander_.execute_planned_traj();    
+    rtn_val = cart_motion_commander_.execute_traj_nseg();    ///execute_traj_nseg(); muti-traj execution
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+        ROS_ERROR("execute_traj_nseg() reported not successful!");
+        gripper_interface_.releaseObject();
+        return false;
+    }   
+
+    ROS_INFO("try setting on table");
+    /* FIX ME!  need plan from pre-pose to drop tote on table;
+     * 
+    rtn_val = cart_motion_commander_.plan_jspace_traj_current_to_tote_pickup(2, 4.0);  //(nsteps, arrival time) tinker with for optimization
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+        ROS_ERROR("plan request was not successful!");
+        return false;
+    }       
+   
+    rtn_val = cart_motion_commander_.execute_traj_nseg();   
+    
+    if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
+        ROS_ERROR("execute_traj_nseg() reported not successful!");
+        gripper_interface_.releaseObject();
+        return false;
+    }       
+    */
+    return true;
+}
+
 bool MovePart::move_to_pickup_tote() {
     rtn_val = cart_motion_commander_.plan_jspace_traj_current_to_tote_pickup(2, 4.0);  //(nsteps, arrival time) tinker with for optimization
     if (rtn_val != arm_motion_action::arm_interfaceResult::SUCCESS) {
