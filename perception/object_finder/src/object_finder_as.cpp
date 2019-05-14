@@ -113,7 +113,7 @@ void ObjectFinder::executeCB(const actionlib::SimpleActionServer<object_finder::
     ROS_INFO("transforming point cloud");
     //transform the head-camera data into the torso frame
     // result will be in "transformed_cloud_ptr_"
-    known_surface_ht = false;  //FOR TESTING
+    //known_surface_ht = false;  //FOR TESTING //! Force use observe height instead of hard code height
     pcl::transformPointCloud(*pclCam_clr_ptr_, *transformed_cloud_ptr_, affine_cam_wrt_torso_);  //Fetch specific here...
     if (known_surface_ht) {
         table_height_ = goal->surface_ht;
