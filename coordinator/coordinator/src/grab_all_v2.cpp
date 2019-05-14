@@ -246,21 +246,11 @@ int main(int argc, char** argv) {
             break;
         case part_codes::part_codes::TOTE:
             ROS_INFO("Attempting to pickup kit");
-            success = movePart.move_to_pickup_tote();
+            success = movePart.move_to_dropoff_tote();
             if(!success){
                 ROS_ERROR("Failed to pickup tote part");
                 return 0;
             }
-
-            cout<<"Enter 1 to dropoff kit, 0 to quit: ";
-            cin>>ans;
-
-            if(ans == 0){
-                return 0;
-            }
-
-            ROS_INFO("Attempting to dropoff kit");
-            success = movePart.move_to_dropoff_tote();
             
             break;
         default:
@@ -283,7 +273,7 @@ int main(int argc, char** argv) {
         }
 
         ROS_INFO("Attempting to recover from dropoff");
-        success = movePart.recover_from_dropoff();
+        success = movePart.recover_from_tote();
     }
     else{
         cout<<"Enter 1 to move arm to preset, 0 to quit: ";
@@ -294,7 +284,7 @@ int main(int argc, char** argv) {
         }
 
         ROS_INFO("Attempting to move arm to preset");
-        success = movePart.preset_arm();
+        success = movePart.recover_from_dropoff();
     }
 
 
