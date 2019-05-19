@@ -1,4 +1,4 @@
-# manipulation_launch
+# bringup_manipulation
 
 package just to hold launch file for manipulation subsystem
 

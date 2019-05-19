@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-    <node pkg="cartesian_motion_commander" type="example_fetch_grab_part" name="example_fetch_grab_part" output="screen" respawn="false" respawn_delay="0">
-        
-    </node>
-</launch>

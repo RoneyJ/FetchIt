@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!--Set the torso lift first-->
+    <node pkg="test_fetch_arm_ac" type="fetch_torso_lift_preset" name="fetch_torso_lift_preset" output="screen" respawn="false" respawn_delay="0">
+        
+    </node>
+
+    <!-- start the navigation startup -->
+    <include file="$(find bringup_navigation)/bringup_navigation.launch">
+        
+    </include>
+
+    <!-- start the vision system -->
+
+    <include file="$(find bringup_vision)/bringup_vision.launch">
+        
+    </include>
+
+    <!-- hand over to secondary bringup -->
+    <include file="$(find timed_roslaunch)/launch/timed_roslaunch.launch">
+        <arg name="time" value="10" /> <!--in seconds-->
+        <arg name="pkg" value="bringup_manipulation" />
+        <arg name="file" value="bringup_manipulation.launch" />
+        <arg name="node_name" value="secondary_bringup_manip" />
+    </include>
+</launch>

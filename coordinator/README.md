@@ -29,5 +29,3 @@ This is the coordinator folder area. This folder hosts all the coordinator relat
 2. **arm_test:** `rosrun coordinator arm_test`
 
 ### Unimplemented Command
-
-1. **bringup_coordinator:** `roslaunch bringup_coordinator bringup_coordinator.launch`

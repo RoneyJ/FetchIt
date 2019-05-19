@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>object_finder_launch</name>
+  <name>bringup_manipulation</name>
   <version>0.0.0</version>
-  <description>The object_finder_launch package</description>
+  <description>The manipulation_launch package</description>
   
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
