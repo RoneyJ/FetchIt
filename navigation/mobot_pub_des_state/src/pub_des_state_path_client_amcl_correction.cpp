@@ -292,7 +292,7 @@ int main(int argc, char **argv) {
         //cout<<"enter a key pose num, 0 to "<<nposes-1<<": ";  //option to prompt for key pose index
         //cin>>key_pose_index;
 
-        //key_pose_index = rand() % 4; //option to select key poses at random
+        //key_pose_index = rand() % 4; //option to select . at random
         while (!g_got_new_key_pose) {
             ros::spinOnce();
             ros::Duration(0.2).sleep();

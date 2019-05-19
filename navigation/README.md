@@ -7,6 +7,7 @@ This is the Navigation folder area. This folder hosts all the navigation related
     ├── bringup_navigation                              # Navigation Startup Launcher
     ├── mapper                                          # Storage location for all the maps needed for the project
     ├── mobot_pub_des_state                             # The main package for the robot drive command
+    ├── traj_builder                                    # The main library for creating the trajectory
     └── README.md                                       # This File!
 
 ## Command Related to Navigation
