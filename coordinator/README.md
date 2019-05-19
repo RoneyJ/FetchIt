@@ -6,8 +6,8 @@ This is the coordinator folder area. This folder hosts all the coordinator relat
     ├── coordinator                                     # Coordinator Code Package
     │   ├── CMakeLists.txt                              # CMake List
     │   ├── package.xml                                 # Package XML
-    │   └── src                                         # Source Folder 
-    │       ├── grab_tote_v2.cpp                        # LATEST grab FAKE_TOTE and REAL_TOTE
+    │   └── src                                         # Source Folder
+    │       ├── grab_all_v2.cpp                         # Interactive grab object all
     │       └── visit_all.cpp                           # LATEST command the vehicle to go all station orderly
     └── README.md                                       # This File!
 
