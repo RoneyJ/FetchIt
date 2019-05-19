@@ -1,13 +1,23 @@
-# bringup_manipulation
+# The bringup_manipulation launcher Package
 
-package just to hold launch file for manipulation subsystem
+This is the package for bringing up the launcher necessity for manipulation. It includes all the node needed for manipulation pre-start.
 
-## Example usage
-`roslaunch manipulation_launch manipulation.launch`
+## Most Up to Date Node
 
-This prepares the arm behavior server for manipulation tasks.  It also pre-positions the torso, head and arm.
-Pre-positioning can be done manually with:
-`roslaunch manipulation_launch pre_pose.launch`
+The following node will be actively used, as of `2019-05-19`.
 
-## Running tests/demos
-    
+**bringup_navigation:** `rosrun bringup_manipulation bringup_manipulation.launch`  
+This node is responsible for: initiate all the manipulation processing related packages. It includes:
+
+1. **SET torso lift:** `rosrun test_fetch_arm_ac fetch_torso_lift_preset`
+2. **SET head tilt:** `rosrun test_fetch_arm_ac fetch_head_tilt_preset`
+3. **SET arm start:** `rosrun test_fetch_arm_ac fetch_arm_safe_start`
+4. 
+## Included Nodes
+
+Nodes here are included, but they might not be actively used for competition.
+
+## Dependencies
+
+Uses libraries:  respectively.
+Provides necessity for coordinator

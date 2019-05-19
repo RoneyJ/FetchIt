@@ -1,4 +1,4 @@
-# The Perception Folder
+# The Navigation Folder
 
 This is the Perception folder area. This folder hosts all the vision related objects:
 

@@ -1,21 +1,25 @@
-# navigation_launch
+# The bringup_navigation launcher Package
 
-package for launch file for navigation.
-Navigation will start up: 
-rosrun mobot_gazebo_state mobot_gazebo_state
-rosrun lin_steering lin_steering_wrt_gazebo_state cmd_vel:=/base_controller/command
-rosrun mobot_pub_des_state mobot_pub_des_state
-rosrun gazebo_set_state freeze_robot_service
+This is the package for bringing up the launcher necessity for navigation. It includes all the node needed for navigation pre-start.
 
-WATCH OUT:  this launch file assumes access to "magic" state from Gazebo.
-This needs to be replaced with a localization means.
-ALSO: this node uses a "freeze" service, which is only relevant for simulation.
+## Most Up to Date Node
 
-## Example usage
-`roslaunch navigation_launch navigation.launch`
+The following node will be actively used, as of `2019-05-19`.
 
-## Running tests/demos
-Normally, navigation will get its commands from the higher-level coordinator.
-But here is an example using move_base_lib to interact with navigation subsystem:
-`rosrun move_base_lib move_base_example_main` 
-    
+**bringup_navigation:** `rosrun bringup_navigation bringup_navigation.launch`  
+This node is responsible for: initiate all the navigation processing related packages. It includes:
+
+1. **AMCL:** `rosrun amcl amcl scan:=/base_scan`
+2. **Map Server:** `rosrun map_server map_server $(find mapper)/real_map/map_main.yaml`
+3. **Open Loop Controller:** `rosrun mobot_pub_des_state open_loop_controller`
+4. **mobot_pub_des_state:** `rosrun mobot_pub_des_state mobot_pub_des_state`
+5. **pub_des_state_path_client_amcl_correction:** `rosrun mobot_pub_des_state pub_des_state_path_client_amcl_correction`
+
+## Included Nodes
+
+Nodes here are included, but they might not be actively used for competition.
+
+## Dependencies
+
+Uses libraries: map, amcl, pubdes state respectively.
+Provides necessity for coordinator

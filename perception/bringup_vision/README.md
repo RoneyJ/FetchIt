@@ -1,14 +1,21 @@
-# object_finder_launch
+# The bringup_vision launcher Package
 
-package for launch file for object finder.
-This starts up nodes:
-rosrun object_finder object_finder_as
-rosrun triad_marker triad_display
+This is the package for bringing up the launcher necessity for vision. It includes all the node needed for vision pre-start.
 
-## Example usage
-`roslaunch object_finder_launch object_finder.launch`
+## Most Up to Date Node
 
-## Running tests/demos
-Normally, this action server gets goals from the higher-level coordinator.  
-But for sub-system test, can run example illustrating use of object_finder_lib (to simplify interface to object finder):
-`rosrun object_finder_lib example_main_object_finder_lib`    
+The following node will be actively used, as of `2019-05-19`.
+
+**bringup_vision:** `rosrun bringup_vision bringup_vision.launch`  
+This node is responsible for: initiate all the vision processing related packages. It includes:
+
+1. **Object Finder Main:** `rosrun obejct_finder object_finder_main`
+2. **Triad Display BGTASK:** `rosrun triad_marker triad_display`
+
+## Included Nodes
+
+Nodes here are included, but they might not be actively used for competition.
+
+## Dependencies
+
+Uses libraries: object_finder, Object_finder_lib, triad_marker, respectively.

@@ -19,35 +19,15 @@ add_definitions(${EIGEN_DEFINITIONS})
 
 catkin_simple()
 
-# example boost usage
-# find_package(Boost REQUIRED COMPONENTS system thread)
-
-# C++0x support - not quite the same as final C++11!
-# use carefully;  can interfere with point-cloud library
-# SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-
-# Libraries: uncomment the following and edit arguments to create a new library
-# cs_add_library(my_lib src/my_lib.cpp)   
-
-# Executables: uncomment the following and edit arguments to compile new nodes
-# may add more of these lines for more nodes from the same package
-cs_add_executable(fetch_arm_test_action_client src/fetch_arm_test_action_client.cpp)
-cs_add_executable(fetch_arm_test_action_client2 src/fetch_arm_test_action_client2.cpp)
-cs_add_executable(fetch_arm_test_interactive src/fetch_arm_test_interactive.cpp)
+#Executable:
+# General start
 cs_add_executable(fetch_arm_pre_pose src/fetch_arm_pre_pose.cpp)
-cs_add_executable(fetch_arm_pre_pose_interactive src/fetch_arm_pre_pose_interactive.cpp)
-
+# For tucked position only
 cs_add_executable(fetch_arm_safe_start src/fetch_arm_safe_start.cpp)
-
-cs_add_executable(fetch_head_test_action_client src/fetch_head_test_action_client.cpp)
+# Head Preset
 cs_add_executable(fetch_head_tilt_preset src/fetch_head_tilt_preset.cpp)
-
-cs_add_executable(fetch_torso_test_action_client src/fetch_torso_test_action_client.cpp)
+# Torso PReset
 cs_add_executable(fetch_torso_lift_preset src/fetch_torso_lift_preset.cpp)
-
-#the following is required, if desire to link a node in this package with a library created in this same package
-# edit the arguments to reference the named node and named library within this package
-# target_link_libraries(example my_lib)
 
 cs_install()
 cs_export()
