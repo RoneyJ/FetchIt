@@ -3,7 +3,7 @@
 package for launch file for object finder.
 This starts up nodes:
 rosrun object_finder object_finder_as
-rosrun example_rviz_marker triad_display
+rosrun triad_marker triad_display
 
 ## Example usage
 `roslaunch object_finder_launch object_finder.launch`
