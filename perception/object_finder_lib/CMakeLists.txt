@@ -31,11 +31,11 @@ cs_add_library(object_finder_lib src/object_finder_lib.cpp)
 
 # Executables: uncomment the following and edit arguments to compile new nodes
 # may add more of these lines for more nodes from the same package
-cs_add_executable(example_main_object_finder_lib src/example_main_object_finder_lib.cpp)
+#cs_add_executable(example_main_object_finder_lib src/example_main_object_finder_lib.cpp)
 
 #the following is required, if desire to link a node in this package with a library created in this same package
 # edit the arguments to reference the named node and named library within this package
-target_link_libraries(example_main_object_finder_lib object_finder_lib)
+#target_link_libraries(example_main_object_finder_lib object_finder_lib)
 
 cs_install()
 cs_export()

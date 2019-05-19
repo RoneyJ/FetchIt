@@ -6,22 +6,15 @@ This is the coordinator code package. It includes all the acutal code for coordi
 
 The following node will be actively used, as of `2019-04-30`.
 
-**grabe_tThis node is **OBSOLETE**. Its function is now replaced with **grabe_tote_v2**.
-ote_v2:** `rosrun coordinator grab_tote_v2`  
-This node is responsible for: initiating a real grabe tote call and test with a fake grab tote call
+**grabe_all:** `rosrun coordinator grab_all`  
+This node is responsible for: interactively proceed through all check points and proced all action.
 
 **visit_all:** `rosrun coordinator visit_all`  
 This node is responsible for: command the robot around the arena once, with user interaction for starting a navigation
 
 ## Included Nodes
 
-Nodes here are included, but they might not be active.
-
-**arm_test:**`rosrun coordinator arm_test`  
-This node is responsible for performing a simple arm grip motion test.
-
-**grab_tote:** `rosrun coordinator grab_tote`  
-This node is **OBSOLETE**. Its function is now replaced with **grabe_tote_v2**.
+Nodes here are included, but they might not be actively used for competition.
 
 ## Dependencies
 
