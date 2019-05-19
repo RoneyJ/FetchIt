@@ -17,7 +17,7 @@ using namespace std;
 using namespace cv;
 
 const float MIN_X_t = 0.35; //include points starting 0.4m in front of robot
-const float MAX_X_t = 1.2; //include points out to 0.9m in front of robot
+const float MAX_X_t = 5.0; //include points out to 0.9m in front of robot
 const float MIN_Y_t = -0.7; //include points starting -0.5m to left of robot
 const float MAX_Y_t = 0.7; //include points up to 0.5m to right of robot
 const float MIN_DZ_t = 0.02; //box filter from this height above the table top

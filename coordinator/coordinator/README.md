@@ -6,7 +6,8 @@ This is the coordinator code package. It includes all the acutal code for coordi
 
 The following node will be actively used, as of `2019-04-30`.
 
-**grabe_tote_v2:** `rosrun coordinator grab_tote_v2`  
+**grabe_tThis node is **OBSOLETE**. Its function is now replaced with **grabe_tote_v2**.
+ote_v2:** `rosrun coordinator grab_tote_v2`  
 This node is responsible for: initiating a real grabe tote call and test with a fake grab tote call
 
 **visit_all:** `rosrun coordinator visit_all`  
