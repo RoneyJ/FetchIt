@@ -5,6 +5,5 @@ This action message defines function codes for various functional behaviors, as 
 Different function codes may also require various parameter values, which are options within the goal message.
 
 ## Example usage
-To use this goal message, include #include <arm_motion_action/arm_interfaceAction.h>
 
-    
+To use this goal message, include #include <arm_motion_action/arm_interfaceAction.h>

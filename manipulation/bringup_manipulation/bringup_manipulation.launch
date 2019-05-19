@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <launch>
     <!-- set arm and head -->
-    <node name= "fetch_torso_lift_preset" pkg= "test_fetch_arm_ac" type= "fetch_torso_lift_preset" />
-    <node name= "fetch_head_tilt_preset" pkg= "test_fetch_arm_ac" type= "fetch_head_tilt_preset" />
-    <node name= "fetch_arm_safe_start" pkg= "test_fetch_arm_ac" type= "fetch_arm_safe_start" />
+    <node name= "fetch_torso_lift_preset" pkg= "fetch_move_arm" type= "fetch_torso_lift_preset" />
+    <node name= "fetch_head_tilt_preset" pkg= "fetch_move_arm" type= "fetch_head_tilt_preset" />
+    <node name= "fetch_arm_safe_start" pkg= "fetch_move_arm" type= "fetch_arm_safe_start" />
     <!-- server setup -->
     <include file="$(find fetch_arm_behavior_server)/launch/fetch_static_transforms.launch" />
     <node name= "fetch_cart_move_as" pkg= "fetch_arm_behavior_server" type= "fetch_cart_move_as" output="screen" respawn="true"/>

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(test_fetch_arm_ac)
+project(fetch_move_arm)
 
 find_package(catkin_simple REQUIRED)
 

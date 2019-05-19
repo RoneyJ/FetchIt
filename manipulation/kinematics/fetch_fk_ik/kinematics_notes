@@ -6,7 +6,7 @@ compute distance from O1 to Ogripper
 --> elbow angles +/-, based on L_humerus and L_forearm
 
 ---------------------test fwd_kin--------------
-rosrun test_fetch_arm_ac fetch_arm_test_action_client2
+rosrun fetch_move_arm fetch_arm_test_action_client2
 
 
 rosrun tf tf_echo shoulder_pan_link wrist_flex_link

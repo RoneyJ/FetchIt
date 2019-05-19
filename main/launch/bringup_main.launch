@@ -2,7 +2,7 @@
 <launch>
 
     <!--Set the torso lift first-->
-    <node pkg="test_fetch_arm_ac" type="fetch_torso_lift_preset" name="fetch_torso_lift_preset" output="screen" respawn="false" respawn_delay="0">
+    <node pkg="fetch_move_arm" type="fetch_torso_lift_preset" name="fetch_torso_lift_preset" output="screen" respawn="false" respawn_delay="0">
         
     </node>
 
