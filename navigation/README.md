@@ -1,24 +1,22 @@
 # The Navigation Folder
 
-This is the Perception folder area. This folder hosts all the vision related objects:
+This is the Navigation folder area. This folder hosts all the navigation related objects:
 
-    Coordinator Folder
-    ├── bringup_vision                                  # Vision Startup Command
-    ├── object_finder                                   # The object finder folder for all object finder code
-    ├── object_finder_lib                               # The obejct finder library for used by coordinator
+    Navigation Folder
+    ├── _Notes                                          # Used for storing notes throughout dev
+    ├── bringup_navigation                              # Navigation Startup Launcher
+    ├── mapper                                          # Storage location for all the maps needed for the project
+    ├── mobot_pub_des_state                             # The main package for the robot drive command
     └── README.md                                       # This File!
 
-## Command Related to Coordinator
+## Command Related to Navigation
 
 ### Latest Command
 
-1. **bringup_vision** `roslaunch bringup_vision bringup_vision.launch`
-2. **object_finder_main** `rosrun object_finder object_finder_main`
+1. **bringup_navigation** `roslaunch bringup_navigation bringup_navigation.launch`
 
 ### Unused Command
 
 The following command are compiled with the main code, but might not be used during competition.
-
-**example_object_finder_action_client:** `rosrun object_finder example_object_finder_action_client`
 
 ### Unimplemented Command
