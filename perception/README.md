@@ -4,7 +4,6 @@ This is the Perception folder area. This folder hosts all the vision related obj
 
     Coordinator Folder
     ├── bringup_vision                                  # Vision Startup Command
-    ├── triad_marker                             # Package used for creating marker for display
     ├── object_finder                                   # The object finder folder for all object finder code
     ├── object_finder_lib                               # The obejct finder library for used by coordinator
     └── README.md                                       # This File!
