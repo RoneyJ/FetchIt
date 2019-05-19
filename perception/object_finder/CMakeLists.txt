@@ -28,20 +28,13 @@ catkin_simple()
 # example boost usage
 find_package(Boost REQUIRED COMPONENTS system thread)
 
-# C++0x support - not quite the same as final C++11!
-# use carefully;  can interfere with point-cloud library
-# SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-
-# Libraries: uncomment the following and edit arguments to create a new library
+# Libraries: 
 cs_add_library(object_finder_as src/object_finder_as.cpp)   
 
-# Executables: uncomment the following and edit arguments to compile new nodes
-# may add more of these lines for more nodes from the same package
+# Executables: 
 cs_add_executable(object_finder_main src/object_finder_main.cpp)
 cs_add_executable(example_object_finder_action_client src/example_object_finder_action_client.cpp)
-cs_add_executable(example_tote_finder_action_client src/example_tote_finder_action_client.cpp)
-#the following is required, if desire to link a node in this package with a library created in this same package
-# edit the arguments to reference the named node and named library within this package
+# link a node in this package with a library created in this same package
 
 target_link_libraries(object_finder_main object_finder_as ${OpenCV_LIBS})
 
