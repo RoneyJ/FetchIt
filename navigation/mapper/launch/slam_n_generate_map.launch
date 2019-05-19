@@ -3,6 +3,9 @@
     <!-- mapping node: -->
     <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen" respawn="false" respawn_delay="0">
         <remap from="scan" to="base_scan"/>
+        <param name="delta" value="0.01"/>
+        <param name="base_frame" value="base_link"/>
+        <param name="astep" value=""/>
     </node>
     <!-- auto map saving -->
     <node pkg="map_server" type="map_saver" name="map_saver" output="screen" args="-f $(find mapper)/newly/generaated_on_field" respawn="true" respawn_delay="1">
