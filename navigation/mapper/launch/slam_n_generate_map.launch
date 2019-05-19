@@ -5,7 +5,7 @@
         <remap from="scan" to="base_scan"/>
     </node>
     <!-- auto map saving -->
-    <node pkg="map_server" type="map_saver" name="map_saver" output="screen" args="-f $(find teamcasefetch_return)/maps/generated_W_lidar" respawn="true" respawn_delay="1">
+    <node pkg="map_server" type="map_saver" name="map_saver" output="screen" args="-f $(find mapper)/newly/generaated_on_field" respawn="true" respawn_delay="1">
         
     </node>
 
