@@ -7,9 +7,9 @@
     </node>
 
     <!-- start the navigation startup -->
-    <include file="$(find bringup_navigation)/bringup_navigation.launch">
+    <!-- <include file="$(find bringup_navigation)/bringup_navigation.launch">
         
-    </include>
+    </include> -->
 
     <!-- start the vision system -->
 
