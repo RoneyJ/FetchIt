@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+    <node pkg="coordinator" type="vision_demo" name="vision_demo" output="screen" respawn="true" respawn_delay="0" />
+</launch>
